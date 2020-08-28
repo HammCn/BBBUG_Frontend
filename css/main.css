@@ -1,0 +1,445 @@
+body,
+html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+
+@font-face {
+    font-family: 'Gotham-Book';
+    src: url('fonts/Gotham-Book.woff2');
+    /* IE9+ */
+}
+
+* {
+    font-family: 'Gotham-Book';
+    background-attachment: fixed;
+    outline: none;
+}
+
+[v-cloak] {
+    visibility: hidden !important;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    /*定义body的元素垂直居中*/
+    justify-content: center;
+    /*定义body的里的元素水平居中*/
+}
+
+::-webkit-scrollbar {
+    width: 5px;
+    /*对垂直流动条有效*/
+    height: 5px;
+    /*对水平流动条有效*/
+}
+
+
+/*定义滚动条的轨道颜色、内阴影及圆角*/
+
+::-webkit-scrollbar-track {
+    /* background-color: rgba(50, 50, 50, 0.1); */
+    background-color: white;
+    border-radius: 5px;
+}
+
+
+/*定义滑块颜色、内阴影及圆角*/
+
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+
+/*定义两端按钮的样式*/
+
+::-webkit-scrollbar-button {
+    background-color: transparent;
+}
+
+
+/*定义右下角汇合处的样式*/
+
+::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+.love {
+    -webkit-animation: rotate 5s linear infinite;
+    -moz-animation: rotate 5s linear infinite;
+    -o-animation: rotate 5s linear infinite;
+    animation: rotate 5s linear infinite;
+}
+
+#chat_room {
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    top: 10px;
+    bottom: 10px;
+}
+
+.online_user {
+    margin-bottom: 20px;
+    vertical-align: middle;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.online_user img {
+    border-radius: 100%;
+    width: 40px;
+    height: 40px;
+}
+
+.online_user * {
+    vertical-align: middle;
+}
+
+.el-table::before {
+    height: 0 !important;
+}
+
+.pickedSongBox {
+    display: fixed !important;
+    left: 20px !important;
+    bottom: 170px !important;
+    width: 400px;
+}
+
+.pickedSongBox .loading {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.pickedSongBox .list {
+    position: relative;
+    width: 400px;
+    min-height: 100px;
+    max-height: 300px;
+    overflow: auto;
+    overflow-x: hidden;
+    display: inline-block;
+}
+
+.pickedSongBox a {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.pickedSongBox thead {
+    display: none;
+}
+
+.pickedSongBox tr {
+    cursor: pointer;
+}
+
+.player {
+    float: right;
+}
+
+.player .lrc {
+    width: 200px;
+}
+
+.player .current {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    background-color: #67c23a;
+    border-radius: 4px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+.chat_room_box {
+    background-color: red;
+}
+
+.chat_room_input {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100px;
+    padding: 10px 15px;
+    border-top: 1px solid #eee;
+}
+
+.el-dialog__body {
+    padding: 5px 20px;
+}
+
+.top_area {
+    position: fixed;
+    right: 20px;
+    top: 10px;
+}
+
+.chat_room_toolbar {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    bottom: 125px;
+}
+
+.chat_room_history {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 60px;
+    bottom: 151px;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+.searchImageBox {
+    display: fixed!important;
+    left: 20px!important;
+    max-width: 300px;
+    bottom: 170px!important;
+}
+
+.searchImageBox .loading {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.searchImageBox .list {
+    position: relative;
+    width: 300px;
+    min-height: 100px;
+    display: inline-block;
+}
+
+.searchImageBox img {
+    margin: 5px;
+    padding: 5px;
+    border-radius: 10px;
+    background-color: white;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+}
+
+audio {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+}
+
+.searchSongBox {
+    display: fixed !important;
+    left: 20px !important;
+    bottom: 170px !important;
+    width: 400px;
+}
+
+.searchSongBox .loading {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.searchSongBox .list {
+    position: relative;
+    width: 100%;
+    min-height: 100px;
+    display: inline-block;
+}
+
+.searchSongBox a {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.searchSongBox thead {
+    display: none;
+}
+
+.searchSongBox tr {
+    cursor: pointer;
+}
+
+.chat_room_message {
+    border: none;
+    width: 100%;
+    height: 100%;
+    font-size: 14px;
+    outline: none;
+    resize: none;
+}
+
+.chat_room_send {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+}
+
+.chat_room_history .system {
+    text-align: center;
+    margin: 10px 0px;
+}
+
+.chat_room_history .system span {
+    background-color: #eee;
+    color: #999;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    padding: 5px 15px;
+    font-size: 12px;
+}
+
+.chat_room_history .item {
+    position: relative;
+    margin: 20px 30px;
+}
+
+.chat_room_history .item .head {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+.chat_room_history .mine .head {
+    position: absolute;
+    right: 0px;
+    left: auto;
+    top: 0px;
+}
+
+.chat_room_history .item .head img {
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+}
+
+.chat_room_history .item .body {
+    margin-left: 50px;
+    margin-top: 20px;
+    text-align: left;
+}
+
+.chat_room_history .mine .body {
+    margin-left: auto;
+    margin-right: 50px;
+    margin-top: 20px;
+    text-align: right;
+}
+
+.chat_room_history .item .body .user {
+    font-size: 14px;
+}
+
+.chat_room_history .item .body .content {
+    overflow: hidden;
+    text-align: left;
+    display: inline-block;
+    max-width: 30%;
+    background-color: #eee;
+    padding: 8px 15px;
+    margin: 10px 0px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    color: #333;
+    word-wrap: break-word;
+    word-break: break-all;
+    font-size: 12px;
+}
+
+.chat_room_history .item .body .img {
+    padding: 1px;
+}
+
+.chat_room_history .item .body .img img {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.chat_room_history .item .body .content a {
+    text-decoration: none;
+    color: orangered;
+}
+
+#room_enter {
+    width: 400px;
+}
+
+.room_enter_message {
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #999;
+}
+
+#room_create {
+    width: 600px;
+}
+
+#room {
+    width: 600px;
+}
+
+.room-user-name {
+    font-size: 12px;
+    color: #999;
+}
+
+.room-icon {
+    font-size: 16px;
+    color: orangered;
+    font-weight: bolder;
+    cursor: pointer;
+}
+
+.isAdmin {
+    margin-left: 2px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.room-title {
+    color: #333;
+    font-weight: bolder;
+}
+
+#login {
+    width: 400px;
+}
+
+.login-send-password {
+    cursor: pointer;
+}
+
+.submit-area {
+    text-align: right;
+    margin-bottom: 0px!important;
+}
+
+.allLine {
+    display: block;
+}
