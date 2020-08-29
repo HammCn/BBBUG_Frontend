@@ -74,7 +74,9 @@
                                 <div :class="[item.user.user_id==userInfo.user_id?'item mine':'item']">
                                     <div class="head">
                                         <el-dropdown trigger="click" @command="commandUserHead" :index="index">
-                                            <img :src="item.user.user_head" onerror="this.src='images/nohead.jpg'" />
+                                            <img :src="item.user.user_head" onerror="this.src='images/nohead.jpg'"
+                                                :class="[chat_room.song&&item.user.user_id==chat_room.song.user.user_id?'love':'']"
+                                                :title="[chat_room.song&&item.user.user_id==chat_room.song.user.user_id?'正在播放Ta点的歌曲':'']" />
                                             <el-dropdown-menu slot="dropdown">
                                                 <el-dropdown-item :command="beforeHandleUserCommand(item.user,'at')"
                                                     v-if="item.user.user_id!=userInfo.user_id">@Ta
@@ -164,6 +166,7 @@
                         <el-tag class="at_box" size="small" closable @close="chat_room.at=null" type="danger"
                             v-if="chat_room.at">
                             @{{chat_room.at.user_name}}</el-tag>
+                        <div class="lrcbox" v-if="lrcString">{{lrcString}}</div>
                     </div>
                 </div>
                 <el-dialog title="修改资料" :visible.sync="chat_room.dialog.editMyProfile" :modal-append-to-body='false'>
@@ -278,7 +281,9 @@
                         <div v-for="(item,index) in chat_room.data.onlineList" v-key="item" class="online_user">
                             <el-dropdown trigger="click" @command="commandUserHead" :index="index">
                                 <el-image style="width: 40px; height: 40px" :src="item.user_head"
-                                    onerror="this.src='images/nohead.jpg'" class="headimg">
+                                    onerror="this.src='images/nohead.jpg'"
+                                    :title="[chat_room.song&&item.user_id==chat_room.song.user.user_id?'正在播放Ta点的歌曲':'']"
+                                    :class="[chat_room.song&&item.user_id==chat_room.song.user.user_id?'headimg love':'headimg']">
                                 </el-image>
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item :command="beforeHandleUserCommand(item,'at')">@Ta
@@ -444,7 +449,7 @@
             </el-card>
             <!-- 登录页面结束 -->
         </div>
-        <audio :src="audioUrl" id="audio" ref="audio" autoplay="autoplay" control></audio>
+        <audio :src="audioUrl" id="audio" ref="audio" autoplay="autoplay" control @timeupdate="audioTimeUpdate"></audio>
     </div>
 </body>
 <script src="js/vue-2.6.10.min.js"></script>
@@ -462,6 +467,8 @@
                 audioUrl: "",
                 copyString: "",
                 userInfo: "",
+                lrcString: "",
+                musicLrcObj: {},
                 volume: 80,
                 loading: false,
                 baseData: {
@@ -782,6 +789,19 @@
                     "command": command
                 }
             },
+            getMusicLrc() {
+                let that = this;
+                that.musicLrcObj = {};
+                that.request({
+                    url: '/song/getLrc',
+                    data: {
+                        copy: that.chat_room.song.song.copyid
+                    },
+                    success(res) {
+                        that.musicLrcObj = that.createLrcObj(res.data);
+                    }
+                });
+            },
             hideAllTo(page) {
                 let that = this;
                 that.login.showPage = false;
@@ -850,6 +870,27 @@
             },
             getPostData(data) {
                 return Object.assign({}, this.baseData, data);
+            },
+            audioTimeUpdate(e) {
+                let that = this;
+                let lrcText = '';
+                if (that.musicLrcObj && that.musicLrcObj.ms) {
+                    for (let i = 0; i < that.musicLrcObj.ms.length; i++) {
+                        if (i == that.musicLrcObj.ms.length - 1) {
+                            lrcText = unescape(that.musicLrcObj.ms[i].c);
+                        } else {
+                            if (that.$refs.audio.currentTime > that.musicLrcObj.ms[i].t && that.$refs.audio.currentTime < that.musicLrcObj.ms[i + 1].t) {
+                                lrcText = unescape(that.musicLrcObj.ms[i].c);
+                                break;
+                            }
+                        }
+                    }
+                    if (lrcText) {
+                        that.lrcString = lrcText;
+                        return;
+                    }
+                }
+                that.lrcString = '';
             },
             checkRoomPassword(room_id, room_password, callback = false) {
                 let that = this;
@@ -1116,6 +1157,7 @@
                         that.$refs.audio.currentTime = (nowTimeStamps - obj.song.since) > 5 ? (nowTimeStamps - obj.song.since) : 0;
                         that.$refs.audio.play();
                         that.addSystemMessage("正在播放 " + that.urldecode(obj.user.user_name) + " 点的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ", 'white', 'lightsalmon');
+                        that.getMusicLrc();
                     }
                 });
 
@@ -1684,6 +1726,66 @@
                 that.baseData.access_token = '';
                 that.hideAllTo('login');
             },
+            createLrcObj(lrc) {
+                var oLRC = {
+                    ti: "", //歌曲名
+                    ar: "", //演唱者
+                    al: "", //专辑名
+                    by: "", //歌词制作人
+                    offset: 0, //时间补偿值，单位毫秒，用于调整歌词整体位置
+                    ms: [] //歌词数组{t:时间,c:歌词}
+                };
+
+                if (lrc.length == 0) {
+                    return;
+                }
+                var lrcs = lrc.split('\n');
+                //用回车拆分成数组
+                for (var i in lrcs) {
+                    //遍历歌词数组
+                    lrcs[i] = lrcs[i].replace(/(^\s*)|(\s*$)/g, "");
+                    //去除前后空格
+                    var t = lrcs[i].substring(lrcs[i].indexOf("[") + 1, lrcs[i].indexOf("]"));
+                    //取[]间的内容
+                    var s = t.split(":");
+                    //分离:前后文字
+                    if (isNaN(parseInt(s[0]))) {
+                        //不是数值
+                        for (var i in oLRC) {
+                            if (i != "ms" && i == s[0].toLowerCase()) {
+                                oLRC[i] = s[1];
+                            }
+                        }
+                    } else {
+                        //是数值
+                        var arr = lrcs[i].match(/\[(\d+:.+?)\]/g);
+                        //提取时间字段，可能有多个
+                        var start = 0;
+                        for (var k in arr) {
+                            start += arr[k].length; //计算歌词位置
+                        }
+                        var content = lrcs[i].substring(start);//获取歌词内容
+                        if (!content) {
+                            continue;
+                        }
+                        for (var k in arr) {
+                            var t = arr[k].substring(1, arr[k].length - 1);//取[]间的内容
+                            var s = t.split(":");
+                            //分离:前后文字
+                            oLRC.ms.push({
+                                //对象{t:时间,c:歌词}加入ms数组
+                                t: parseFloat((parseFloat(s[0]) * 60 + parseFloat(s[1])).toFixed(3)),
+                                c: content
+                            });
+                        }
+                    }
+                }
+                oLRC.ms.sort(function (a, b) {
+                    //按时间顺序排序
+                    return a.t - b.t;
+                });
+                return oLRC;
+            }
         }
     });
 </script>

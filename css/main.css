@@ -74,7 +74,13 @@ body {
     left: 10px;
     bottom: 10px;
 }
-
+.lrcbox{
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    font-size:12px;
+    color:#999;
+}
 .el-form-item {
     margin-bottom: 20px;
 }
