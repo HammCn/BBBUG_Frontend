@@ -2,11 +2,12 @@
 <html>
 
 <head>
-    <title>BBBUG</title>
+    <title>BBBUG聊天室</title>
     <meta name="referrer" content="never">
     <meta charset="UTF-8">
-    <meta content='' name='Keywords'>
-    <meta content='' name='Description'>
+    <meta content='程序员划水,聊天室,音乐聊天室,一起听歌,程序员,划水摸鱼,佛系聊天,交友水群,,斗图,表情包' name='Keywords'>
+    <meta content='BBBUG.COM，一个程序员的佛系划水音乐聊天室，超多程序员都在这里一起听歌、划水聊天、技术分享、表情包斗图、讨论产品设计，各种小哥哥小姐姐们在这里等你哟。欢迎你的加入！'
+        name='Description'>
     <meta name="viewport"
         content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
     <link rel="stylesheet" href="css/element.css">
@@ -34,6 +35,7 @@
                         <i class="room-icon el-icon-chat-line-round" v-if="room.roomInfo.room_type == 0"
                             title="普通文字聊天房"></i>
                         <i class="room-icon el-icon-service" v-if="room.roomInfo.room_type == 1" title="一起听歌音乐房"></i>
+                        <i class="room-icon el-icon-coin" v-if="room.roomInfo.room_type == 2" title="听歌猜歌游戏房"></i>
                         <el-link @click="doChatRoomShowSettingBox" v-if="room.roomInfo.room_user==userInfo.user_id">管理
                         </el-link>
                     </span>
@@ -114,6 +116,17 @@
                                                 :large="getImageUrl(urldecode(item.resource))" :preview="item.resource"
                                                 onerror="this.src='images/error.jpg'" title="点击查看大图" />
                                         </div>
+                                        <div class="content" v-if="item.type=='link'"
+                                            style="padding:10px 20px;max-width:30%;background-color:#f5f5f5;border:1px solid #eee;cursor:pointer;"
+                                            title="点击访问" @click="openWebUrl(item.link)">
+                                            <div class="title">{{urldecode(item.title)}}</div>
+                                            <div class="desc" :style="{paddingLeft:item.img?'40px':'0px'}">
+                                                <img :src="item.img" v-if="item.img"
+                                                    onerror="this.src='images/nohead.jpg'">
+                                                {{urldecode(item.desc)}}
+                                            </div>
+                                            <div class="link">{{urldecode(item.link)}}</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -160,7 +173,8 @@
                     </div>
                     <div class="chat_room_input">
                         <textarea @click="hideAllDialog" v-model="chat_room.message" @keydown.13="doChatRoomEnterDown"
-                            @keydown.8="doChatRoomDelete" class="chat_room_message" placeholder="来说点什么吧~"></textarea>
+                            @keydown.8="doChatRoomDelete" class="chat_room_message"
+                            :placeholder="ChatPlaceHolder"></textarea>
                         <el-button class="chat_room_send" size="small" @click="doChatRoomSendMessage">发送(Enter)
                         </el-button>
                         <el-tag class="at_box" size="small" closable @close="chat_room.at=null" type="danger"
@@ -348,6 +362,8 @@
                                         title="普通文字聊天房"></i>
                                     <i class="room-icon el-icon-service" v-if="scope.row.room_type == 1"
                                         title="一起听歌音乐房"></i>
+                                    <i class="room-icon el-icon-coin" v-if="scope.row.room_type == 2"
+                                        title="听歌猜歌游戏房"></i>
                                     <!-- <i class="room-icon el-icon-video-play"></i>
                                     <i class="room-icon el-icon-timer"></i> -->
                                 </div>
@@ -450,6 +466,13 @@
             <!-- 登录页面结束 -->
         </div>
         <audio :src="audioUrl" id="audio" ref="audio" autoplay="autoplay" control @timeupdate="audioTimeUpdate"></audio>
+        <audio :src="game.music.url" id="audio_game_music" ref="audio_game_music" autoplay="autoplay" control></audio>
+        <div class="lockscreen" v-if="lockScreenData.ifLockSystem">
+            <div class="lockImg"><img v-if="lockScreenData.musicHead" :src="lockScreenData.musicHead"
+                    class="musicHead love" /></div>
+            <div class="lockTitle">{{lockScreenData.musicString}}</div>
+            <div class="lockLrc">{{lockScreenData.nowMusicLrcText}}</div>
+        </div>
     </div>
 </body>
 <script src="js/vue-2.6.10.min.js"></script>
@@ -466,8 +489,15 @@
                 apiUrl: "https://api.bbbug.com/api/",
                 audioUrl: "",
                 copyString: "",
+                ChatPlaceHolder: "新版上线啦,快来体验一下把~~~",
                 userInfo: "",
                 lrcString: "",
+                lockScreenData: {
+                    ifLockSystem: false,
+                    musicHead: "",
+                    musicString: "",
+                    nowMusicLrcText: ""
+                },
                 musicLrcObj: {},
                 volume: 80,
                 loading: false,
@@ -565,6 +595,9 @@
                     }, {
                         value: 1,
                         title: "一起听歌音乐房"
+                    }, {
+                        value: 2,
+                        title: "听歌猜歌游戏房"
                     }],
                     form: {
                         room_name: "",
@@ -582,6 +615,11 @@
                         user_password: ""
                     }
                 },
+                game: {
+                    music: {
+                        url: ""
+                    }
+                }
             }
         },
         created() {
@@ -630,10 +668,28 @@
             that.$refs.audio.addEventListener("ended", function () {
                 that.audioUrl = "";
                 that.chat_room.song = null;
+                that.lrcString = '歌曲加载中...';
             });
             that.$refs.audio.addEventListener("timeupdate", function () {
                 that.chat_room.songPercent = parseInt(that.$refs.audio.currentTime / that.$refs.audio.duration * 100);
             });
+
+            window.onkeydown = function (e) {
+                switch (e.keyCode) {
+                    case 27:
+                        e.preventDefault();
+                        if (that.room.roomInfo.room_type == 1 && that.chat_room.song) {
+                            that.lockScreenData.ifLockSystem = !that.lockScreenData.ifLockSystem;
+                            if (that.lockScreenData.ifLockSystem) {
+                                document.title = '音乐电台播放器';
+                            } else {
+                                document.title = that.room.roomInfo.room_name + " - BBBUG.com";
+                            }
+                        }
+                        break;
+                    default:
+                }
+            };
         },
         updated() {
             let that = this;
@@ -671,6 +727,9 @@
                         console.log(error)
                     });
             },
+            openWebUrl(url) {
+                window.open(url);
+            },
             initByInvate() {
                 let that = this;
                 let room_id = localStorage.getItem('room_id');
@@ -681,7 +740,6 @@
                     },
                     success(res) {
                         let room = res.data;
-                        console.log(res);
                         if (room.room_password_error) {
                             //需要密码
                             that.$prompt('请输入该房间的密码后进入', '加密房间', {
@@ -696,6 +754,7 @@
                                         that.$alert('房间密码验证错误,你可以联系房主获取.', '密码错误', {
                                             confirmButtonText: '确定',
                                             callback: function () {
+                                                localStorage.removeItem('room_password_' + room.room_id);
                                                 that.initByInvate();
                                             }
                                         });
@@ -707,7 +766,8 @@
                         } else {
                             location.replace('/');
                         }
-                    }, error() {
+                    },
+                    error() {
                         location.replace('/');
                     },
                 });
@@ -847,6 +907,7 @@
                                     }).then(function () {
                                         that.doChatRoomEditProfile();
                                         that.$refs.audio.play();
+                                        that.$refs.audio_game_music.play();
                                     }).catch(function () {
                                         that.$refs.audio.play();
                                     });
@@ -887,6 +948,7 @@
                     }
                     if (lrcText) {
                         that.lrcString = lrcText;
+                        that.lockScreenData.nowMusicLrcText = lrcText;
                         return;
                     }
                 }
@@ -976,6 +1038,10 @@
                         if (res.data.room_type != 1) {
                             that.audioUrl = '';
                             that.chat_room.song = null;
+                        }
+                        if (res.data.room_type != 2) {
+                            that.$refs.audio_game_music.pause();
+                            that.game.music.url = '';
                         }
                         if (res.data.room_password_error) {
                             that.$message.error("密码验证失败,请联系房主获取正确的密码");
@@ -1077,6 +1143,7 @@
                             that.saveMessageHistory();
                             break;
                         case 'img':
+                        case 'link':
                         case 'system':
                             that.chat_room.list.push(obj);
                             that.saveMessageHistory();
@@ -1126,6 +1193,15 @@
                         case 'roomUpdate':
                             that.initNowRoomInfo();
                             break;
+                        case 'game_music':
+                            if (that.game.music.url != obj.url) {
+                                that.game.music.url = obj.url;
+                                that.addSystemMessage("仔细听,猜猜是什么歌曲(直接在聊天框输入答案发送即可)");
+                            }
+                            break;
+                        case 'game_music_success':
+                            that.addSystemMessage("恭喜 " + that.urldecode(obj.user.user_name) + " 猜中了! " + obj.music.name, '#ff4500', 'white');
+                            break;
                         default:
                     }
                 } catch (error) {
@@ -1145,6 +1221,9 @@
                     }
                 }
                 that.chat_room.song = obj;
+                that.lockScreenData.musicHead = obj.user.user_head || 'images/nohead.jpg';
+                that.lockScreenData.musicString = "正在播放 " + that.urldecode(obj.user.user_name) + " 点的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ";
+
                 that.request({
                     url: 'song/getPlayUrl',
                     data: {
@@ -1541,6 +1620,8 @@
                 if (!that.chat_room.message) {
                     return;
                 }
+                let msg = that.chat_room.message;
+                that.chat_room.message = '';
                 that.request({
                     url: "message/send",
                     data: {
@@ -1548,7 +1629,7 @@
                         to: that.websocket.params.channel,
                         type: 'text',
                         at: that.chat_room.at,
-                        msg: encodeURIComponent(that.chat_room.message)
+                        msg: encodeURIComponent(msg)
                     },
                     success(res) {
                         that.chat_room.message = '';
@@ -1614,8 +1695,7 @@
                                 that.$message.error("房间密码验证错误,你可以联系房主获取.");
                             }
                         });
-                    }).catch(function () {
-                    });
+                    }).catch(function () { });
                 } else {
                     that.hideAllTo('chat_room');
                 }
@@ -1655,6 +1735,7 @@
                 localStorage.removeItem('room_password_' + that.room.room_id);
                 that.chat_room.song = null;
                 that.audioUrl = '';
+                that.game.music.url = '';
                 that.websocket.hardStop = true;
                 if (that.websocket.connection) {
                     that.websocket.connection.close();
@@ -1764,12 +1845,12 @@
                         for (var k in arr) {
                             start += arr[k].length; //计算歌词位置
                         }
-                        var content = lrcs[i].substring(start);//获取歌词内容
+                        var content = lrcs[i].substring(start); //获取歌词内容
                         if (!content) {
                             continue;
                         }
                         for (var k in arr) {
-                            var t = arr[k].substring(1, arr[k].length - 1);//取[]间的内容
+                            var t = arr[k].substring(1, arr[k].length - 1); //取[]间的内容
                             var s = t.split(":");
                             //分离:前后文字
                             oLRC.ms.push({
