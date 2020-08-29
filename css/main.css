@@ -69,11 +69,21 @@ body {
     background: transparent;
 }
 
+.at_box {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+}
+
+.el-form-item {
+    margin-bottom: 20px;
+}
+
 .love {
-    -webkit-animation: rotate 5s linear infinite;
-    -moz-animation: rotate 5s linear infinite;
-    -o-animation: rotate 5s linear infinite;
-    animation: rotate 5s linear infinite;
+    -webkit-animation: rotate 10s linear infinite;
+    -moz-animation: rotate 10s linear infinite;
+    -o-animation: rotate 10s linear infinite;
+    animation: rotate 10s linear infinite;
 }
 
 #chat_room {
@@ -82,6 +92,11 @@ body {
     right: 10px;
     top: 10px;
     bottom: 10px;
+}
+.volume{
+    position: fixed!important;
+    right: 10px;
+    bottom: 180px;
 }
 
 .online_user {
@@ -96,8 +111,10 @@ body {
 
 .online_user img {
     border-radius: 100%;
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
+    border:1px solid #eee;
+    cursor: pointer;
 }
 
 .online_user * {
@@ -334,6 +351,8 @@ audio {
     width: 40px;
     height: 40px;
     border-radius: 100%;
+    border:1px solid #eee;
+    cursor: pointer;
 }
 
 .chat_room_history .item .body {
@@ -367,7 +386,7 @@ audio {
     color: #333;
     word-wrap: break-word;
     word-break: break-all;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .chat_room_history .item .body .img {
