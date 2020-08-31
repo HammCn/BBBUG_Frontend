@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="css/element.css">
     <link rel="stylesheet" href="//at.alicdn.com/t/font_666204_u6x6ssnn9sh.css">
     <link rel="stylesheet" href="css/vue.preview.css">
-    <link rel="stylesheet" href="css/main.css?2">
+    <link rel="stylesheet" href="css/main.css?1231243224">
 </head>
 
 <body>
@@ -29,7 +29,7 @@
                         <el-tag size="mini" type="info" style="margin: 0px 5px;color:#333;font-weight:bolder;">
                             ID:{{room.room_id}}
                         </el-tag>
-                        {{room.roomInfo.room_name}}
+                        <b>{{room.roomInfo.room_name}}</b>
                         <i class="room-icon el-icon-lock" v-if="room.roomInfo.room_password" title="密码房间"></i>
                         <i class="room-icon el-icon-chat-line-round" v-if="room.roomInfo.room_type == 0"
                             title="普通文字聊天房"></i>
@@ -39,7 +39,7 @@
                             v-if="room.roomInfo.room_user==userInfo.user_id || userInfo.user_admin">管理
                         </el-link>
                     </span>
-                    <span style="float: right; padding: 3px 0">
+                    <span style="float: right; padding: 3px 0" class="hideWhenScreenSmall">
                         <el-button-group style="text-align: right;">
                             <el-button size="mini"
                                 @click="chat_room.dialog.showOnlineBox = true;doChatRoomShowOnlineList()"
@@ -146,12 +146,9 @@
                                     :style="{backgroundColor:item.bgColor||'#eee',color:item.color||'#999'}">{{(item.content)}}</span>
                             </div>
                         </div>
-                        <el-slider v-model="volume" @change="doVolumeChanged" vertical height="100px" step="10"
-                            show-stops="true" class="volume" v-if="room.roomInfo.room_type==1 && chat_room.song">
-                        </el-slider>
                     </div>
                     <div class="chat_room_toolbar">
-                        <el-button-group>
+                        <el-button-group class="hideWhenScreenSmall">
                             <el-button size="mini">
                                 <el-upload :action="[apiUrl+'attach/uploadimage']" :show-file-list="false"
                                     :on-success="handleImageUploadSuccess" :before-upload="doChatRoomUploadBefore"
@@ -167,21 +164,34 @@
                             <el-button size="mini" @click="doChatRoomShowSongList" v-if="room.roomInfo.room_type==1">已点
                             </el-button>
                         </el-button-group>
-                        <el-button-group class="player" v-if="room.roomInfo.room_type==1 && chat_room.song">
-                            <el-button size="mini" type="warning"
-                                v-if="room.roomInfo.room_user==userInfo.user_id || userInfo.user_admin || chat_room.song.user.user_id == userInfo.user_id"
-                                @click="doChatRoomPassTheSong">切歌</el-button>
-                            <el-button size="mini" type="warning"
-                                v-if="room.roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin && chat_room.song.user.user_id != userInfo.user_id"
-                                @click="doChatRoomDontLikeTheSong">不喜欢</el-button>
-                            <el-button size="mini" type="info" style="border:none;position: relative;">
-                                <div class="current" :style="{width:chat_room.songPercent+'%'}"></div>
-                                <marquee class="lrc" scrollamount="1">
-                                    正在播放 {{urldecode(chat_room.song.user.user_name)}} 点的歌曲
-                                    《{{chat_room.song.song.name}}》({{chat_room.song.song.singer}})
+                        <div v-if="room.roomInfo.room_type==1 && chat_room.song " class="player_body">
+                            <div class="player_img"><img
+                                    :title="(room.roomInfo.room_user==userInfo.user_id || userInfo.user_admin || chat_room.song.user.user_id == userInfo.user_id)?'切歌':'不喜欢'"
+                                    @mouseover.stop="player.nextButton=true" @mouseout.stop="player.nextButton=false"
+                                    :src="urldecode(chat_room.song.user.user_head)"
+                                    onerror="this.src='images/nohead.jpg';this.onerror=null;" width="100%" height="100%"
+                                    class="love"
+                                    @click="(room.roomInfo.room_user==userInfo.user_id || userInfo.user_admin || chat_room.song.user.user_id == userInfo.user_id)?doChatRoomPassTheSong():doChatRoomDontLikeTheSong()" />
+                                <i style="pointer-events: none" class="iconfont icon-changyongtubiao-mianxing-5"
+                                    v-if="player.nextButton"></i>
+                            </div>
+                            <div class="player_title">
+                                <marquee scrollamount="1">{{chat_room.song.song.name}} - {{chat_room.song.song.singer}}
                                 </marquee>
-                            </el-button>
-                        </el-button-group>
+                                <i class="icon-systemprompt_fill iconfont" @click="player.voiceBar=!player.voiceBar"
+                                    title="调整音量"></i>
+                            </div>
+                            <div class="player_name">
+                                点歌人　{{urldecode(chat_room.song.user.user_name)}}
+                            </div>
+                            <div style="margin-left:60px;">
+                                <el-progress :percentage="chat_room.songPercent" :format="formatProgress" color="#ccc">
+                                </el-progress>
+                            </div>
+                            <el-slider v-model="volume" @change="doVolumeChanged" vertical height="70px" step="5"
+                                class="volume" v-if="player.voiceBar">
+                            </el-slider>
+                        </div>
                     </div>
                     <div class="chat_room_input">
                         <textarea @click="hideAllDialog" v-model="chat_room.message" @keydown.13="doChatRoomEnterDown"
@@ -562,6 +572,11 @@
                 userInfo: "",
                 lrcString: "",
                 ctrlEnabled: false,
+                player: {
+                    nextButton: false,
+                    voiceBar: false,
+                    volumeChangeTimer: null
+                },
                 lockScreenData: {
                     ifLockSystem: false,
                     musicHead: "",
@@ -847,11 +862,18 @@
                     },
                 });
             },
+            formatProgress(percentage) {
+                return '';
+            },
             doVolumeChanged() {
                 let that = this;
                 that.volume = parseInt(that.volume);
                 that.$refs.audio.volume = parseFloat(that.volume / 100);
                 localStorage.setItem('volume', that.volume);
+                clearTimeout(that.player.volumeChangeTimer);
+                that.player.volumeChangeTimer = setTimeout(function () {
+                    that.player.voiceBar = false;
+                }, 3000);
             },
             onCopySuccess() {
                 this.$message.success('复制成功,快发给好友来一起嗨皮吧');
@@ -992,9 +1014,15 @@
                                     }).then(function () {
                                         that.doChatRoomEditProfile();
                                         that.initAudioControllers();
+                                        that.initWebsocket();
+                                        that.doChatRoomSearchImage();
+                                        that.doChatRoomSearchSong();
                                         that.callParentFunction('noticeClicked', 'click_motify_info');
                                     }).catch(function () {
                                         that.initAudioControllers();
+                                        that.initWebsocket();
+                                        that.doChatRoomSearchImage();
+                                        that.doChatRoomSearchSong();
                                         that.callParentFunction('noticeClicked', 'click_cancel');
                                     });
                                 } else {
@@ -1002,14 +1030,13 @@
                                         confirmButtonText: '确定',
                                         callback: function () {
                                             that.initAudioControllers();
+                                            that.initWebsocket();
+                                            that.doChatRoomSearchImage();
+                                            that.doChatRoomSearchSong();
                                             that.callParentFunction('noticeClicked', 'success');
                                         }
                                     });
                                 }
-                                that.initWebsocket();
-                                that.initAudioControllers();
-                                that.doChatRoomSearchImage();
-                                that.doChatRoomSearchSong();
                             }
                         });
                         break;
@@ -1018,8 +1045,12 @@
             },
             initAudioControllers() {
                 let that = this;
-                that.$refs.audio.play();
-                that.$refs.audio_game_music.play();
+                try {
+                    that.$refs.audio.play();
+                    that.$refs.audio_game_music.play();
+                } catch (error) {
+                    console.log(error);
+                }
             },
             callParentFunction(type, msg) {
                 //触发父容器方法
