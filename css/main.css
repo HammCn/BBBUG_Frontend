@@ -68,6 +68,29 @@ body {
 ::-webkit-scrollbar-corner {
     background: transparent;
 }
+.showUserProfile {
+    width: 400px;
+    margin-top: 40vh!important;
+    box-shadow: none;
+    border-radius:10px!important;
+    padding: 0px!important;
+}
+
+
+.showUserProfile .el-dialog__body {
+    padding: 0;
+    border: none;
+}
+
+.showUserProfile .el-dialog__headerbtn {
+    z-index: 99;
+}
+
+.showUserProfile .el-dialog__header {
+    height: 0px;
+    padding: 0px;
+    display:none;
+}
 .lockscreen {
     position: fixed;
     left: 0;
@@ -79,7 +102,7 @@ body {
     text-align: center;
     padding-top: 150px;
 }
-.body .title {
+.link .title {
     font-size: 16px;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -89,7 +112,7 @@ body {
     font-weight: bold;
 }
 
-.body .desc {
+.link .desc {
     font-size: 12px;
     color: #999;
     overflow: hidden;
@@ -102,7 +125,7 @@ body {
     padding-left: 50px;
 }
 
-.body .link {
+.link .url {
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -115,7 +138,7 @@ body {
     color:#999;
 }
 
-.body img {
+.link .img {
     width: 40px;
     height: 40px;
     position: absolute;
