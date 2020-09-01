@@ -246,10 +246,10 @@ body {
 }
 #chat_room {
     position: fixed;
-    left: 10px;
-    right: 10px;
-    top: 10px;
-    bottom: 10px;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
 }
 .volume{
     position: fixed!important;
@@ -300,7 +300,7 @@ body {
 
 .pickedSongBox .list {
     position: relative;
-    width: 400px;
+    width: 100%;
     min-height: 100px;
     max-height: 300px;
     overflow: auto;
@@ -378,9 +378,10 @@ body {
     left: 0;
     right: 0;
     top: 60px;
-    bottom: 200px;
+    bottom: 120px;
     overflow: hidden;
     overflow-y: scroll;
+    padding-bottom:80px;
 }
 
 .searchImageBox {
@@ -480,6 +481,7 @@ audio {
 .chat_room_history .system span {
     background-color: #eee;
     color: #999;
+    display: inline-block;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
     border-radius: 5px;
@@ -621,16 +623,14 @@ audio {
     display: block;
 }
 
+.rightMenu{
+    position: fixed;
+    right:10px;
+    top :10px;
+}
 @media only screen and (max-width: 640px) {
     .hideWhenScreenSmall{
         display:none;
-    }
-    #chat_room {
-        position: fixed;
-        left: 0px;
-        right: 0px;
-        top: 0px;
-        bottom: 0px;
     }
     .player_body{
         right:3px;
@@ -641,5 +641,59 @@ audio {
     }
     .player_title marquee{
         margin-right:0;
+    }
+    .el-message-box{
+        width:80%;
+    }
+    .chat_room_history .content{
+        max-width:80%!important;
+    }
+    #login{
+        width:100%;
+    }
+    .player_body{
+        width:50px;
+    }
+    .searchSongBox{
+        left:10px!important;
+        right:10px!important;
+        bottom:160px!important;
+        padding:10px;
+        width:auto!important;
+    }
+    .pickedSongBox{
+        left:10px!important;
+        right:10px!important;
+        bottom:160px!important;
+        padding:10px;
+        width:auto!important;
+    }
+    .pickedSongBox{
+        left:10px!important;
+        right:10px!important;
+        bottom:160px!important;
+        padding:10px;
+        width:auto!important;
+    }
+    .showUserProfile{
+        left:0px!important;
+        right:0px!important;
+        bottom:160px!important;
+        padding:10px;
+        width:95%!important;
+    }
+    #room{
+        width:auto;
+        position: fixed;
+        left: 0;
+        right: 0;
+        top:0;
+        bottom:0;
+    }
+    #room .el-card__body{
+        padding:0;
+    }
+    .chat_room_history .item{
+        margin:0px 10px;
     }
 }

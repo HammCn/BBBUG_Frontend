@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="css/element.css">
     <link rel="stylesheet" href="//at.alicdn.com/t/font_666204_u6x6ssnn9sh.css">
     <link rel="stylesheet" href="css/vue.preview.css">
-    <link rel="stylesheet" href="css/main.css?1231241241233224">
+    <link rel="stylesheet" href="css/main.css?22">
 </head>
 
 <body>
@@ -29,26 +29,26 @@
                         <el-tag size="mini" type="info" style="margin: 0px 5px;color:#333;font-weight:bolder;">
                             ID:{{room.room_id}}
                         </el-tag>
-                        <b>{{room.roomInfo.room_name}}</b>
+                        <b class="hideWhenScreenSmall">{{room.roomInfo.room_name}}</b>
                         <i class="room-icon el-icon-lock" v-if="room.roomInfo.room_password" title="密码房间"></i>
                         <i class="room-icon el-icon-chat-line-round" v-if="room.roomInfo.room_type == 0"
                             title="普通文字聊天房"></i>
                         <i class="room-icon el-icon-service" v-if="room.roomInfo.room_type == 1" title="一起听歌音乐房"></i>
                         <i class="room-icon el-icon-coin" v-if="room.roomInfo.room_type == 2" title="听歌猜歌游戏房"></i>
-                        <el-link @click="doChatRoomShowSettingBox"
+                        <el-link class="hideWhenScreenSmall" @click="doChatRoomShowSettingBox"
                             v-if="room.roomInfo.room_user==userInfo.user_id || userInfo.user_admin">管理
                         </el-link>
                     </span>
-                    <span style="float: right; padding: 3px 0" class="hideWhenScreenSmall">
+                    <span style="float: right; padding: 3px 0" class="rightMenu">
                         <el-button-group style="text-align: right;">
                             <el-button size="mini"
                                 @click="chat_room.dialog.showOnlineBox = true;doChatRoomShowOnlineList()"
                                 v-html="'在线 (<font color=red style=\'font-weight:bolder;\'>'+chat_room.data.onlineList.length+'</font>)'">
                             </el-button>
-                            <el-button size="mini" v-html="title.invate_person" v-clipboard:copy="copyString"
+                            <el-button class="hideWhenScreenSmall" size="mini" v-html="title.invate_person" v-clipboard:copy="copyString"
                                 v-clipboard:success="onCopySuccess"></el-button>
                             <el-button size="mini" @click="doChatRoomEditProfile" v-html="title.my_profile"
-                                v-if="userInfo.user_id>0"></el-button>
+                                v-if="userInfo.user_id>0" class="hideWhenScreenSmall"></el-button>
                             <el-button size="mini" @click="do_room_return_to_room" style="color:orangered"
                                 v-html="userInfo.user_id>0?title.exit_room:title.login">
                             </el-button>
@@ -125,7 +125,7 @@
                                                 onerror="this.src='images/error.jpg'" title="点击查看大图" />
                                         </div>
                                         <div class="content link" v-if="item.type=='link'"
-                                            style="padding:10px 20px;max-width:30%;background-color:#f5f5f5;border:1px solid #eee;cursor:pointer;"
+                                            style="padding:10px 20px;background-color:#f5f5f5;border:1px solid #eee;cursor:pointer;"
                                             title="点击访问" @click="openWebUrl(item.link)">
                                             <div class="title">{{item.title}}</div>
                                             <div class="desc">
@@ -148,7 +148,7 @@
                         </div>
                     </div>
                     <div class="chat_room_toolbar">
-                        <el-button-group class="hideWhenScreenSmall">
+                        <el-button-group class="">
                             <el-button size="mini">
                                 <el-upload :action="[apiUrl+'attach/uploadimage']" :show-file-list="false"
                                     :on-success="handleImageUploadSuccess" :before-upload="doChatRoomUploadBefore"
@@ -275,7 +275,7 @@
                 <el-dialog :visible.sync="chat_room.dialog.showUserProfile" :modal="false"
                     custom-class="showUserProfile">
                     <div
-                        style="position: relative;box-shadow:0px 0px 20px rgba(0,0,0,0.5);border-radius:10px;background-color: white;width:400px;height:150px;">
+                        style="position: relative;box-shadow:0px 0px 20px rgba(0,0,0,0.5);border-radius:10px;background-color: white;height:150px;">
                         <img :src="getImageUrl(urldecode(chat_room.data.hisUserInfo.user_head))"
                             onerror="this.src='images/nohead.jpg'"
                             style="border-radius: 100%;width:80px;height:80px;position: absolute;left:10px;top:10px;" />
