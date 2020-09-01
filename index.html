@@ -130,7 +130,7 @@
                                             <div class="title">{{item.title}}</div>
                                             <div class="desc">
                                                 <img class="img" src="images/nohead.jpg" @error="item.img = false;"
-                                                    :data="item.img"
+                                                    data='' :data="item.img"
                                                     onload="this.src=this.attributes.data.value;this.onload=null"
                                                     v-if="item.img" />
                                                 <i class="img el-icon-link" style="font-size:32px;"
@@ -172,7 +172,7 @@
                             <div class="player_img"><img
                                     :title="(room.roomInfo.room_user==userInfo.user_id || userInfo.user_admin || chat_room.song.user.user_id == userInfo.user_id)?'切歌':'不喜欢'"
                                     @mouseover.stop="player.nextButton=true" @mouseout.stop="player.nextButton=false"
-                                    :src="urldecode(chat_room.song.user.user_head)"
+                                    :src="urldecode(chat_room.song.song.pic)"
                                     onerror="this.src='images/nohead.jpg';this.onerror=null;" width="100%" height="100%"
                                     class="love"
                                     @click="(room.roomInfo.room_user==userInfo.user_id || userInfo.user_admin || chat_room.song.user.user_id == userInfo.user_id)?doChatRoomPassTheSong():doChatRoomDontLikeTheSong()" />
@@ -332,11 +332,7 @@
                                         style="float:right;">点
                                     </el-button>
                                     <font color="#333">{{scope.row.name}}</font><br>
-                                    <font color="#999" style="font-size:12px;">
-                                        <el-tag size="mini" type="warning" style="margin-right:5px;"
-                                            v-if="scope.row.plat==1">咪咕</el-tag>
-                                        <el-tag size="mini" type="warning" style="margin-right:5px;"
-                                            v-if="scope.row.plat==2">QQ音乐</el-tag>歌手：{{scope.row.singer}}
+                                    <font color="#999" style="font-size:12px;">歌手：{{scope.row.singer}}
                                     </font>
                                 </template>
                             </el-table-column>
@@ -350,11 +346,21 @@
                         <el-table :data="chat_room.data.pickedSongList" stripe style="display:inline-block;">
                             <el-table-column>
                                 <template slot-scope="scope">
-                                    <el-button type="warning" circle size="small" style="float:right;"
-                                        @click="doChatRoomPushSongTop(scope.row)">顶
-                                    </el-button>
-                                    <font color="#333">{{scope.row.song.name}}</font><br>
-                                    　<font color="#999" style="font-size:12px;">
+                                    <span style="float:right;">
+                                        <el-button circle size="small" @click="doChatRoomDeleteSong(scope.row)"
+                                            v-if="userInfo.user_id==room.roomInfo.room_user || userInfo.user_admin">删
+                                        </el-button>
+                                        <el-button :type="scope.row.user.user_id==userInfo.user_id?'warning':'success'"
+                                            circle size="small" @click="doChatRoomPushSongTop(scope.row)">顶
+                                        </el-button>
+                                    </span>
+                                    <font style="font-size:16px;font-weight:bolder;"
+                                        :color="scope.row.user.user_id==userInfo.user_id?'orangered':'#333'">
+                                        No.{{scope.$index+1}}</font>
+                                    <font :color="scope.row.user.user_id==userInfo.user_id?'orangered':'#333'">
+                                        {{scope.row.song.name}}</font><br>
+                                    　<font :color="scope.row.user.user_id==userInfo.user_id?'orangered':'#999'"
+                                        style="font-size:12px;">
                                         点歌人：{{urldecode(scope.row.user.user_name)}}</font>
                                 </template>
                             </el-table-column>
@@ -563,6 +569,14 @@
 <script src="js/element.js"></script>
 <script src="js/vue-clipboard.min.js"></script>
 <script src="js/vue.preview.js"></script>
+<style>
+    audio {
+        /* position: fixed;
+        left: -2000px;
+        top: -2000px; */
+        /* z-index:-1; */
+    }
+</style>
 <script>
     Vue.use(vuePhotoPreview, {});
     new Vue({
@@ -572,7 +586,7 @@
                 apiUrl: "https://api.bbbug.com/api/",
                 audioUrl: "",
                 copyString: "",
-                ChatPlaceHolder: "新版上线啦,快来体验一下把~~~",
+                ChatPlaceHolder: "新版上线啦,快来体验一下把~~~老规矩,输入音量20可快速将音量设置为20",
                 userInfo: "",
                 lrcString: "",
                 ctrlEnabled: false,
@@ -711,7 +725,8 @@
                     music: {
                         url: ""
                     }
-                }
+                },
+                iosCanPlay: false
             }
         },
         created() {
@@ -746,42 +761,47 @@
                     that.hideAllTo('chat_room');
                 });
             } else {
-                that.hideAllTo('login');
+                // that.hideAllTo('login');
+                location.replace('/login');
             }
         },
         mounted() {
             let that = this;
             document.addEventListener('paste', that.getClipboardFiles);
-            that.volume = parseInt(localStorage.getItem('volume'));
+            that.volume = parseInt(localStorage.getItem('volume') || 80);
             that.$refs.audio.volume = parseFloat(that.volume / 100);
+            that.$refs.audio_game_music.volume = parseFloat(that.volume / 100);
 
             that.$refs.audio.addEventListener("playing", function () {
                 that.nowPlaying = true;
+                that.lrcString = '歌词加载中...';
                 if (that.chat_room.song.song) {
                     that.chat_room.songPercent = parseInt(that.$refs.audio.currentTime / that.$refs.audio.duration * 100);
-                    if (that.lengthReportedMid != that.chat_room.song.song.mid) {
-                        let _length = parseInt(that.$refs.audio.duration);
-                        that.request({
-                            url: 'song/reportLength',
-                            data: {
-                                length: _length,
-                                room_id: that.room.room_id,
-                                song: that.chat_room.song.song
-                            },
-                            success(res) {
-                                that.lengthReportedMid = that.chat_room.song.song.mid;
-                            },
-                        });
-                    }
                 }
             });
             that.$refs.audio.addEventListener("ended", function () {
                 that.audioUrl = "";
                 that.chat_room.song = null;
-                that.lrcString = '歌曲加载中...';
+                that.lrcString = '歌词加载中...';
             });
             that.$refs.audio.addEventListener("timeupdate", function () {
                 that.chat_room.songPercent = parseInt(that.$refs.audio.currentTime / that.$refs.audio.duration * 100);
+            });
+            that.$refs.audio.addEventListener("canplay", function () {
+                if (that.isIos() && !that.iosCanPlay) {
+                    that.$alert('播放器加载成功!', '加载成功', {
+                        confirmButtonText: '确定',
+                        callback: function () {
+                            that.$refs.audio.play();
+                            that.iosCanPlay = true;
+                        }
+                    });
+                } else {
+                    that.$refs.audio.play();
+                }
+            });
+            that.$refs.audio_game_music.addEventListener("canplay", function () {
+                that.$refs.audio_game_music.play();
             });
         },
         updated() {
@@ -789,6 +809,9 @@
             that.$previewRefresh();
         },
         methods: {
+            isIos() {
+                return !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);;
+            },
             request(_data = {}) {
                 let that = this;
                 _data.loading && (that.loading = true);
@@ -873,6 +896,7 @@
                 let that = this;
                 that.volume = parseInt(that.volume);
                 that.$refs.audio.volume = parseFloat(that.volume / 100);
+                that.$refs.audio_game_music.volume = parseFloat(that.volume / 100);
                 localStorage.setItem('volume', that.volume);
                 clearTimeout(that.player.volumeChangeTimer);
                 that.player.volumeChangeTimer = setTimeout(function () {
@@ -964,12 +988,13 @@
                 let that = this;
                 that.musicLrcObj = {};
                 that.request({
-                    url: '/song/getLrc',
+                    url: 'song/getLrc',
                     data: {
-                        copy: that.chat_room.song.song.copyid
+                        mid: that.chat_room.song.song.mid
                     },
                     success(res) {
-                        that.musicLrcObj = that.createLrcObj(res.data);
+                        that.musicLrcObj = (res.data);
+                        // that.musicLrcObj = that.createLrcObj(res.data);
                     }
                 });
             },
@@ -1021,6 +1046,9 @@
                         that.chat_room.list = messageString ? JSON.parse(messageString) : [];
                         that.initNowRoomInfo(function (result) {
                             if (result) {
+                                that.initWebsocket();
+                                that.doChatRoomSearchImage();
+                                that.doChatRoomSearchSong();
                                 if (that.userInfo.user_needmotify && that.userInfo.user_app == 1) {
                                     that.$confirm('完善资料并修改密码,下次就可以直接用密码登录啦!', '资料待完善', {
                                         confirmButtonText: '去完善',
@@ -1029,17 +1057,11 @@
                                         closeOnPressEscape: false,
                                         type: 'warning'
                                     }).then(function () {
-                                        that.doChatRoomEditProfile();
                                         that.initAudioControllers();
-                                        that.initWebsocket();
-                                        that.doChatRoomSearchImage();
-                                        that.doChatRoomSearchSong();
+                                        that.doChatRoomEditProfile();
                                         that.callParentFunction('noticeClicked', 'click_motify_info');
                                     }).catch(function () {
                                         that.initAudioControllers();
-                                        that.initWebsocket();
-                                        that.doChatRoomSearchImage();
-                                        that.doChatRoomSearchSong();
                                         that.callParentFunction('noticeClicked', 'click_cancel');
                                     });
                                 } else {
@@ -1047,9 +1069,6 @@
                                         confirmButtonText: '确定',
                                         callback: function () {
                                             that.initAudioControllers();
-                                            that.initWebsocket();
-                                            that.doChatRoomSearchImage();
-                                            that.doChatRoomSearchSong();
                                             that.callParentFunction('noticeClicked', 'success');
                                         }
                                     });
@@ -1063,8 +1082,15 @@
             initAudioControllers() {
                 let that = this;
                 try {
-                    that.$refs.audio.play();
-                    that.$refs.audio_game_music.play();
+                    if (that.isIos()) {
+                        that.$refs.audio.play();
+                        that.$refs.audio_game_music.play();
+                        that.$refs.audio.pause();
+                        that.$refs.audio_game_music.pause();
+                    } else {
+                        that.$refs.audio.play();
+                        that.$refs.audio_game_music.play();
+                    }
                 } catch (error) {
                     console.log(error);
                 }
@@ -1084,13 +1110,13 @@
             audioTimeUpdate(e) {
                 let that = this;
                 let lrcText = '';
-                if (that.musicLrcObj && that.musicLrcObj.ms) {
-                    for (let i = 0; i < that.musicLrcObj.ms.length; i++) {
-                        if (i == that.musicLrcObj.ms.length - 1) {
-                            lrcText = unescape(that.musicLrcObj.ms[i].c);
+                if (that.musicLrcObj) {
+                    for (let i = 0; i < that.musicLrcObj.length; i++) {
+                        if (i == that.musicLrcObj.length - 1) {
+                            lrcText = (that.musicLrcObj[i].lineLyric);
                         } else {
-                            if (that.$refs.audio.currentTime > that.musicLrcObj.ms[i].t && that.$refs.audio.currentTime < that.musicLrcObj.ms[i + 1].t) {
-                                lrcText = unescape(that.musicLrcObj.ms[i].c);
+                            if (that.$refs.audio.currentTime > that.musicLrcObj[i].time && that.$refs.audio.currentTime < that.musicLrcObj[i + 1].time) {
+                                lrcText = (that.musicLrcObj[i].lineLyric);
                                 break;
                             }
                         }
@@ -1355,6 +1381,10 @@
                             that.addSystemMessage(that.urldecode(obj.user.user_name) + " 将歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") 设为置顶候播放");
                             that.saveMessageHistory();
                             break;
+                        case 'removeSong':
+                            that.addSystemMessage(that.urldecode(obj.user.user_name) + " 将歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") 从队列移除");
+                            that.saveMessageHistory();
+                            break;
                         case 'removeban':
                             that.addSystemMessage(that.urldecode(obj.user.user_name) + " 将 " + that.urldecode(obj.ban.user_name) + " 解禁");
                             that.saveMessageHistory();
@@ -1423,52 +1453,43 @@
                         return;
                     }
                 }
+                that.audioUrl = "https://api.bbbug.com/api/song/playurl?mid=" + obj.song.mid;
                 that.chat_room.song = obj;
-                that.lockScreenData.musicHead = obj.user.user_head || 'images/nohead.jpg';
+                that.lockScreenData.musicHead = obj.song.pic || 'images/nohead.jpg';
                 that.lockScreenData.musicString = "正在播放 " + that.urldecode(obj.user.user_name) + " 点的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ";
-
-                that.request({
-                    url: 'song/getPlayUrl',
-                    data: {
-                        song: obj.song
-                    },
-                    success(res) {
-                        that.audioUrl = res.data.url.replace('http://', 'https://');
-                        let nowTimeStamps = parseInt(new Date().valueOf() / 1000);
-                        that.$refs.audio.currentTime = (nowTimeStamps - obj.song.since) > 5 ? (nowTimeStamps - obj.song.since) : 0;
-                        that.$refs.audio.play();
-                        that.addSystemMessage("正在播放 " + that.urldecode(obj.user.user_name) + " 点的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ", 'white', 'lightsalmon');
-                        that.getMusicLrc();
-                        if (obj.user.user_id == that.userInfo.user_id) {
-                            if (that.config.notification) {
-                                let isNotificated = false;
-                                if (window.Notification && Notification.permission !== "denied") {
-                                    Notification.requestPermission(function (status) { // 请求权限
-                                        if (status === 'granted') {
-                                            // 弹出一个通知
-                                            var n = new Notification("正在播放你点的歌", {
-                                                body: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
-                                                icon: ""
-                                            });
-                                            isNotificated = true;
-                                            // 两秒后关闭通知
-                                            setTimeout(function () {
-                                                n.close();
-                                            }, 5000);
-                                        }
+                let nowTimeStamps = parseInt(new Date().valueOf() / 1000);
+                console.log(obj);
+                that.$refs.audio.currentTime = (nowTimeStamps - obj.since) > 5 ? (nowTimeStamps - obj.since) : 0;
+                that.addSystemMessage("正在播放 " + that.urldecode(obj.user.user_name) + " 点的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ", 'white', 'lightsalmon');
+                that.getMusicLrc();
+                if (obj.user.user_id == that.userInfo.user_id) {
+                    if (that.config.notification) {
+                        let isNotificated = false;
+                        if (window.Notification && Notification.permission !== "denied") {
+                            Notification.requestPermission(function (status) { // 请求权限
+                                if (status === 'granted') {
+                                    // 弹出一个通知
+                                    var n = new Notification("正在播放你点的歌", {
+                                        body: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
+                                        icon: ""
                                     });
+                                    isNotificated = true;
+                                    // 两秒后关闭通知
+                                    setTimeout(function () {
+                                        n.close();
+                                    }, 5000);
                                 }
-                                if (!isNotificated) {
-                                    that.$notify({
-                                        title: "正在播放你点的歌曲",
-                                        message: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
-                                        duration: 5
-                                    });
-                                }
-                            }
+                            });
+                        }
+                        if (!isNotificated) {
+                            that.$notify({
+                                title: "正在播放你点的歌曲",
+                                message: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
+                                duration: 5
+                            });
                         }
                     }
-                });
+                }
 
             },
             saveMessageHistory() {
@@ -1578,6 +1599,20 @@
                 let that = this;
                 that.request({
                     url: "song/push",
+                    data: {
+                        room_id: that.room.room_id,
+                        song: row
+                    },
+                    success(res) {
+                        that.$message.success(res.msg);
+                        that.doChatRoomSongListUpdate();
+                    }
+                });
+            },
+            doChatRoomDeleteSong(row) {
+                let that = this;
+                that.request({
+                    url: "song/remove",
                     data: {
                         room_id: that.room.room_id,
                         song: row
@@ -1854,6 +1889,23 @@
                     return;
                 }
                 let msg = that.chat_room.message;
+
+                if (msg.indexOf("音量") == 0) {
+                    let volume = parseInt(msg.replace(/音量/g, '').replace(/\/\//g, ''));
+                    if (volume < 0 || volume > 100) {
+                        return;
+                    } else {
+                        that.volume = volume;
+                        that.$refs.audio.volume = parseFloat(volume / 100);
+                        that.$refs.audio_game_music.volume = parseFloat(volume / 100);
+                        this.addSystemMessage("音量已经设置为" + volume + "%");
+                        localStorage.setItem('volume', volume);
+                        that.chat_room.message = '';
+                        return;
+                    }
+                }
+
+
                 that.chat_room.message = '';
                 that.request({
                     url: "message/send",
