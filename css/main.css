@@ -250,7 +250,6 @@ body {
     right: 10px;
     top: 10px;
     bottom: 10px;
-    background-color:rgba(255,255,255,0.99);
 }
 .volume{
     position: fixed!important;
@@ -622,8 +621,25 @@ audio {
     display: block;
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 640px) {
     .hideWhenScreenSmall{
         display:none;
+    }
+    #chat_room {
+        position: fixed;
+        left: 0px;
+        right: 0px;
+        top: 0px;
+        bottom: 0px;
+    }
+    .player_body{
+        right:3px;
+        bottom:125px;
+    }
+    .player_title i{
+        display: none;
+    }
+    .player_title marquee{
+        margin-right:0;
     }
 }
