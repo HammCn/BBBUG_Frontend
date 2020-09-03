@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="css/element.css">
     <link rel="stylesheet" href="//at.alicdn.com/t/font_666204_u6x6ssnn9sh.css">
     <link rel="stylesheet" href="css/vue.preview.css">
-    <link rel="stylesheet" href="css/main.css?2221232">
+    <link rel="stylesheet" href="css/main.css?d123123yhy">
 </head>
 
 <body>
@@ -113,7 +113,16 @@
                                         </el-dropdown>
                                     </div>
                                     <div class="body">
-                                        <div class="user">{{urldecode(item.user.user_name)}}
+                                        <div class="user">
+                                            <i class="iconfont icon-apple1 user_device" title="iOS客户端在线"
+                                                v-if="item.user.user_device=='iPhone' || item.user.user_device=='iPad' || item.user.user_device=='iPod'"></i>
+                                            <i class="iconfont icon-apple1 user_device" title="Mac在线"
+                                                v-if="item.user.user_device=='MacOS'"></i>
+                                            <i class="iconfont icon-windows-fill user_device" title="Windows在线"
+                                                v-if="item.user.user_device=='Windows'"></i>
+                                            <i class="iconfont icon-android1 user_device" title="Android在线"
+                                                v-if="item.user.user_device=='Android'"></i>
+                                            {{urldecode(item.user.user_name)}}
                                             <el-tag size="mini" type="warning" class="isAdmin" title="管理员"
                                                 v-if="item.user.user_admin">管</el-tag>
                                             <el-tag size="mini" type="success" class="isAdmin" title="房主"
@@ -174,13 +183,17 @@
                                 PASS
                             </el-button>
                         </el-button-group>
-                        <div v-if="room.roomInfo.room_type==1 && chat_room.song " class="player_body">
+                        <div v-if="room.roomInfo.room_type==1 && chat_room.song " class="player_body" id="player_body"
+                            ref="player_body"
+                            
+                            title="综合考虑,我还是安安静静待在这里吧">
+                            <img class="player_bg" :src="chat_room.song.song.pic" />
                             <div class="player_img"><img
                                     :title="(room.roomInfo.room_user==userInfo.user_id || userInfo.user_admin || chat_room.song.user.user_id == userInfo.user_id)?'切歌':'不喜欢'"
                                     @mouseover.stop="player.nextButton=true" @mouseout.stop="player.nextButton=false"
                                     :src="urldecode(chat_room.song.song.pic)"
                                     onerror="this.src='images/nohead.jpg';this.onerror=null;" width="100%" height="100%"
-                                    class="love"
+                                    :class="player_body.isMoving?'':'love'"
                                     @click="(room.roomInfo.room_user==userInfo.user_id || userInfo.user_admin || chat_room.song.user.user_id == userInfo.user_id)?doChatRoomPassTheSong():doChatRoomDontLikeTheSong()" />
                                 <i style="pointer-events: none" class="iconfont icon-changyongtubiao-mianxing-5"
                                     v-if="player.nextButton"></i>
@@ -191,17 +204,18 @@
                                 <i class="icon-systemprompt_fill iconfont" @click="player.voiceBar=!player.voiceBar"
                                     title="调整音量"></i>
                             </div>
-                            <div class="player_name">
+                            <div class="player_name" @click="chat_room.at=chat_room.song.user" title="点击@点歌人">
                                 点歌人　{{urldecode(chat_room.song.user.user_name)}}
                             </div>
                             <div style="margin-left:60px;">
-                                <el-progress :percentage="chat_room.songPercent" :format="formatProgress" color="#ccc">
+                                <el-progress :percentage="chat_room.songPercent" :format="formatProgress"
+                                    color="rgba(255,255,255,0.6)">
                                 </el-progress>
                             </div>
-                            <el-slider v-model="volume" @change="doVolumeChanged" vertical height="70px" step="5"
-                                class="volume" v-if="player.voiceBar">
-                            </el-slider>
                         </div>
+                        <el-slider v-model="volume" @change="doVolumeChanged" vertical height="70px" step="5"
+                            class="volume" v-if="player.voiceBar">
+                        </el-slider>
                     </div>
                     <div class="chat_room_input">
                         <textarea @click="hideAllDialog" v-model="chat_room.message" @keydown.13="doChatRoomEnterDown"
@@ -392,9 +406,25 @@
                                     <el-dropdown-item :command="beforeHandleUserCommand(item, 'removeBan')"
                                         v-if="userInfo.user_admin || userInfo.user_id == room.roomInfo.room_user">解禁
                                     </el-dropdown-item>
+                                    <el-dropdown-item :command="beforeHandleUserCommand(item, 'shutdown')"
+                                        v-if="userInfo.user_admin || userInfo.user_id == room.roomInfo.room_user">
+                                        禁言
+                                    </el-dropdown-item>
+                                    <el-dropdown-item :command="beforeHandleUserCommand(item, 'songdown')"
+                                        v-if="userInfo.user_admin || userInfo.user_id == room.roomInfo.room_user">
+                                        禁歌
+                                    </el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
                             <span style="display:inline-block;">
+                                <i class="iconfont icon-apple1 user_device" title="iOS客户端在线"
+                                    v-if="item.user_device=='iPhone' || item.user_device=='iPad' || item.user_device=='iPod'"></i>
+                                <i class="iconfont icon-apple1 user_device" title="Mac在线"
+                                    v-if="item.user_device=='MacOS'"></i>
+                                <i class="iconfont icon-windows-fill user_device" title="Windows在线"
+                                    v-if="item.user_device=='Windows'"></i>
+                                <i class="iconfont icon-android1 user_device" title="Android在线"
+                                    v-if="item.user_device=='Android'"></i>
                                 {{urldecode(item.user_name)}}
                                 <el-tag size="mini" type="warning" class="from" v-if="item.user_admin" title="管理员">管
                                 </el-tag>
@@ -632,8 +662,8 @@
                         my_setting: "设置",
                         invate_person: "邀请",
                         my_profile: "我的",
-                        ios_app: "iOS APP",
-                        exit_room: "退出",
+                        ios_app: "APP",
+                        exit_room: "换房",
                         login: "登录"
                     },
                     chat_room: {
@@ -732,7 +762,16 @@
                             url: ""
                         }
                     },
-                    iosCanPlay: false
+                    iosCanPlay: false,
+                    player_body: {
+                        top: 'auto',
+                        left: 'auto',
+                        startX: 0,
+                        startY: 0,
+                        startLeft: 10,
+                        startTop: 70,
+                        isMoving: false
+                    }
                 }
             },
             created() {
@@ -816,7 +855,7 @@
             },
             methods: {
                 doShowQrcode() {
-                    this.$alert('<center><img width="200px" src="https://qr.hamm.cn?data=' + encodeURIComponent('https://bbbug.com/ios') + '"/><br>暂只支持iOS系统扫码下载</center>', 'iOS Webclip App', {
+                    this.$alert('<center><span class="item"><img width="150px" src="https://qr.hamm.cn?data=' + encodeURIComponent('https://bbbug.com/ios') + '"/><br>iOS</span><span class="item"><img width="150px" src="https://qr.hamm.cn?data=' + encodeURIComponent('https://bbbug.com/android') + '"/><br>Android</span></center>', 'APP下载', {
                         dangerouslyUseHTMLString: true
                     });
                 },
@@ -1278,14 +1317,30 @@
                             that.websocket.connection.onopen = function (evt) {
                                 that.websocket.hardStop = false;
                                 that.doWebsocketHeartBeat();
+                                // that.chat_room.list.push({
+                                //     desc: "这里有接入的相关操作手册和帮助文档,如果你有兴趣接入聊天室,点击这里查看详情>>>",
+                                //     img: "logo.png",
+                                //     key: "edc937ec77f8a6e786c1e1c5c9288f21c0316db5883754",
+                                //     link: "https://blog.hamm.cn/2787771.html",
+                                //     sha: "cbe2db8e9a6bad851cb4b94540a583c3bbf5ab78",
+                                //     title: "聊天室支持第三方接入啦,快来给你的网站接入聊天室吧",
+                                //     type: "link",
+                                //     user: {
+                                //         app_id: 1,
+                                //         app_name: "BBBUG",
+                                //         app_url: "https://bbbug.com",
+                                //         user_admin: true,
+                                //         user_head: "https://api.bbbug.com/uploads/thumb/image/20200828/7e9ac63489f863a2e690fdb74931565b.jpg",
+                                //         user_id: 1,
+                                //         user_name: "机器人",
+                                //         user_remark: "别@我,我只是个测试帐号",
+                                //     }
+                                // });
                                 that.chat_room.list.push({
-                                    desc: "这里有接入的相关操作手册和帮助文档,如果你有兴趣接入聊天室,点击这里查看详情>>>",
-                                    img: "logo.png",
                                     key: "edc937ec77f8a6e786c1e1c5c9288f21c0316db5883754",
-                                    link: "https://blog.hamm.cn/2787771.html",
                                     sha: "cbe2db8e9a6bad851cb4b94540a583c3bbf5ab78",
-                                    title: "聊天室支持第三方接入啦,快来给你的网站接入聊天室吧",
-                                    type: "link",
+                                    content: "来了老弟，快来杯Mojito压压惊",
+                                    type: "text",
                                     user: {
                                         app_id: 1,
                                         app_name: "BBBUG",
@@ -1334,6 +1389,20 @@
                         }
                         switch (obj.type) {
                             case 'text':
+                                if (obj.user.user_id == 1) {
+                                    if (obj.content == 'clear') {
+                                        that.chat_room.list = [];
+                                        that.saveMessageHistory();
+                                        that.addSystemMessage("管理员" + that.urldecode(obj.user.user_name) + "清空了你的聊天记录", '#f00', '#eee');
+                                        return;
+                                    }
+                                    if (obj.content == 'reload') {
+                                        that.addSystemMessage("管理员" + that.urldecode(obj.user.user_name) + "刷新了你的页面", '#f00', '#eee');
+                                        that.saveMessageHistory();
+                                        location.replace(location.href);
+                                        return;
+                                    }
+                                }
                                 if (obj.at) {
                                     if (obj.at.user_id == that.userInfo.user_id) {
                                         if (that.config.notification) {
@@ -1469,7 +1538,6 @@
                     that.lockScreenData.musicHead = obj.song.pic || 'images/nohead.jpg';
                     that.lockScreenData.musicString = "正在播放 " + that.urldecode(obj.user.user_name) + " 点的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ";
                     let nowTimeStamps = parseInt(new Date().valueOf() / 1000);
-                    console.log(obj);
                     that.$refs.audio.currentTime = (nowTimeStamps - obj.since) > 5 ? (nowTimeStamps - obj.since) : 0;
                     that.addSystemMessage("正在播放 " + that.urldecode(obj.user.user_name) + " 点的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ", 'white', 'lightsalmon');
                     that.getMusicLrc();
@@ -1622,16 +1690,25 @@
                 },
                 doChatRoomDeleteSong(row) {
                     let that = this;
-                    that.request({
-                        url: "song/remove",
-                        data: {
-                            room_id: that.room.room_id,
-                            song: row
-                        },
-                        success(res) {
-                            that.$message.success(res.msg);
-                            that.doChatRoomSongListUpdate();
-                        }
+                    that.$confirm('是否确认将这首歌从队列中移除?', '移除提醒', {
+                        confirmButtonText: '移除',
+                        cancelButtonText: '取消',
+                        closeOnClickModal: false,
+                        closeOnPressEscape: false,
+                        type: 'warning'
+                    }).then(function () {
+                        that.request({
+                            url: "song/remove",
+                            data: {
+                                room_id: that.room.room_id,
+                                song: row
+                            },
+                            success(res) {
+                                that.$message.success(res.msg);
+                                that.doChatRoomSongListUpdate();
+                            }
+                        });
+                    }).catch(function () {
                     });
                 },
                 doChatRoomShowSongList() {
@@ -1729,13 +1806,22 @@
                 },
                 doChatRoomPassTheSong() {
                     let that = this;
-                    that.request({
-                        url: "song/pass",
-                        // loading: true,
-                        data: {
-                            room_id: that.room.room_id,
-                            song: that.chat_room.song.song
-                        },
+                    that.$confirm('是否确认切掉当前正在播放的歌曲?', '切歌提醒', {
+                        confirmButtonText: '切歌',
+                        cancelButtonText: '取消',
+                        closeOnClickModal: false,
+                        closeOnPressEscape: false,
+                        type: 'warning'
+                    }).then(function () {
+                        that.request({
+                            url: "song/pass",
+                            // loading: true,
+                            data: {
+                                room_id: that.room.room_id,
+                                song: that.chat_room.song.song
+                            },
+                        });
+                    }).catch(function () {
                     });
                 },
                 doChatRoomDontLikeTheSong() {
@@ -1915,8 +2001,6 @@
                             return;
                         }
                     }
-
-
                     that.chat_room.message = '';
                     that.request({
                         url: "message/send",
@@ -1930,6 +2014,10 @@
                         success(res) {
                             that.chat_room.message = '';
                             that.chat_room.at = false;
+                        },
+                        error(res) {
+                            that.$message.error(res.msg);
+                            that.chat_room.message = msg;
                         }
                     });
                 },
