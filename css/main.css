@@ -393,7 +393,16 @@ body {
 .el-dialog__body {
     padding: 5px 20px;
 }
-
+.user_sex{
+    margin-right:5px;
+    cursor: pointer;
+}
+.icon-xingbie-nv{
+    color:#FE9898;
+}
+.icon-xingbie-nan{
+    color:#66CBFF;
+}
 .top_area {
     position: fixed;
     right: 20px;
