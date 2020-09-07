@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="css/element.css">
     <link rel="stylesheet" href="//at.alicdn.com/t/font_666204_trcuv9ja6ip.css">
     <link rel="stylesheet" href="css/vue.preview.css">
-    <link rel="stylesheet" href="css/main.css?d1231223y112231hy">
+    <link rel="stylesheet" href="css/main.css?xx111231x">
 </head>
 
 <body>
@@ -67,8 +67,6 @@
                                 </el-dropdown-item>
                                 <el-dropdown-item command="switchNotification">{{config.notification?'关闭通知':'打开通知'}}
                                 </el-dropdown-item>
-                                <el-dropdown-item command="switchLockScreen">{{config.lockScreen?'自动滚动':'锁定屏幕'}}
-                                </el-dropdown-item>
                                 <el-dropdown-item command="switchPlayMusic">{{config.playMusic?'关闭音乐':'打开音乐'}}
                                 </el-dropdown-item>
                             </el-dropdown-menu>
@@ -81,6 +79,7 @@
                         <div v-for="(item,index) in chat_room.list">
                             <div v-if="item.type!='system'">
                                 <div :class="[item.user.user_id==userInfo.user_id?'item mine':'item']">
+                                    <!-- <img src="images/ajx.png" style="position: absolute;left:-4px;top:-4px;width:50px;height:50px;"/> -->
                                     <div class="head">
                                         <el-dropdown trigger="click" @command="commandUserHead" :index="index">
                                             <img :src="item.user.user_head" onerror="this.src='images/nohead.jpg'"
@@ -125,12 +124,14 @@
                                             <i class="iconfont user_sex icon-xingbie-nv" title="女生"
                                                 v-if="item.user.user_sex==0"></i><i
                                                 class="iconfont user_sex icon-xingbie-nan" title="男生"
-                                                v-if="item.user.user_sex==1"></i>{{urldecode(item.user.user_name)}}
+                                                v-if="item.user.user_sex==1"></i>
+                                            {{urldecode(item.user.user_name)}}
                                             <el-tag size="mini" type="warning" class="isAdmin" title="管理员"
                                                 v-if="item.user.user_admin">管</el-tag>
                                             <el-tag size="mini" type="success" class="isAdmin" title="房主"
                                                 v-if="item.user.user_id == room.roomInfo.room_user">房</el-tag>
-                                            <a :href="item.user.app_url" target="_blank" v-if="item.user.app_id>1">
+                                            <a :href="replaceProfileLink(item.user.app_url,item.user.user_extra)"
+                                                target="_blank" v-if="item.user.app_id>1">
                                                 <el-tag size="mini" type="info" class="isAdmin" title="来自第三方应用登录">
                                                     {{item.user.app_name}}</el-tag>
                                             </a>
@@ -183,14 +184,18 @@
                                 </el-upload>
                             </el-button>
                             <el-button size="mini"
-                                @click="hideAllDialog();chat_room.dialog.searchImageBox=!chat_room.dialog.searchImageBox;" title="点击搜索表情">
+                                @click="hideAllDialog();chat_room.dialog.searchImageBox=!chat_room.dialog.searchImageBox;"
+                                title="点击搜索表情">
                                 表情</el-button>
                             <el-button size="mini" v-if="room.roomInfo.room_type==1"
-                                @click="hideAllDialog();chat_room.dialog.searchSongBox=!chat_room.dialog.searchSongBox;doChatRoomSearchSong()" title="点击打开歌曲搜索">
+                                @click="hideAllDialog();chat_room.dialog.searchSongBox=!chat_room.dialog.searchSongBox;doChatRoomSearchSong()"
+                                title="点击打开歌曲搜索">
                                 点歌</el-button>
-                            <el-button size="mini" @click="doChatRoomShowSongList" v-if="room.roomInfo.room_type==1" title="当前已点的歌单列表">已点
+                            <el-button size="mini" @click="doChatRoomShowSongList" v-if="room.roomInfo.room_type==1"
+                                title="当前已点的歌单列表">已点
                             </el-button>
-                            <el-button size="mini" @click="doChatRoomShowMySongList" v-if="room.roomInfo.room_type==1" title="我点过的歌">
+                            <el-button size="mini" @click="doChatRoomShowMySongList" v-if="room.roomInfo.room_type==1"
+                                title="我点过的歌">
                                 我的
                             </el-button>
                             <el-button size="mini" @click="doGameMusicPass"
@@ -229,6 +234,19 @@
                         <el-slider v-model="volume" @change="doVolumeChanged" vertical height="70px" step="5"
                             class="volume" v-if="player.voiceBar">
                         </el-slider>
+                        <!-- <div class="pet" v-if="pet.show && chat_room.song" title="Hamm 的歌词狗&#10;&#10;测试中,点击关闭"
+                            @click="pet.show=false;">
+                            <img src="images/dog/1.webp" />
+                            <div v-if="lrcString" style="    position: absolute;
+                            right: 120px;
+                            background-color: orange;
+                            border-radius: 10px;
+                            padding: 5px 10px;
+                            color: white;
+                            font-size: 14px;
+                            top: 0px;
+                            word-break: keep-all;">{{lrcString}}</div>
+                        </div> -->
                     </div>
                     <div class="chat_room_input">
                         <textarea @click="hideAllDialog" v-model="chat_room.message" @keydown.13="doChatRoomEnterDown"
@@ -251,7 +269,7 @@
                 <el-dialog title="修改资料" :visible.sync="chat_room.dialog.editMyProfile" :modal-append-to-body='false'>
                     <el-form status-icon>
                         <div style="text-align: center;margin-bottom: 20px;">
-                            <el-upload :action="[apiUrl+'attach/uploadimage']" :show-file-list="false"
+                            <el-upload :action="[apiUrl+'attach/uploadHead']" :show-file-list="false"
                                 :on-success="handleProfileHeadUploadSuccess" :before-upload="doChatRoomUploadBefore"
                                 :data="baseData">
                                 <img :src="chat_room.form.editMyProfile.user_head"
@@ -334,8 +352,8 @@
                                     v-if="chat_room.data.hisUserInfo.user_admin">管</el-tag>
                                 <el-tag size="mini" type="success" class="isAdmin" title="房主"
                                     v-if="chat_room.data.hisUserInfo.user_id == room.roomInfo.room_user">房</el-tag>
-                                <a :href="chat_room.data.hisUserInfo.app_url" target="_blank"
-                                    v-if="chat_room.data.hisUserInfo.app_id>1">
+                                <a :href="replaceProfileLink(chat_room.data.hisUserInfo.app_url,chat_room.data.hisUserInfo.user_extra)"
+                                    target="_blank" v-if="chat_room.data.hisUserInfo.app_id>1">
                                     <el-tag size="mini" type="info" class="isAdmin" title="来自第三方应用登录">
                                         {{chat_room.data.hisUserInfo.app_name}}</el-tag>
                                 </a>
@@ -378,7 +396,8 @@
                         placeholder="输入歌名/歌手搜索歌曲"></el-input>
                     <div class="list" v-loading="chat_room.loading.searchSongBox">
                         <el-table :data="chat_room.data.searchSongList" stripe
-                            style="display:inline-block;max-height:300px;overflow-y:auto;">
+                            style="display:inline-block;max-height:300px;overflow-y:auto;" ref="searchSongBox"
+                            id="searchSongBox">
                             <el-table-column>
                                 <template slot-scope="scope">
                                     <el-button type="warning" circle size="small" @click="doChatRoomAddSong(scope.row)"
@@ -397,14 +416,15 @@
                     v-model="chat_room.dialog.mySongBox" title="你点过最近50首歌">
                     <div class="list" v-loading="chat_room.loading.mySongBox">
                         <el-table :data="chat_room.data.mySongList" stripe
-                            style="display:inline-block;max-height:300px;overflow-y:auto;">
+                            style="display:inline-block;max-height:300px;overflow-y:auto;" ref="mySongBox">
                             <el-table-column>
                                 <template slot-scope="scope">
                                     <el-button type="warning" circle size="small" @click="doChatRoomAddSong(scope.row)"
                                         style="float:right;">点
                                     </el-button>
                                     <font color="#333">{{scope.row.name}}</font><br>
-                                    <font color="#999" style="font-size:12px;">歌手：{{scope.row.singer}} 点过：{{scope.row.played}}次
+                                    <font color="#999" style="font-size:12px;">歌手：{{scope.row.singer}}
+                                        点过：{{scope.row.played}}次
                                     </font>
                                 </template>
                             </el-table-column>
@@ -415,7 +435,8 @@
                     :title="'接下来要播放的歌曲 ('+chat_room.data.pickedSongList.length+')'" trigger="manual"
                     v-model="chat_room.dialog.pickedSongBox">
                     <div class="list" v-loading="chat_room.loading.pickedSongBox">
-                        <el-table :data="chat_room.data.pickedSongList" stripe style="display:inline-block;">
+                        <el-table :data="chat_room.data.pickedSongList" stripe style="display:inline-block;"
+                            ref="pickedSongBox">
                             <el-table-column>
                                 <template slot-scope="scope">
                                     <span style="float:right;">
@@ -468,7 +489,7 @@
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
-                            <span style="display:inline-block;">
+                            <span style="display:inline-block;width:200px;">
                                 <i class="iconfont icon-apple1 user_device" title="iOS客户端在线"
                                     v-if="item.user_device=='iPhone' || item.user_device=='iPad' || item.user_device=='iPod'"></i>
                                 <i class="iconfont icon-apple1 user_device" title="Mac在线"
@@ -487,7 +508,8 @@
                                 </el-tag>
                                 <el-tag size="mini" type="success" class="from"
                                     v-if="item.user_id==room.roomInfo.room_user" title="房主">房</el-tag>
-                                <a :href="item.app_url" target="_blank" v-if="item.app_id>1">
+                                <a :href="replaceProfileLink(item.app_url,item.user_extra)" target="_blank"
+                                    v-if="item.app_id>1">
                                     <el-tag size="mini" type="info" class="isAdmin" title="来自第三方应用登录">
                                         {{item.app_name}}</el-tag>
                                 </a>
@@ -638,7 +660,22 @@
                                 title="发送验证码到邮箱"></el-button>
                         </el-input>
                     </el-form-item>
-                    <el-form-item class="submit-area">
+                    <el-form-item class="submit-area" style="margin-left:10px;">
+                        <span style="float:left;" class="hideWhenScreenSmall">
+                            第三方：
+                            <el-link
+                                @click="location.replace('https://gitee.com/oauth/authorize?client_id=d2c3e3c6f5890837a69c65585cc14488e4075709db1e89d4cb4c64ef1712bdbb&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Fgitee.php&response_type=code')">
+                                码云
+                            </el-link>
+                            <el-link
+                                @click="location.replace('https://graph.qq.com/oauth2.0/authorize?client_id=101904044&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Fqq.php&response_type=code&state=bbbug')">
+                                QQ
+                            </el-link>
+                            <el-link
+                                @click="location.replace('https://www.oschina.net/action/oauth2/authorize?client_id=utwQOfbgBgBcwBolfNft&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Foschina.php&response_type=code')">
+                                开源中国
+                            </el-link>
+                        </span>
                         <el-button type="primary" @click="do_login_form_submit('login_form')">立即登录</el-button>
                     </el-form-item>
                 </el-form>
@@ -648,6 +685,7 @@
         <audio :src="audioUrl" id="audio" ref="audio" autoplay="autoplay" control @timeupdate="audioTimeUpdate"></audio>
         <audio :src="game.music.url" id="audio_game_music" ref="audio_game_music" autoplay="autoplay" control></audio>
         <div class="lockscreen" v-if="lockScreenData.ifLockSystem">
+            <img :src="lockScreenData.musicHead" class="lockBg" />
             <div class="lockImg"><img v-if="lockScreenData.musicHead" :src="lockScreenData.musicHead"
                     class="musicHead love" /></div>
             <div class="lockTitle">{{lockScreenData.musicString}}</div>
@@ -669,7 +707,7 @@
     </style>
     <script>
         Vue.use(vuePhotoPreview, {});
-        new Vue({
+        var BBBUG = new Vue({
             el: '#app',
             data() {
                 return {
@@ -840,6 +878,9 @@
                         startLeft: 10,
                         startTop: 70,
                         isMoving: false
+                    },
+                    pet: {
+                        show: false,
                     }
                 }
             },
@@ -889,6 +930,7 @@
                 that.$refs.audio.addEventListener("playing", function () {
                     that.nowPlaying = true;
                     that.lrcString = '歌词加载中...';
+                    that.$refs.audio.volume = localStorage.getItem('volume') ? parseFloat(parseInt(localStorage.getItem('volume')) / 100) : 0.8;
                     if (that.chat_room.song.song) {
                         that.chat_room.songPercent = parseInt(that.$refs.audio.currentTime / that.$refs.audio.duration * 100);
                     }
@@ -897,6 +939,8 @@
                     that.audioUrl = "";
                     that.chat_room.song = null;
                     that.lrcString = '歌词加载中...';
+                    that.copyString = '欢迎来' + that.room.roomInfo.room_name + "一起听歌聊天呀:\n" + location.href + "#" + that.room.room_id;
+                    // that.pet.show = false;
                 });
                 that.$refs.audio.addEventListener("timeupdate", function () {
                     that.chat_room.songPercent = parseInt(that.$refs.audio.currentTime / that.$refs.audio.duration * 100);
@@ -924,7 +968,7 @@
             },
             methods: {
                 doShowQrcode() {
-                    this.$alert('<center><span class="item"><img width="150px" src="https://qr.hamm.cn?data=' + encodeURIComponent('https://bbbug.com/ios') + '"/><br>iOS</span><span class="item"><img width="150px" src="https://qr.hamm.cn?data=' + encodeURIComponent('https://bbbug.com/android') + '"/><br>Android</span></center>', 'APP下载', {
+                    this.$alert('<center><span class="item"><img width="150px" src="https://qr.hamm.cn?data=' + encodeURIComponent('https://bbbug.com/ios') + '"/><br>iOS</span><span class="item"><img width="150px" src="https://qr.hamm.cn?data=' + encodeURIComponent('https://bbbug.com/android') + '"/><br>Android</span><div style="font-size:14px;color:orangered;">请注意,第三方登录帐号无法登录APP!</div></center>', 'APP下载', {
                         dangerouslyUseHTMLString: true
                     });
                 },
@@ -1104,6 +1148,9 @@
                         "row": row,
                         "command": command
                     }
+                },
+                replaceProfileLink(appUrl, userExtra) {
+                    return appUrl.replace('#extra#', userExtra);
                 },
                 getMusicLrc() {
                     let that = this;
@@ -1343,7 +1390,7 @@
                         success(res) {
                             that.room.roomInfo = res.data;
                             that.addSystemMessage(res.data.room_notice ? res.data.room_notice : ('欢迎来到' + res.data.room_name + '!'));
-                            that.copyString = '欢迎来' + res.data.room_name + "划水听歌聊天呀:\n" + location.href + "#" + that.room.room_id;
+                            that.copyString = '欢迎来' + res.data.room_name + "一起听歌聊天呀:\n" + location.href + "#" + that.room.room_id;
                             that.doChatRoomShowOnlineList();
                             if (res.data.room_type != 1) {
                                 that.audioUrl = '';
@@ -1412,7 +1459,7 @@
                                 that.chat_room.list.push({
                                     key: "edc937ec77f8a6e786c1e1c5c9288f21c0316db5883754",
                                     sha: "cbe2db8e9a6bad851cb4b94540a583c3bbf5ab78",
-                                    content: "来了老弟，快来杯Mojito压压惊",
+                                    content: "来了老弟，快来杯Mojito压压惊！",
                                     type: "text",
                                     user: {
                                         app_id: 1,
@@ -1531,6 +1578,10 @@
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 点了一首 《" + obj.song.name + "》(" + obj.song.singer + ")", '#409EFF', '#eee');
                                 that.saveMessageHistory();
                                 break;
+                            case 'chat_bg':
+                                that.addSystemMessage(that.urldecode(obj.user.user_name) + " 运气大爆发,触发了点歌背景墙特效(1小时内播放歌曲时有效)!", 'green', '#eee');
+                                that.saveMessageHistory();
+                                break;
                             case 'push':
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 将歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") 设为置顶候播放");
                                 that.saveMessageHistory();
@@ -1607,10 +1658,11 @@
                             return;
                         }
                     }
+
                     that.audioUrl = "https://api.bbbug.com/api/song/playurl?mid=" + obj.song.mid;
                     that.chat_room.song = obj;
                     that.lockScreenData.musicHead = obj.song.pic || 'images/nohead.jpg';
-                    that.lockScreenData.musicString = "正在播放 " + that.urldecode(obj.user.user_name) + " 点的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ";
+                    that.lockScreenData.musicString = "《" + obj.song.name + "》(" + obj.song.singer + ") ";
                     let nowTimeStamps = parseInt(new Date().valueOf() / 1000);
                     that.$refs.audio.currentTime = (nowTimeStamps - obj.since) > 5 ? (nowTimeStamps - obj.since) : 0;
                     // that.addSystemMessage("正在播放 " + that.urldecode(obj.user.user_name) + " 点的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ", 'white', 'lightsalmon');
@@ -1644,6 +1696,13 @@
                         }
                     }
 
+                    // if (obj.user.user_id == 10000) {
+                    //     that.pet.show = true;
+                    // } else {
+                    //     that.pet.show = false;
+                    // }
+
+                    that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\n" + location.href + "#" + that.room.room_id;
                 },
                 saveMessageHistory() {
                     let that = this;
@@ -1693,14 +1752,6 @@
                                 that.addSystemMessage('通知已开启,你将收到@提醒和歌曲通知');
                             } else {
                                 that.addSystemMessage('通知已关闭,你将无法@提醒和歌曲通知');
-                            }
-                            break;
-                        case 'switchLockScreen':
-                            that.config.lockScreen = !that.config.lockScreen;
-                            if (that.config.lockScreen) {
-                                that.addSystemMessage('已打开屏幕自动滚动');
-                            } else {
-                                that.addSystemMessage('已锁定屏幕,新消息将不再滚动');
                             }
                             break;
                         case 'switchPlayMusic':
@@ -1928,6 +1979,11 @@
                             room_id: that.room.room_id,
                             song: that.chat_room.song.song
                         },
+                        success(res) {
+                            that.$message.success(res.msg);
+                            that.addSystemMessage('你选择了不喜欢这首歌,已自动静音,下首歌自动开启音乐.');
+                            that.$refs.audio.volume = 0;
+                        }
                     });
                 },
                 doChatRoomSearchSong() {
@@ -1945,6 +2001,7 @@
                         })
                     })
                         .then(function (response) {
+                            document.getElementById("searchSongBox").scrollTop = 0;
                             that.chat_room.data.searchSongList = response.data.data;
                             that.chat_room.loading.searchSongBox = false;
                         })
@@ -2085,16 +2142,18 @@
 
                     if (msg.indexOf("音量") == 0) {
                         let volume = parseInt(msg.replace(/音量/g, '').replace(/\/\//g, ''));
-                        if (volume < 0 || volume > 100) {
-                            return;
-                        } else {
-                            that.volume = volume;
-                            that.$refs.audio.volume = parseFloat(volume / 100);
-                            that.$refs.audio_game_music.volume = parseFloat(volume / 100);
-                            this.addSystemMessage("音量已经设置为" + volume + "%");
-                            localStorage.setItem('volume', volume);
-                            that.chat_room.message = '';
-                            return;
+                        if (msg == '音量' + volume) {
+                            if (volume < 0 || volume > 100) {
+                                return;
+                            } else {
+                                that.volume = volume;
+                                that.$refs.audio.volume = parseFloat(volume / 100);
+                                that.$refs.audio_game_music.volume = parseFloat(volume / 100);
+                                this.addSystemMessage("音量已经设置为" + volume + "%");
+                                localStorage.setItem('volume', volume);
+                                that.chat_room.message = '';
+                                return;
+                            }
                         }
                     }
                     that.chat_room.message = '';

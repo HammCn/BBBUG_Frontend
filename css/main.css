@@ -79,8 +79,6 @@ body {
     border-radius:10px!important;
     padding: 0px!important;
 }
-
-
 .showUserProfile .el-dialog__body {
     padding: 0;
     border: none;
@@ -105,6 +103,17 @@ body {
     background-color: #fff;
     text-align: center;
     padding-top: 150px;
+}
+.lockBg{
+    position: fixed;
+    left: -25%;
+    right: -25%;
+    top: -25%;
+    bottom: -25%;
+    width: 150%;
+    height: 150%;
+    filter: blur(50px);
+    z-index: -1;
 }
 .link .title {
     font-size: 16px;
@@ -156,15 +165,17 @@ body {
 }
 
 .lockTitle {
-    font-size: 16px;
+    font-size: 20px;
     margin-top: 30px;
-    color: #999;
+    color:white;
+    text-shadow:1px 1px 2px rgba(0,0,0,0.5);
 }
 
 .lockLrc {
     font-size: 24px;
     margin-top: 30px;
-    color: #333;
+    color:white;
+    text-shadow:1px 1px 2px rgba(0,0,0,0.5);
 }
 
 .at_box {
@@ -184,10 +195,10 @@ body {
 }
 
 .love {
-    -webkit-animation: rotate 10s linear infinite;
-    -moz-animation: rotate 10s linear infinite;
-    -o-animation: rotate 10s linear infinite;
-    animation: rotate 10s linear infinite;
+    -webkit-animation: rotate 20s linear infinite;
+    -moz-animation: rotate 20s linear infinite;
+    -o-animation: rotate 20s linear infinite;
+    animation: rotate 20s linear infinite;
 }
 .el-slider__button{
     border-color:#333!important;
@@ -387,7 +398,7 @@ body {
     bottom: 0;
     height: 100px;
     padding: 10px 15px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #eee;   
 }
 
 .el-dialog__body {
@@ -408,7 +419,18 @@ body {
     right: 20px;
     top: 10px;
 }
-
+.pet{
+    position: fixed;
+    right: 280px;
+    bottom: 100px;
+    width: 200px;
+    z-index: 99;
+    cursor: pointer;
+}
+.pet img{
+    width: 100%;
+    height: 100%;
+}
 .chat_room_toolbar {
     position: absolute;
     left: 4px;
@@ -425,8 +447,13 @@ body {
     overflow: hidden;
     overflow-y: scroll;
     padding-bottom:80px;
+    /* background: #fff url(/images/footer.png) no-repeat;
+    background-size:  100% 300px;
+    background-position: bottom center; */
 }
-
+.submit-area .el-form-item__content{
+    margin-left:10px!important;
+}
 .searchImageBox {
     display: fixed!important;
     left: 20px!important;
@@ -508,6 +535,7 @@ audio {
     font-size: 14px;
     outline: none;
     resize: none;
+    background-color: transparent;
 }
 
 .chat_room_send {
@@ -650,7 +678,10 @@ audio {
 }
 
 #login {
-    width: 400px;
+    width: 500px;
+}
+#login .submit-area .el-link{
+    margin-right:5px;
 }
 
 .login-send-password {
@@ -749,5 +780,8 @@ audio {
     }
     .chat_room_history{
         padding-bottom: 80px;
+    }
+    .pet{
+        display: none;
     }
 }
