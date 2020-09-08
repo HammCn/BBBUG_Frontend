@@ -2,21 +2,32 @@
 <html>
 
 <head>
-    <title>BBBUG 音乐聊天室</title>
-    <meta name="referrer" content="never">
+    <title>BBBUG音乐聊天室</title>
     <meta charset="UTF-8">
-    <meta content='划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,,斗图,表情包' name='Keywords'>
-    <meta content='BBBUG.COM，一个划水音乐聊天室，超多小哥哥小姐姐都在这里一起听歌、划水聊天、技术分享、表情包斗图，欢迎你的加入！' name='Description'>
-    <meta name="viewport"
-        content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name='Keywords' content='划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包'>
+    <meta name='Description' content='BBBUG.COM，一个划水音乐聊天室，超多小哥哥小姐姐都在这里一起听歌、划水聊天、技术分享、表情包斗图，欢迎你的加入！'>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0;maximum-scale=1.0, user-scalable=no"/>
     <meta name="format-detection" content="telephone=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="Hamm">
     <meta name="apple-mobile-web-app-status-bar-style" content="light">
+    <meta name="MobileOptimized" content="480">
+    <meta name="HandheldFriendly" content="True">
     <link rel="stylesheet" href="css/element.css">
     <link rel="stylesheet" href="//at.alicdn.com/t/font_666204_trcuv9ja6ip.css">
     <link rel="stylesheet" href="css/vue.preview.css">
-    <link rel="stylesheet" href="css/main.css?xx111231x">
+    <link rel="stylesheet" href="css/main.css?xx11112231x">
+    <script>
+        var _hmt = _hmt || [];
+        (function () {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?499e3708baf422896ff8f6c2fc7cfd75";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
 </head>
 
 <body>
@@ -187,7 +198,8 @@
                                 @click="hideAllDialog();chat_room.dialog.searchImageBox=!chat_room.dialog.searchImageBox;"
                                 title="点击搜索表情">
                                 表情</el-button>
-                            <el-button size="mini" v-if="room.roomInfo.room_type==1"
+                            <el-button size="mini"
+                                v-if="room.roomInfo.room_type==1 && !(room.roomInfo.room_addsong==1 && room.roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)"
                                 @click="hideAllDialog();chat_room.dialog.searchSongBox=!chat_room.dialog.searchSongBox;doChatRoomSearchSong()"
                                 title="点击打开歌曲搜索">
                                 点歌</el-button>
@@ -250,8 +262,8 @@
                     </div>
                     <div class="chat_room_input">
                         <textarea @click="hideAllDialog" v-model="chat_room.message" @keydown.13="doChatRoomEnterDown"
-                            @keydown.8="doChatRoomDelete" class="chat_room_message"
-                            :placeholder="ChatPlaceHolder"></textarea>
+                            @keydown.8="doChatRoomDelete" class="chat_room_message" :placeholder="ChatPlaceHolder"
+                            :disabled="room.roomInfo.room_sendmsg==1 && room.roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin?true:false"></textarea>
                         <el-dropdown class="chat_room_send" split-button size="small" @click="doChatRoomSendMessage"
                             @command="handleSendButtonCommand">
                             {{ctrlEnabled?'发送(Ctrl+Enter)':'发送(Enter)'}}
@@ -318,10 +330,31 @@
                             <el-input size="small" autocomplete="off" placeholder=""
                                 v-model="chat_room.form.editMyRoom.room_password"></el-input>
                         </el-form-item>
+                        <el-form-item label="全员禁言">
+                            <el-select size="small" v-model="chat_room.form.editMyRoom.room_sendmsg"
+                                placeholder="请选择是否全员禁言" class="allLine" style="margin-left:70px;">
+                                <el-option v-for="(item,index) in chat_room.data.room_sendmsg" :label="item.title"
+                                    :value="item.value"></el-option>
+                            </el-select>
+                        </el-form-item>
                         <el-form-item label="房间类型">
                             <el-select size="small" v-model="chat_room.form.editMyRoom.room_type" placeholder="请选择房间类型"
                                 class="allLine" style="margin-left:70px;">
                                 <el-option v-for="(item,index) in room_create.typeList" :label="item.title"
+                                    :value="item.value"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="机器点歌" v-if="chat_room.form.editMyRoom.room_type==1">
+                            <el-select size="small" v-model="chat_room.form.editMyRoom.room_robot"
+                                placeholder="请选择机器人是否点歌" class="allLine" style="margin-left:70px;">
+                                <el-option v-for="(item,index) in chat_room.data.room_robot" :label="item.title"
+                                    :value="item.value"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="开启点歌" v-if="chat_room.form.editMyRoom.room_type==1">
+                            <el-select size="small" v-model="chat_room.form.editMyRoom.room_addsong"
+                                placeholder="请选择是否开启点歌" class="allLine" style="margin-left:70px;">
+                                <el-option v-for="(item,index) in chat_room.data.room_addsong" :label="item.title"
                                     :value="item.value"></el-option>
                             </el-select>
                         </el-form-item>
@@ -441,7 +474,7 @@
                                 <template slot-scope="scope">
                                     <span style="float:right;">
                                         <el-button circle size="small" @click="doChatRoomDeleteSong(scope.row)"
-                                            v-if="userInfo.user_id==room.roomInfo.room_user || userInfo.user_admin">删
+                                            v-if="userInfo.user_id==room.roomInfo.room_user || userInfo.user_admin || scope.row.user.user_id == userInfo.user_id">删
                                         </el-button>
                                         <el-button :type="scope.row.user.user_id==userInfo.user_id?'warning':'success'"
                                             circle size="small" @click="doChatRoomPushSongTop(scope.row)">顶
@@ -707,6 +740,7 @@
     </style>
     <script>
         Vue.use(vuePhotoPreview, {});
+        let placeholder = "新版上线啦,快来体验一下把~~~老规矩,输入音量20可快速将音量设置为20";
         var BBBUG = new Vue({
             el: '#app',
             data() {
@@ -714,7 +748,7 @@
                     apiUrl: "https://api.bbbug.com/api/",
                     audioUrl: "",
                     copyString: "",
-                    ChatPlaceHolder: "新版上线啦,快来体验一下把~~~老规矩,输入音量20可快速将音量设置为20",
+                    ChatPlaceHolder: "",
                     userInfo: "",
                     lrcString: "",
                     ctrlEnabled: false,
@@ -800,6 +834,27 @@
                             mySongList: [],
                             onlineList: [],
                             hisUserInfo: {},
+                            room_addsong: [{
+                                value: 0,
+                                title: "所有人可点歌"
+                            }, {
+                                value: 1,
+                                title: "仅房主可点歌"
+                            }],
+                            room_sendmsg: [{
+                                value: 0,
+                                title: "关闭全员禁言"
+                            }, {
+                                value: 1,
+                                title: "开启全员禁言"
+                            }],
+                            room_robot: [{
+                                value: 0,
+                                title: "开启机器人点歌"
+                            }, {
+                                value: 1,
+                                title: "关闭机器人点歌"
+                            }],
                         },
                         form: {
                             editMyProfile: {
@@ -814,6 +869,8 @@
                                 room_notice: "",
                                 room_type: 0,
                                 room_password: "",
+                                room_addsong: "",
+                                root_sendmsg: "",
                             },
                             searchImageBox: {
                                 keyword: "哈哈哈"
@@ -892,9 +949,9 @@
                             if (that.room.roomInfo.room_type == 1 && that.chat_room.song) {
                                 that.lockScreenData.ifLockSystem = !that.lockScreenData.ifLockSystem;
                                 if (that.lockScreenData.ifLockSystem) {
-                                    document.title = '音乐电台播放器';
+                                    document.title = '音乐播放器';
                                 } else {
-                                    document.title = that.room.roomInfo.room_name + " - BBBUG.com";
+                                    document.title = that.room.roomInfo.room_name;
                                 }
                             }
                             e.preventDefault();
@@ -1391,6 +1448,7 @@
                             that.room.roomInfo = res.data;
                             that.addSystemMessage(res.data.room_notice ? res.data.room_notice : ('欢迎来到' + res.data.room_name + '!'));
                             that.copyString = '欢迎来' + res.data.room_name + "一起听歌聊天呀:\n" + location.href + "#" + that.room.room_id;
+                            document.title = res.data.room_name;
                             that.doChatRoomShowOnlineList();
                             if (res.data.room_type != 1) {
                                 that.audioUrl = '';
@@ -1409,6 +1467,11 @@
                                 if (callback) {
                                     callback(false);
                                 }
+                            }
+                            if (that.room.roomInfo.room_sendmsg == 1 && that.room.roomInfo.room_user != that.userInfo.user_id && !that.userInfo.user_admin) {
+                                that.ChatPlaceHolder = '全员禁言中,你暂时无法发言';
+                            } else {
+                                that.ChatPlaceHolder = placeholder;
                             }
                             if (callback) {
                                 callback(true);
@@ -1436,31 +1499,14 @@
                             that.websocket.connection.onopen = function (evt) {
                                 that.websocket.hardStop = false;
                                 that.doWebsocketHeartBeat();
-                                // that.chat_room.list.push({
-                                //     desc: "这里有接入的相关操作手册和帮助文档,如果你有兴趣接入聊天室,点击这里查看详情>>>",
-                                //     img: "logo.png",
-                                //     key: "edc937ec77f8a6e786c1e1c5c9288f21c0316db5883754",
-                                //     link: "https://blog.hamm.cn/2787771.html",
-                                //     sha: "cbe2db8e9a6bad851cb4b94540a583c3bbf5ab78",
-                                //     title: "聊天室支持第三方接入啦,快来给你的网站接入聊天室吧",
-                                //     type: "link",
-                                //     user: {
-                                //         app_id: 1,
-                                //         app_name: "BBBUG",
-                                //         app_url: "https://bbbug.com",
-                                //         user_admin: true,
-                                //         user_head: "https://api.bbbug.com/uploads/thumb/image/20200828/7e9ac63489f863a2e690fdb74931565b.jpg",
-                                //         user_id: 1,
-                                //         user_sex:0,
-                                //         user_name: "机器人",
-                                //         user_remark: "别@我,我只是个测试帐号",
-                                //     }
-                                // });
                                 that.chat_room.list.push({
+                                    desc: "聊天室支持第三方接入啦,快来给你的网站接入一个自己的音乐聊天室吧>>>",
+                                    img: "logo.png",
                                     key: "edc937ec77f8a6e786c1e1c5c9288f21c0316db5883754",
+                                    link: "https://doc.bbbug.com/2811812.html",
                                     sha: "cbe2db8e9a6bad851cb4b94540a583c3bbf5ab78",
-                                    content: "来了老弟，快来杯Mojito压压惊！",
-                                    type: "text",
+                                    title: "BBBUG聊天室第三方接入文档",
+                                    type: "link",
                                     user: {
                                         app_id: 1,
                                         app_name: "BBBUG",
@@ -1468,11 +1514,28 @@
                                         user_admin: true,
                                         user_head: "https://api.bbbug.com/uploads/thumb/image/20200828/7e9ac63489f863a2e690fdb74931565b.jpg",
                                         user_id: 1,
+                                        user_sex:0,
                                         user_name: "机器人",
-                                        user_sex: 0,
                                         user_remark: "别@我,我只是个测试帐号",
                                     }
                                 });
+                                // that.chat_room.list.push({
+                                //     key: "edc937ec77f8a6e786c1e1c5c9288f21c0316db5883754",
+                                //     sha: "cbe2db8e9a6bad851cb4b94540a583c3bbf5ab78",
+                                //     content: "音乐房888房间招房管一枚，主要负责音乐房秩序管理，在线时间长，大水逼优先，虽然没工资，但是可以加入我们的小团队一起划水也是乐趣是吧？联系QQ：455250574",
+                                //     type: "text",
+                                //     user: {
+                                //         app_id: 1,
+                                //         app_name: "BBBUG",
+                                //         app_url: "https://bbbug.com",
+                                //         user_admin: true,
+                                //         user_head: "https://api.bbbug.com/uploads/thumb/image/20200828/7e9ac63489f863a2e690fdb74931565b.jpg",
+                                //         user_id: 1,
+                                //         user_name: "机器人",
+                                //         user_sex: 0,
+                                //         user_remark: "别@我,我只是个测试帐号",
+                                //     }
+                                // });
                             };
                             that.websocket.connection.onmessage = function (event) {
                                 that.messageController(event.data);
@@ -1649,9 +1712,6 @@
                 },
                 doPlayMusic(obj) {
                     let that = this;
-                    if (!that.config.playMusic) {
-                        return;
-                    }
                     if (that.chat_room.song) {
                         //is playing
                         if (obj.song.mid == that.chat_room.song.song.mid) {
@@ -1757,11 +1817,13 @@
                         case 'switchPlayMusic':
                             that.config.playMusic = !that.config.playMusic;
                             if (that.config.playMusic) {
-                                that.addSystemMessage('音乐已打开');
-                                that.$refs.audio.play();
+                                that.addSystemMessage('音乐已打开,如无音乐,请调整音量至合适即可.');
+                                that.volume = parseInt(localStorage.getItem('volume') || 80);
+                                that.$refs.audio.volume = parseFloat(that.volume / 100);
                             } else {
-                                that.addSystemMessage('音乐已关闭');
-                                that.$refs.audio.pause();
+                                that.addSystemMessage('音乐已静音');
+                                that.$refs.audio.volume = 0;
+                                that.volume = 0;
                             }
                             break;
                         default:
@@ -2122,6 +2184,9 @@
                     that.chat_room.form.editMyRoom.room_name = that.room.roomInfo.room_name;
                     that.chat_room.form.editMyRoom.room_notice = that.room.roomInfo.room_notice;
                     that.chat_room.form.editMyRoom.room_type = that.room.roomInfo.room_type;
+                    that.chat_room.form.editMyRoom.room_sendmsg = that.room.roomInfo.room_sendmsg;
+                    that.chat_room.form.editMyRoom.room_addsong = that.room.roomInfo.room_addsong;
+                    that.chat_room.form.editMyRoom.room_robot = that.room.roomInfo.room_robot;
                     that.chat_room.dialog.editMyRoom = true;
                 },
                 doChatRoomEditProfile() {
@@ -2411,15 +2476,7 @@
             }
         });
     </script>
-    <script>
-        var _hmt = _hmt || [];
-        (function () {
-            var hm = document.createElement("script");
-            hm.src = "https://hm.baidu.com/hm.js?08dd37237f4d510a18fd7f45f34646f2";
-            var s = document.getElementsByTagName("script")[0];
-            s.parentNode.insertBefore(hm, s);
-        })();
-    </script>
+
 </body>
 
 
