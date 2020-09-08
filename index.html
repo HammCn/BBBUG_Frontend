@@ -6,7 +6,8 @@
     <meta charset="UTF-8">
     <meta name='Keywords' content='划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包'>
     <meta name='Description' content='BBBUG.COM，一个划水音乐聊天室，超多小哥哥小姐姐都在这里一起听歌、划水聊天、技术分享、表情包斗图，欢迎你的加入！'>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0;maximum-scale=1.0, user-scalable=no"/>
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1.0,minimum-scale=1.0;maximum-scale=1.0, user-scalable=no" />
     <meta name="format-detection" content="telephone=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="Hamm">
@@ -94,8 +95,8 @@
                                     <div class="head">
                                         <el-dropdown trigger="click" @command="commandUserHead" :index="index">
                                             <img :src="item.user.user_head" onerror="this.src='images/nohead.jpg'"
-                                                :class="[chat_room.song&&item.user.user_id==chat_room.song.user.user_id?'love':'']"
-                                                :title="[chat_room.song&&item.user.user_id==chat_room.song.user.user_id?'正在播放Ta点的歌曲':'']" />
+                                                :class="[room.roomInfo.room_type==1&&chat_room.song&&item.user.user_id==chat_room.song.user.user_id?'love':'']"
+                                                :title="[room.roomInfo.room_type==1&&chat_room.song&&item.user.user_id==chat_room.song.user.user_id?'正在播放Ta点的歌曲':'']" />
                                             <!--  @mouseover="doGetUserInfoById(item.user.user_id)"
                                                 @mouseout="chat_room.data.hisUserInfo={};chat_room.dialog.showUserProfile=false;" -->
                                             <el-dropdown-menu slot="dropdown">
@@ -211,14 +212,14 @@
                                 我的
                             </el-button>
                             <el-button size="mini" @click="doGameMusicPass"
-                                v-if="room.roomInfo.room_type==2 && ( room.roomInfo.room_user == userInfo.user_id || userInfo.user_admin) && game.music.url">
+                                v-if="room.roomInfo.room_type==2 && (room.roomInfo.room_user == userInfo.user_id || userInfo.user_admin)">
                                 PASS
                             </el-button>
                         </el-button-group>
-                        <div v-if="room.roomInfo.room_type==1 && chat_room.song " class="player_body" id="player_body"
-                            ref="player_body" title="综合考虑,我还是安安静静待在这里吧">
+                        <div v-if="(room.roomInfo.room_type==1||room.roomInfo.room_type==2) && chat_room.song "
+                            class="player_body" id="player_body" ref="player_body" title="综合考虑,我还是安安静静待在这里吧">
                             <img class="player_bg" :src="chat_room.song.song.pic" />
-                            <div class="player_img"><img
+                            <div class="player_img" v-if="room.roomInfo.room_type==1"><img
                                     :title="(room.roomInfo.room_user==userInfo.user_id || userInfo.user_admin || chat_room.song.user.user_id == userInfo.user_id)?'切歌':'不喜欢'"
                                     @mouseover.stop="player.nextButton=true" @mouseout.stop="player.nextButton=false"
                                     :src="urldecode(chat_room.song.song.pic)"
@@ -228,14 +229,25 @@
                                 <i style="pointer-events: none" class="iconfont icon-changyongtubiao-mianxing-5"
                                     v-if="player.nextButton"></i>
                             </div>
+                            <div class="player_img" v-if="room.roomInfo.room_type==2"><img :src="chat_room.song.song.pic"
+                                    width="100%" height="100%" :class="player_body.isMoving?'':'love'" />
+                            </div>
                             <div class="player_title">
-                                <marquee scrollamount="1">{{chat_room.song.song.name}} - {{chat_room.song.song.singer}}
+                                <marquee scrollamount="1" v-if="room.roomInfo.room_type==1">{{chat_room.song.song.name}}
+                                    - {{chat_room.song.song.singer}}
+                                </marquee>
+                                <marquee scrollamount="1" v-if="room.roomInfo.room_type==2">{{chat_room.song.song.name}}
+                                    - {{chat_room.song.song.singer}}
                                 </marquee>
                                 <i class="icon-systemprompt_fill iconfont" @click="player.voiceBar=!player.voiceBar"
                                     title="调整音量"></i>
                             </div>
-                            <div class="player_name" @click="chat_room.at=chat_room.song.user" title="点击@点歌人">
+                            <div class="player_name" @click="chat_room.at=chat_room.song.user" title="点击@点歌人"
+                                v-if="room.roomInfo.room_type==1">
                                 点歌人　{{urldecode(chat_room.song.user.user_name)}}
+                            </div>
+                            <div class="player_name" v-if="room.roomInfo.room_type==2">
+                                请在聊天框发送歌名参与游戏
                             </div>
                             <div style="margin-left:60px;">
                                 <el-progress :percentage="chat_room.songPercent" :format="formatProgress"
@@ -474,7 +486,8 @@
                                 <template slot-scope="scope">
                                     <span style="float:right;">
                                         <el-button circle size="small" @click="doChatRoomDeleteSong(scope.row)"
-                                            v-if="userInfo.user_id==room.roomInfo.room_user || userInfo.user_admin || scope.row.user.user_id == userInfo.user_id">删
+                                            v-if="userInfo.user_id==room.roomInfo.room_user || userInfo.user_admin || scope.row.user.user_id == userInfo.user_id">
+                                            删
                                         </el-button>
                                         <el-button :type="scope.row.user.user_id==userInfo.user_id?'warning':'success'"
                                             circle size="small" @click="doChatRoomPushSongTop(scope.row)">顶
@@ -501,8 +514,8 @@
                             <el-dropdown trigger="click" @command="commandUserHead" :index="index">
                                 <el-image style="width: 40px; height: 40px" :src="item.user_head"
                                     onerror="this.src='images/nohead.jpg'"
-                                    :title="[chat_room.song&&item.user_id==chat_room.song.user.user_id?'正在播放Ta点的歌曲':'']"
-                                    :class="[chat_room.song&&item.user_id==chat_room.song.user.user_id?'headimg love':'headimg']">
+                                    :title="[room.roomInfo.room_type==1&&chat_room.song&&item.user_id==chat_room.song.user.user_id?'正在播放Ta点的歌曲':'']"
+                                    :class="[room.roomInfo.room_type==1&&chat_room.song&&item.user_id==chat_room.song.user.user_id?'headimg love':'headimg']">
                                 </el-image>
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item :command="beforeHandleUserCommand(item,'at')">@Ta
@@ -716,7 +729,6 @@
             <!-- 登录页面结束 -->
         </div>
         <audio :src="audioUrl" id="audio" ref="audio" autoplay="autoplay" control @timeupdate="audioTimeUpdate"></audio>
-        <audio :src="game.music.url" id="audio_game_music" ref="audio_game_music" autoplay="autoplay" control></audio>
         <div class="lockscreen" v-if="lockScreenData.ifLockSystem">
             <img :src="lockScreenData.musicHead" class="lockBg" />
             <div class="lockImg"><img v-if="lockScreenData.musicHead" :src="lockScreenData.musicHead"
@@ -921,11 +933,6 @@
                             user_password: ""
                         }
                     },
-                    game: {
-                        music: {
-                            url: ""
-                        }
-                    },
                     iosCanPlay: false,
                     player_body: {
                         top: 'auto',
@@ -982,7 +989,6 @@
                 document.addEventListener('paste', that.getClipboardFiles);
                 that.volume = parseInt(localStorage.getItem('volume') || 80);
                 that.$refs.audio.volume = parseFloat(that.volume / 100);
-                that.$refs.audio_game_music.volume = parseFloat(that.volume / 100);
 
                 that.$refs.audio.addEventListener("playing", function () {
                     that.nowPlaying = true;
@@ -1014,9 +1020,6 @@
                     } else {
                         that.$refs.audio.play();
                     }
-                });
-                that.$refs.audio_game_music.addEventListener("canplay", function () {
-                    that.$refs.audio_game_music.play();
                 });
             },
             updated() {
@@ -1118,7 +1121,6 @@
                     let that = this;
                     that.volume = parseInt(that.volume);
                     that.$refs.audio.volume = parseFloat(that.volume / 100);
-                    that.$refs.audio_game_music.volume = parseFloat(that.volume / 100);
                     localStorage.setItem('volume', that.volume);
                     clearTimeout(that.player.volumeChangeTimer);
                     that.player.volumeChangeTimer = setTimeout(function () {
@@ -1230,9 +1232,6 @@
                         url: '/song/gamePass',
                         data: {
                             room_id: that.room.room_id,
-                        },
-                        success(res) {
-                            that.musicLrcObj = that.createLrcObj(res.data);
                         }
                     });
                 },
@@ -1309,12 +1308,9 @@
                     try {
                         if (that.isIos()) {
                             that.$refs.audio.play();
-                            that.$refs.audio_game_music.play();
                             that.$refs.audio.pause();
-                            that.$refs.audio_game_music.pause();
                         } else {
                             that.$refs.audio.play();
-                            that.$refs.audio_game_music.play();
                         }
                     } catch (error) {
                         console.log(error);
@@ -1445,19 +1441,15 @@
                             room_password: room_password
                         },
                         success(res) {
+                            if (res.data.room_type != that.room.roomInfo.room_type) {
+                                that.audioUrl = '';
+                                that.chat_room.song = null;
+                            }
                             that.room.roomInfo = res.data;
                             that.addSystemMessage(res.data.room_notice ? res.data.room_notice : ('欢迎来到' + res.data.room_name + '!'));
                             that.copyString = '欢迎来' + res.data.room_name + "一起听歌聊天呀:\n" + location.href + "#" + that.room.room_id;
                             document.title = res.data.room_name;
                             that.doChatRoomShowOnlineList();
-                            if (res.data.room_type != 1) {
-                                that.audioUrl = '';
-                                that.chat_room.song = null;
-                            }
-                            if (res.data.room_type != 2) {
-                                that.$refs.audio_game_music.pause();
-                                that.game.music.url = '';
-                            }
                             if (res.data.room_password_error) {
                                 that.$message.error("密码验证失败,请联系房主获取正确的密码");
                                 localStorage.removeItem('room_id');
@@ -1514,7 +1506,7 @@
                                         user_admin: true,
                                         user_head: "https://api.bbbug.com/uploads/thumb/image/20200828/7e9ac63489f863a2e690fdb74931565b.jpg",
                                         user_id: 1,
-                                        user_sex:0,
+                                        user_sex: 0,
                                         user_name: "机器人",
                                         user_remark: "别@我,我只是个测试帐号",
                                     }
@@ -1684,7 +1676,7 @@
                                 that.saveMessageHistory();
                                 break;
                             case 'playSong':
-                                if (obj.song && obj.user) {
+                                if (obj.song) {
                                     that.doPlayMusic(obj);
                                 }
                                 break;
@@ -1694,14 +1686,11 @@
                             case 'roomUpdate':
                                 that.initNowRoomInfo();
                                 break;
-                            case 'game_music':
-                                if (that.game.music.url != obj.url) {
-                                    that.game.music.url = obj.url;
-                                    that.addSystemMessage("仔细听,猜猜是什么歌曲(直接在聊天框输入答案发送即可)");
-                                }
-                                break;
                             case 'game_music_success':
-                                that.addSystemMessage("恭喜 " + that.urldecode(obj.user.user_name) + " 猜中了! " + obj.music.name, '#ff4500', '#eee');
+                                that.addSystemMessage("恭喜 " + that.urldecode(obj.user.user_name) + " 猜中了《" + obj.song.name + "》(" + obj.song.singer + "),30s后开始新一轮游戏", '#ff4500', '#eee');
+                                that.chat_room.song.song.pic = obj.song.pic;
+                                that.chat_room.song.song.name = obj.song.name;
+                                that.chat_room.song.song.singer = obj.song.singer;
                                 break;
                             default:
                         }
@@ -1718,7 +1707,6 @@
                             return;
                         }
                     }
-
                     that.audioUrl = "https://api.bbbug.com/api/song/playurl?mid=" + obj.song.mid;
                     that.chat_room.song = obj;
                     that.lockScreenData.musicHead = obj.song.pic || 'images/nohead.jpg';
@@ -1726,43 +1714,44 @@
                     let nowTimeStamps = parseInt(new Date().valueOf() / 1000);
                     that.$refs.audio.currentTime = (nowTimeStamps - obj.since) > 5 ? (nowTimeStamps - obj.since) : 0;
                     // that.addSystemMessage("正在播放 " + that.urldecode(obj.user.user_name) + " 点的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ", 'white', 'lightsalmon');
-                    that.getMusicLrc();
-                    if (obj.user.user_id == that.userInfo.user_id) {
-                        if (that.config.notification) {
-                            let isNotificated = false;
-                            if (window.Notification && Notification.permission !== "denied") {
-                                Notification.requestPermission(function (status) { // 请求权限
-                                    if (status === 'granted') {
-                                        // 弹出一个通知
-                                        var n = new Notification("正在播放你点的歌", {
-                                            body: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
-                                            icon: ""
+
+                    switch (that.room.roomInfo.room_type) {
+                        case 1:
+                            that.getMusicLrc();
+                            if (obj.user.user_id == that.userInfo.user_id) {
+                                if (that.config.notification) {
+                                    let isNotificated = false;
+                                    if (window.Notification && Notification.permission !== "denied") {
+                                        Notification.requestPermission(function (status) { // 请求权限
+                                            if (status === 'granted') {
+                                                // 弹出一个通知
+                                                var n = new Notification("正在播放你点的歌", {
+                                                    body: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
+                                                    icon: ""
+                                                });
+                                                isNotificated = true;
+                                                // 两秒后关闭通知
+                                                setTimeout(function () {
+                                                    n.close();
+                                                }, 5000);
+                                            }
                                         });
-                                        isNotificated = true;
-                                        // 两秒后关闭通知
-                                        setTimeout(function () {
-                                            n.close();
-                                        }, 5000);
                                     }
-                                });
+                                    if (!isNotificated) {
+                                        that.$notify({
+                                            title: "正在播放你点的歌曲",
+                                            message: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
+                                            duration: 5
+                                        });
+                                    }
+                                }
                             }
-                            if (!isNotificated) {
-                                that.$notify({
-                                    title: "正在播放你点的歌曲",
-                                    message: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
-                                    duration: 5
-                                });
-                            }
-                        }
+                            that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\n" + location.href + "#" + that.room.room_id;
+                            break;
+                        case 2:
+                            that.addSystemMessage("仔细听,猜猜是什么歌曲(直接在聊天框输入答案发送即可)");
                     }
 
-                    // if (obj.user.user_id == 10000) {
-                    //     that.pet.show = true;
-                    // } else {
-                    //     that.pet.show = false;
-                    // }
-
-                    that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\n" + location.href + "#" + that.room.room_id;
                 },
                 saveMessageHistory() {
                     let that = this;
@@ -2213,7 +2202,6 @@
                             } else {
                                 that.volume = volume;
                                 that.$refs.audio.volume = parseFloat(volume / 100);
-                                that.$refs.audio_game_music.volume = parseFloat(volume / 100);
                                 this.addSystemMessage("音量已经设置为" + volume + "%");
                                 localStorage.setItem('volume', volume);
                                 that.chat_room.message = '';
@@ -2340,7 +2328,6 @@
                     localStorage.removeItem('room_password_' + that.room.room_id);
                     that.chat_room.song = null;
                     that.audioUrl = '';
-                    that.game.music.url = '';
                     that.websocket.hardStop = true;
                     if (that.websocket.connection) {
                         that.websocket.connection.close();
