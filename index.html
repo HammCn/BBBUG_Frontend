@@ -106,6 +106,9 @@
                                                 <el-dropdown-item
                                                     :command="beforeHandleUserCommand(item.user, 'profile')">资料
                                                 </el-dropdown-item>
+                                                <el-dropdown-item
+                                                    :command="beforeHandleUserCommand(item.user, 'sendSong')">送歌
+                                                </el-dropdown-item>
                                                 <el-dropdown-item :command="beforeHandleUserCommand(item, 'pullback')"
                                                     v-if="(item.user.user_id==userInfo.user_id || userInfo.user_admin || userInfo.user_id==room.roomInfo.room_user)">
                                                     撤回
@@ -229,8 +232,9 @@
                                 <i style="pointer-events: none" class="iconfont icon-changyongtubiao-mianxing-5"
                                     v-if="player.nextButton"></i>
                             </div>
-                            <div class="player_img" v-if="room.roomInfo.room_type==2"><img :src="chat_room.song.song.pic"
-                                    width="100%" height="100%" :class="player_body.isMoving?'':'love'" />
+                            <div class="player_img" v-if="room.roomInfo.room_type==2"><img
+                                    :src="chat_room.song.song.pic" width="100%" height="100%"
+                                    :class="player_body.isMoving?'':'love'" />
                             </div>
                             <div class="player_title">
                                 <marquee scrollamount="1" v-if="room.roomInfo.room_type==1">{{chat_room.song.song.name}}
@@ -244,7 +248,9 @@
                             </div>
                             <div class="player_name" @click="chat_room.at=chat_room.song.user" title="点击@点歌人"
                                 v-if="room.roomInfo.room_type==1">
-                                点歌人　{{urldecode(chat_room.song.user.user_name)}}
+                                <span v-if="!chat_room.song.at">点歌人　{{urldecode(chat_room.song.user.user_name)}}</span>
+                                <span v-if="chat_room.song.at">{{urldecode(chat_room.song.user.user_name)}} 送给
+                                    {{urldecode(chat_room.song.at.user_name)}}</span>
                             </div>
                             <div class="player_name" v-if="room.roomInfo.room_type==2">
                                 请在聊天框发送歌名参与游戏
@@ -455,6 +461,10 @@
                             </el-table-column>
                         </el-table>
                     </div>
+                    <el-alert effect="dark" v-if="chat_room.songSendUser"
+                        :title="'你正在为 '+urldecode(chat_room.songSendUser.user_name)+' 送歌'" type="info" close-text="取消"
+                        style="padding-left: 3px;" @close="chat_room.songSendUser=false">
+                    </el-alert>
                 </el-popover>
 
                 <el-popover placement="top-start" popper-class="searchSongBox" trigger="manual"
@@ -486,7 +496,7 @@
                                 <template slot-scope="scope">
                                     <span style="float:right;">
                                         <el-button circle size="small" @click="doChatRoomDeleteSong(scope.row)"
-                                            v-if="userInfo.user_id==room.roomInfo.room_user || userInfo.user_admin || scope.row.user.user_id == userInfo.user_id">
+                                            v-if="userInfo.user_id==room.roomInfo.room_user || userInfo.user_admin || scope.row.user.user_id == userInfo.user_id || (scope.row.at&&scope.row.at.user_id == userInfo.user_id)">
                                             删
                                         </el-button>
                                         <el-button :type="scope.row.user.user_id==userInfo.user_id?'warning':'success'"
@@ -494,13 +504,17 @@
                                         </el-button>
                                     </span>
                                     <font style="font-size:16px;font-weight:bolder;"
-                                        :color="scope.row.user.user_id==userInfo.user_id?'orangered':'#333'">
+                                        :color="scope.row.user.user_id==userInfo.user_id||scope.row.at&&scope.row.at.user_id==userInfo.user_id?'orangered':'#333'">
                                         No.{{scope.$index+1}}</font>
-                                    <font :color="scope.row.user.user_id==userInfo.user_id?'orangered':'#333'">
+                                    <font
+                                        :color="scope.row.user.user_id==userInfo.user_id||scope.row.at&&scope.row.at.user_id==userInfo.user_id?'orangered':'#333'">
                                         {{scope.row.song.name}}</font><br>
-                                    　<font :color="scope.row.user.user_id==userInfo.user_id?'orangered':'#999'"
+                                    　<font color="#999"
                                         style="font-size:12px;">
-                                        点歌人：{{urldecode(scope.row.user.user_name)}}</font>
+                                        <span v-if="!scope.row.at">点歌人：{{urldecode(scope.row.user.user_name)}}</span>
+                                        <span v-if="scope.row.at">{{urldecode(scope.row.user.user_name)}} 送给
+                                            {{urldecode(scope.row.at.user_name)}} 的歌</span>
+                                    </font>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -521,6 +535,8 @@
                                     <el-dropdown-item :command="beforeHandleUserCommand(item,'at')">@Ta
                                     </el-dropdown-item>
                                     <el-dropdown-item :command="beforeHandleUserCommand(item, 'profile')">资料
+                                    </el-dropdown-item>
+                                    <el-dropdown-item :command="beforeHandleUserCommand(item, 'sendSong')">送歌
                                     </el-dropdown-item>
                                     <el-dropdown-item :command="beforeHandleUserCommand(item, 'removeBan')"
                                         v-if="userInfo.user_admin || userInfo.user_id == room.roomInfo.room_user">解禁
@@ -816,6 +832,7 @@
                         login: "登录"
                     },
                     chat_room: {
+                        songSendUser: false,
                         showPage: false,
                         message: "",
                         at: null,
@@ -1198,9 +1215,18 @@
                             that.doGetUserInfoById(cmd.row.user_id);
                             that.chat_room.dialog.showUserProfile = true;
                             break;
+                        case 'sendSong':
+                            that.doSendSongToUser(cmd.row);
+                            break;
                         default:
                             that.$message.error('即将上线，敬请期待');
                     }
+                },
+                doSendSongToUser(user) {
+                    let that = this;
+                    that.chat_room.songSendUser = user;
+                    that.hideAllDialog();
+                    that.chat_room.dialog.searchSongBox = true;
                 },
                 beforeHandleUserCommand(row, command) {
                     return {
@@ -1450,6 +1476,9 @@
                             that.copyString = '欢迎来' + res.data.room_name + "一起听歌聊天呀:\n" + location.href + "#" + that.room.room_id;
                             document.title = res.data.room_name;
                             that.doChatRoomShowOnlineList();
+                            if (that.websocket.connection) {
+                                that.websocket.connection.send('getNowSong');
+                            }
                             if (res.data.room_password_error) {
                                 that.$message.error("密码验证失败,请联系房主获取正确的密码");
                                 localStorage.removeItem('room_id');
@@ -1630,7 +1659,40 @@
                                 that.saveMessageHistory();
                                 break;
                             case 'addSong':
-                                that.addSystemMessage(that.urldecode(obj.user.user_name) + " 点了一首 《" + obj.song.name + "》(" + obj.song.singer + ")", '#409EFF', '#eee');
+                                if (obj.at) {
+                                    console.log(obj);
+                                    that.addSystemMessage(that.urldecode(obj.user.user_name) + " 送了一首 《" + obj.song.name + "》(" + obj.song.singer + ") 给 " + that.urldecode(obj.at.user_name), '#409EFF', '#eee');
+                                    if (obj.at.user_id == that.userInfo.user_id) {
+                                        if (that.config.notification) {
+                                            let isNotificated = false;
+                                            if (window.Notification && Notification.permission !== "denied") {
+                                                Notification.requestPermission(function (status) { // 请求权限
+                                                    if (status === 'granted') {
+                                                        // 弹出一个通知
+                                                        var n = new Notification(that.urldecode(obj.user.user_name) + "送了歌给你：", {
+                                                            body: "《" + obj.song.name + "》(" + obj.song.singer + ")",
+                                                            icon: ""
+                                                        });
+                                                        isNotificated = true;
+                                                        // 两秒后关闭通知
+                                                        setTimeout(function () {
+                                                            n.close();
+                                                        }, 5000);
+                                                    }
+                                                });
+                                            }
+                                            if (!isNotificated) {
+                                                that.$notify({
+                                                    title: that.urldecode(obj.user.user_name) + "送了歌给你：",
+                                                    message: "《" + obj.song.name + "》(" + obj.song.singer + ")",
+                                                    duration: 0
+                                                });
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    that.addSystemMessage(that.urldecode(obj.user.user_name) + " 点了一首 《" + obj.song.name + "》(" + obj.song.singer + ")", '#409EFF', '#eee');
+                                }
                                 that.saveMessageHistory();
                                 break;
                             case 'chat_bg':
@@ -1676,7 +1738,7 @@
                                 that.saveMessageHistory();
                                 break;
                             case 'playSong':
-                                if (obj.song) {
+                                if (obj.song && (that.room.roomInfo.room_type == 1 || that.room.roomInfo.room_type == 2)) {
                                     that.doPlayMusic(obj);
                                 }
                                 break;
@@ -1713,7 +1775,9 @@
                     that.lockScreenData.musicString = "《" + obj.song.name + "》(" + obj.song.singer + ") ";
                     let nowTimeStamps = parseInt(new Date().valueOf() / 1000);
                     that.$refs.audio.currentTime = (nowTimeStamps - obj.since) > 5 ? (nowTimeStamps - obj.since) : 0;
-                    // that.addSystemMessage("正在播放 " + that.urldecode(obj.user.user_name) + " 点的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ", 'white', 'lightsalmon');
+                    if (obj.at) {
+                        that.addSystemMessage("正在播放 " + that.urldecode(obj.user.user_name) + " 送给 " + that.urldecode(obj.at.user_name) + " 的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ", 'white', 'lightsalmon');
+                    }
 
                     switch (that.room.roomInfo.room_type) {
                         case 1:
@@ -1740,6 +1804,34 @@
                                     if (!isNotificated) {
                                         that.$notify({
                                             title: "正在播放你点的歌曲",
+                                            message: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
+                                            duration: 5
+                                        });
+                                    }
+                                }
+                            }
+                            if (obj.at.user_id == that.userInfo.user_id) {
+                                if (that.config.notification) {
+                                    let isNotificated = false;
+                                    if (window.Notification && Notification.permission !== "denied") {
+                                        Notification.requestPermission(function (status) { // 请求权限
+                                            if (status === 'granted') {
+                                                // 弹出一个通知
+                                                var n = new Notification("正在播放 " + that.urldecode(obj.user.user_name) + " 送你的歌", {
+                                                    body: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
+                                                    icon: ""
+                                                });
+                                                isNotificated = true;
+                                                // 两秒后关闭通知
+                                                setTimeout(function () {
+                                                    n.close();
+                                                }, 5000);
+                                            }
+                                        });
+                                    }
+                                    if (!isNotificated) {
+                                        that.$notify({
+                                            title: "正在播放 " + that.urldecode(obj.user.user_name) + " 送你的歌",
                                             message: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
                                             duration: 5
                                         });
@@ -1968,10 +2060,12 @@
                         url: "song/addSong",
                         data: {
                             song: row,
+                            at: that.chat_room.songSendUser,
                             room_id: that.room.room_id
                         },
                         success(res) {
                             that.$message.success(res.msg);
+                            that.chat_room.songSendUser = false;
                         }
                     });
                 },
