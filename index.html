@@ -390,7 +390,7 @@
                     custom-class="showUserProfile">
                     <div
                         style="position: relative;box-shadow:0px 0px 20px rgba(0,0,0,0.5);border-radius:10px;background-color: white;height:150px;">
-                        <img :src="getImageUrl(urldecode(chat_room.data.hisUserInfo.user_head))"
+                        <img :src="getImageUrl(chat_room.data.hisUserInfo.user_head)"
                             onerror="this.src='images/nohead.jpg'"
                             style="border-radius: 100%;width:80px;height:80px;position: absolute;left:10px;top:10px;" />
                         <div style="position: absolute;left:100px;top:20px;">
@@ -415,7 +415,7 @@
                                 </a>
                             </div>
                             <div style="font-size:14px;color:#999;margin-top:5px;">
-                                {{urldecode(chat_room.data.hisUserInfo.user_remark)}}</div>
+                                {{chat_room.data.hisUserInfo.user_remark}}</div>
                         </div>
                         <div
                             style="font-size:12px;color:#999;margin-top:10px;position: absolute;left:10px;right:10px;bottom:10px;">
@@ -630,9 +630,10 @@
                                     <!-- <i class="room-icon el-icon-video-play"></i>
                                     <i class="room-icon el-icon-timer"></i> -->
                                 </div>
-                                <div class="room-user-name">房主：{{scope.row.user_name}}<el-tag size="mini" type="warning"
-                                        class="isAdmin" title="管理员" v-if="scope.row.user_admin">管</el-tag>　在线：<font
-                                        color=orangered style="font-weight: bolder;">{{scope.row.room_online}}</font>人
+                                <div class="room-user-name">房主：{{urldecode(scope.row.user_name)}}<el-tag size="mini"
+                                        type="warning" class="isAdmin" title="管理员" v-if="scope.row.user_admin">管
+                                    </el-tag>　在线：<font color=orangered style="font-weight: bolder;">
+                                        {{scope.row.room_online}}</font>人
                                 </div>
                             </template>
                         </el-table-column>
@@ -1223,6 +1224,7 @@
                             break;
                         case 'sendSong':
                             that.doSendSongToUser(cmd.row);
+                            that.doChatRoomSearchSong();
                             break;
                         default:
                             that.$message.error('即将上线，敬请期待');
@@ -2280,7 +2282,7 @@
                 },
                 doChatRoomEditProfile() {
                     let that = this;
-                    that.chat_room.form.editMyProfile.user_name = that.userInfo.user_name;
+                    that.chat_room.form.editMyProfile.user_name = that.urldecode(that.userInfo.user_name);
                     that.chat_room.form.editMyProfile.user_remark = that.userInfo.user_remark;
                     that.chat_room.form.editMyProfile.user_sex = that.userInfo.user_sex;
                     that.chat_room.form.editMyProfile.user_head = that.userInfo.user_head;
