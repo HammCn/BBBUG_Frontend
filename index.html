@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="css/element.css">
     <link rel="stylesheet" href="//at.alicdn.com/t/font_666204_trcuv9ja6ip.css">
     <link rel="stylesheet" href="css/vue.preview.css">
-    <link rel="stylesheet" href="css/main.css?xx11112231x">
+    <link rel="stylesheet" href="css/main.css?xx111112231x">
     <script>
         var _hmt = _hmt || [];
         (function () {
@@ -112,6 +112,11 @@
                                                 <el-dropdown-item :command="beforeHandleUserCommand(item, 'pullback')"
                                                     v-if="(item.user.user_id==userInfo.user_id || userInfo.user_admin || userInfo.user_id==room.roomInfo.room_user)">
                                                     撤回
+                                                </el-dropdown-item>
+                                                <el-dropdown-item
+                                                    :command="beforeHandleUserCommand(item.user, 'removeBan')"
+                                                    v-if="userInfo.user_admin || userInfo.user_id == room.roomInfo.room_user">
+                                                    解禁
                                                 </el-dropdown-item>
                                                 <el-dropdown-item
                                                     :command="beforeHandleUserCommand(item.user, 'shutdown')"
@@ -229,8 +234,8 @@
                                     onerror="this.src='images/nohead.jpg';this.onerror=null;" width="100%" height="100%"
                                     :class="player_body.isMoving?'':'love'"
                                     @click="(room.roomInfo.room_user==userInfo.user_id || userInfo.user_admin || chat_room.song.user.user_id == userInfo.user_id)?doChatRoomPassTheSong():doChatRoomDontLikeTheSong()" />
-                                <i style="pointer-events: none" class="iconfont icon-changyongtubiao-mianxing-5"
-                                    v-if="player.nextButton"></i>
+                                <i style="pointer-events: none;text-shadow:0px 0px 3px rgba(0,0,0,0.9)"
+                                    class="iconfont icon-guanbi1" v-if="player.nextButton"></i>
                             </div>
                             <div class="player_img" v-if="room.roomInfo.room_type==2"><img
                                     :src="chat_room.song.song.pic" width="100%" height="100%"
@@ -509,8 +514,7 @@
                                     <font
                                         :color="scope.row.user.user_id==userInfo.user_id||scope.row.at&&scope.row.at.user_id==userInfo.user_id?'orangered':'#333'">
                                         {{scope.row.song.name}}</font><br>
-                                    　<font color="#999"
-                                        style="font-size:12px;">
+                                    　<font color="#999" style="font-size:12px;">
                                         <span v-if="!scope.row.at">点歌人：{{urldecode(scope.row.user.user_name)}}</span>
                                         <span v-if="scope.row.at">{{urldecode(scope.row.user.user_name)}} 送给
                                             {{urldecode(scope.row.at.user_name)}} 的歌</span>
@@ -717,7 +721,8 @@
                     <el-form-item prop="user_password" label="密码" :rules="[
                     { required: true, message: '不填写密码如何登录???', trigger: 'blur' }
                   ]">
-                        <el-input v-model="login.form.user_password" type="password" placeholder="请输入你的登录密码或验证码">
+                        <el-input v-model="login.form.user_password" type="password" placeholder="请输入你的登录密码或验证码"
+                            @keydown.13.native="do_login_form_submit('login_form')">
                             <el-button slot="append" icon="el-icon-message" @click="do_login_send_password"
                                 title="发送验证码到邮箱"></el-button>
                         </el-input>
@@ -827,7 +832,7 @@
                         my_setting: "设置",
                         invate_person: "邀请",
                         my_profile: "我的",
-                        ios_app: "APP",
+                        ios_app: "手机版",
                         exit_room: "换房",
                         login: "登录"
                     },
@@ -898,8 +903,9 @@
                                 room_notice: "",
                                 room_type: 0,
                                 room_password: "",
-                                room_addsong: "",
-                                root_sendmsg: "",
+                                room_addsong: 0,
+                                room_sendmsg: 0,
+                                room_robot: 0,
                             },
                             searchImageBox: {
                                 keyword: "哈哈哈"
@@ -1045,7 +1051,7 @@
             },
             methods: {
                 doShowQrcode() {
-                    this.$alert('<center><span class="item"><img width="150px" src="https://qr.hamm.cn?data=' + encodeURIComponent('https://bbbug.com/ios') + '"/><br>iOS</span><span class="item"><img width="150px" src="https://qr.hamm.cn?data=' + encodeURIComponent('https://bbbug.com/android') + '"/><br>Android</span><div style="font-size:14px;color:orangered;">请注意,第三方登录帐号无法登录APP!</div></center>', 'APP下载', {
+                    this.$alert('<center><span class="item" style="color:red;font-size:14px;"><font color=black style="font-size:20px;">手机扫码立即穿梭</font><br><br><img width="200px" src="https://qr.hamm.cn?data=' + encodeURIComponent('https://bbbug.com/third?access_token=' + this.baseData.access_token) + '"/><br>请不要截图发给其他人,避免账号被盗</span></center>', {
                         dangerouslyUseHTMLString: true
                     });
                 },
