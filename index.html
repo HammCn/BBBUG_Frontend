@@ -297,7 +297,7 @@
                         </el-dropdown>
                         <el-tag class="at_box" size="small" closable @close="chat_room.at=null" type="danger"
                             v-if="chat_room.at" :style="{marginBottom:lrcString?'20px':'0'}">
-                            @{{chat_room.at.user_name}}</el-tag>
+                            @{{urldecode(chat_room.at.user_name)}}</el-tag>
                         <div class="lrcbox" v-if="lrcString">{{lrcString}}</div>
                     </div>
                 </div>
