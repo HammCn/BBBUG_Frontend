@@ -1954,7 +1954,7 @@
                         url: "song/push",
                         data: {
                             room_id: that.room.room_id,
-                            song: row
+                            mid: row.song.mid
                         },
                         success(res) {
                             that.$message.success(res.msg);
@@ -1975,7 +1975,7 @@
                             url: "song/remove",
                             data: {
                                 room_id: that.room.room_id,
-                                song: row
+                                mid: row.song.mid
                             },
                             success(res) {
                                 that.$message.success(res.msg);
@@ -2065,8 +2065,8 @@
                     that.request({
                         url: "song/addSong",
                         data: {
-                            song: row,
-                            at: that.chat_room.songSendUser,
+                            mid: row.mid,
+                            at: that.chat_room.songSendUser.user_id,
                             room_id: that.room.room_id
                         },
                         success(res) {
@@ -2115,7 +2115,7 @@
                             // loading: true,
                             data: {
                                 room_id: that.room.room_id,
-                                song: that.chat_room.song.song
+                                mid: that.chat_room.song.song.mid
                             },
                         });
                     }).catch(function () {
@@ -2128,7 +2128,7 @@
                         // loading: true,
                         data: {
                             room_id: that.room.room_id,
-                            song: that.chat_room.song.song
+                            mid: that.chat_room.song.song.mid
                         },
                         success(res) {
                             that.$message.success(res.msg);
