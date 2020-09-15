@@ -1125,7 +1125,7 @@
                 that.$refs.audio.addEventListener("playing", function () {
                     that.nowPlaying = true;
                     that.lrcString = '歌词加载中...';
-                    that.$refs.audio.volume = localStorage.getItem('volume') ? parseFloat(parseInt(localStorage.getItem('volume')) / 100) : 0.8;
+                    that.$refs.audio.volume = parseFloat(that.volume / 100);
                     if (that.chat_room.song) {
                         that.chat_room.songPercent = parseInt(that.$refs.audio.currentTime / that.$refs.audio.duration * 100);
                     }
