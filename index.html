@@ -857,6 +857,7 @@
             el: '#app',
             data() {
                 return {
+                    timeDiff: 0,//与服务器时间偏移
                     apiUrl: "https://api.bbbug.com/api/",
                     audioUrl: "",
                     copyString: "",
@@ -1073,6 +1074,14 @@
             },
             created() {
                 let that = this;
+                that.request({
+                    url: "system/time",
+                    success(res) {
+                        let serverTime = res.data.time;
+                        that.timeDiff = parseInt(new Date().valueOf()) - serverTime;
+                        console.log("timeDiff is : " + that.timeDiff + "ms");
+                    },
+                });
                 window.onkeydown = function (e) {
                     switch (e.keyCode) {
                         case 27:
@@ -1886,7 +1895,7 @@
                                 that.addSystemMessage('正在播放声音《' + obj.story.name + '》(' + obj.story.part + ')', '#409EFF', '#eee');
                                 that.audioUrl = obj.story.play;
                                 that.chat_room.voice = obj.story;
-                                let nowTimeStamps = parseInt(new Date().valueOf() / 1000);
+                                let nowTimeStamps = parseInt((new Date().valueOf() - that.timeDiff) / 1000);
                                 console.log(nowTimeStamps - obj.since);
                                 that.$refs.audio.currentTime = (nowTimeStamps - obj.since) > 5 ? (nowTimeStamps - obj.since) : 0;
                                 that.saveMessageHistory();
@@ -1906,11 +1915,12 @@
                             return;
                         }
                     }
+
                     that.audioUrl = "https://api.bbbug.com/api/song/playurl?mid=" + obj.song.mid;
                     that.chat_room.song = obj;
                     that.lockScreenData.musicHead = obj.song.pic || 'images/nohead.jpg';
                     that.lockScreenData.musicString = "《" + obj.song.name + "》(" + obj.song.singer + ") ";
-                    let nowTimeStamps = parseInt(new Date().valueOf() / 1000);
+                    let nowTimeStamps = parseInt((new Date().valueOf() - that.timeDiff) / 1000);
                     that.$refs.audio.currentTime = (nowTimeStamps - obj.since) > 5 ? (nowTimeStamps - obj.since) : 0;
                     if (obj.at) {
                         that.addSystemMessage("正在播放 " + that.urldecode(obj.user.user_name) + " 送给 " + that.urldecode(obj.at.user_name) + " 的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ", 'white', 'lightsalmon');
