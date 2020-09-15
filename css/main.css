@@ -151,7 +151,9 @@ body {
     padding-top: 5px;
     color:#999;
 }
-
+.chat_room_toolbar button{
+    font-size:14px;
+}
 .link .img {
     width: 40px;
     height: 40px;
@@ -559,6 +561,7 @@ audio {
     border-radius: 5px;
     padding: 5px 15px;
     font-size: 12px;
+    max-width:80%;
 }
 
 .chat_room_history .item {
@@ -784,5 +787,8 @@ audio {
     }
     .pet{
         display: none;
+    }
+    .chat_room_toolbar button{
+        font-size:12px;
     }
 }
