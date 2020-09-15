@@ -17,6 +17,10 @@ html {
     font-family: 'Gotham-Book';
     background-attachment: fixed;
     outline: none;
+    -webkit-text-size-adjust : none ;
+    -moz-text-size-adjust : none ;
+    -ms-text-size-adjust : none ;
+    text-size-adjust : none
 }
 
 [v-cloak] {
@@ -68,20 +72,237 @@ body {
 ::-webkit-scrollbar-corner {
     background: transparent;
 }
-
-.love {
-    -webkit-animation: rotate 5s linear infinite;
-    -moz-animation: rotate 5s linear infinite;
-    -o-animation: rotate 5s linear infinite;
-    animation: rotate 5s linear infinite;
+.showUserProfile {
+    width: 400px;
+    margin-top: 40vh!important;
+    box-shadow: none;
+    border-radius:10px!important;
+    padding: 0px!important;
+}
+.showUserProfile .el-dialog__body {
+    padding: 0;
+    border: none;
 }
 
+.showUserProfile .el-dialog__headerbtn {
+    z-index: 99;
+}
+
+.showUserProfile .el-dialog__header {
+    height: 0px;
+    padding: 0px;
+    display:none;
+}
+.lockscreen {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 999;
+    background-color: #fff;
+    text-align: center;
+    padding-top: 150px;
+}
+.lockBg{
+    position: fixed;
+    left: -25%;
+    right: -25%;
+    top: -25%;
+    bottom: -25%;
+    width: 150%;
+    height: 150%;
+    filter: blur(50px);
+    z-index: -1;
+}
+.link .title {
+    font-size: 16px;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    font-weight: bold;
+}
+
+.link .desc {
+    font-size: 12px;
+    color: #999;
+    overflow: hidden;
+    margin-top: 10px;
+    position: relative;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    padding-left: 50px;
+    min-height:30px;
+}
+
+.link .url {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    font-size: 12px;
+    margin-top: 10px;
+    -webkit-box-orient: vertical;
+    border-top: 1px solid #e5e5e5;
+    padding-top: 5px;
+    color:#999;
+}
+.chat_room_toolbar button{
+    font-size:14px;
+}
+.link .img {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.lockImg img {
+    border-radius: 100%;
+    width: 150px;
+    height: 150px;
+}
+
+.lockTitle {
+    font-size: 20px;
+    margin-top: 30px;
+    color:white;
+    text-shadow:1px 1px 3px rgba(0,0,0,0.8);
+}
+
+.lockLrc {
+    font-size: 24px;
+    margin-top: 30px;
+    color:white;
+    text-shadow:1px 1px 3px rgba(0,0,0,0.8);
+}
+
+.at_box {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+}
+.lrcbox{
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    font-size:12px;
+    color:#999;
+}
+.el-form-item {
+    margin-bottom: 20px;
+}
+
+.love {
+    -webkit-animation: rotate 20s linear infinite;
+    -moz-animation: rotate 20s linear infinite;
+    -o-animation: rotate 20s linear infinite;
+    animation: rotate 20s linear infinite;
+}
+.el-slider__button{
+    border-color:#333!important;
+}
+.el-slider__bar{
+    background-color:#333!important;
+}
+.player_body{
+    z-index:100;
+    background-color: rgba(0,0,0,0.5);
+    position: fixed;color:white;border-radius: 5px;font-size:12px;padding:10px;width:250px;overflow: hidden;
+    right:10px;
+    bottom: 130px;
+}
+.player_bg{
+    z-index:-1;
+    position: absolute;
+    left:0;
+    top:0;
+    bottom:0;
+    right:0;filter: blur(10px);
+    background-color: #333333;
+    width:100%;
+    height:100%;
+    background-position: center;
+}
+.el-message-box .item{
+    display:inline-block;
+}
+.player_body >*{
+    text-shadow:1px 1px 1px rgba(0,0,0,0.9);  -moz-user-select:none; /*火狐*/
+    -webkit-user-select:none; /*webkit浏览器*/
+    -ms-user-select:none; /*IE10*/
+    -khtml-user-select:none; /*早期浏览器*/
+    user-select:none;
+}
+.user_device{
+    color: #333;
+    border-radius: 100%;
+    cursor: pointer;
+    font-size: 16px;
+}
+.player_img{
+    width: 55px;
+    height: 55px;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+}
+.player_img i{
+    font-size: 56px;
+    color: white;
+    text-shadow: none;
+    position: absolute;
+    left: 0;
+    top: -3px;
+    /* font-weight: bolder; */
+    cursor: pointer;
+}
+.player_img img{
+    border-radius:100%;
+    cursor: pointer;
+}
+.player_title{
+    font-size:16px;margin-left:60px;
+    font-weight: bolder;
+}
+.player_title marquee{
+    margin-right:30px;
+}
+.player_title i{
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    font-size: 28px;
+    text-shadow: none;
+    color: #fff;
+    cursor: pointer;
+    text-shadow:1px 1px 1px rgba(0,0,0,0.5);
+}
+.player_name{
+    color:#eee;margin-left:60px;text-overflow:ellipsis;overflow:hidden;word-break: keep-all;white-space: nowrap;cursor:pointer;
+}
+.player_body .el-progress-bar{
+    padding-right:0;
+}
+.player_body .el-progress-bar__outer{
+    background-color: rgba(0,0,0,0.3);
+}
 #chat_room {
     position: fixed;
-    left: 10px;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+}
+ .volume{
+    position: fixed!important;
     right: 10px;
-    top: 10px;
-    bottom: 10px;
+    bottom: 210px;
+    z-index: 100;
 }
 
 .online_user {
@@ -96,8 +317,10 @@ body {
 
 .online_user img {
     border-radius: 100%;
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
+    border:1px solid #eee;
+    cursor: pointer;
 }
 
 .online_user * {
@@ -125,7 +348,7 @@ body {
 
 .pickedSongBox .list {
     position: relative;
-    width: 400px;
+    width: 100%;
     min-height: 100px;
     max-height: 300px;
     overflow: auto;
@@ -178,19 +401,39 @@ body {
     bottom: 0;
     height: 100px;
     padding: 10px 15px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #eee;   
 }
 
 .el-dialog__body {
     padding: 5px 20px;
 }
-
+.user_sex{
+    margin-right:5px;
+    cursor: pointer;
+}
+.icon-xingbie-nv{
+    color:#FE9898;
+}
+.icon-xingbie-nan{
+    color:#66CBFF;
+}
 .top_area {
     position: fixed;
     right: 20px;
     top: 10px;
 }
-
+.pet{
+    position: fixed;
+    right: 280px;
+    bottom: 100px;
+    width: 200px;
+    z-index: 99;
+    cursor: pointer;
+}
+.pet img{
+    width: 100%;
+    height: 100%;
+}
 .chat_room_toolbar {
     position: absolute;
     left: 4px;
@@ -203,11 +446,17 @@ body {
     left: 0;
     right: 0;
     top: 60px;
-    bottom: 151px;
+    bottom: 120px;
     overflow: hidden;
     overflow-y: scroll;
+    padding-bottom:80px;
+    /* background: #fff url(/images/footer.png) no-repeat;
+    background-size:  100% 300px;
+    background-position: bottom center; */
 }
-
+.submit-area .el-form-item__content{
+    margin-left:10px!important;
+}
 .searchImageBox {
     display: fixed!important;
     left: 20px!important;
@@ -289,6 +538,7 @@ audio {
     font-size: 14px;
     outline: none;
     resize: none;
+    background-color: transparent;
 }
 
 .chat_room_send {
@@ -305,11 +555,13 @@ audio {
 .chat_room_history .system span {
     background-color: #eee;
     color: #999;
+    display: inline-block;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
     border-radius: 5px;
     padding: 5px 15px;
     font-size: 12px;
+    max-width:80%;
 }
 
 .chat_room_history .item {
@@ -334,6 +586,8 @@ audio {
     width: 40px;
     height: 40px;
     border-radius: 100%;
+    border:1px solid #eee;
+    cursor: pointer;
 }
 
 .chat_room_history .item .body {
@@ -357,7 +611,7 @@ audio {
     overflow: hidden;
     text-align: left;
     display: inline-block;
-    max-width: 30%;
+    max-width: 40%;
     background-color: #eee;
     padding: 8px 15px;
     margin: 10px 0px;
@@ -367,7 +621,7 @@ audio {
     color: #333;
     word-wrap: break-word;
     word-break: break-all;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .chat_room_history .item .body .img {
@@ -428,7 +682,10 @@ audio {
 }
 
 #login {
-    width: 400px;
+    width: 500px;
+}
+#login .submit-area .el-link{
+    margin-right:5px;
 }
 
 .login-send-password {
@@ -442,4 +699,96 @@ audio {
 
 .allLine {
     display: block;
+}
+
+.rightMenu{
+    position: fixed;
+    right:10px;
+    top :10px;
+}
+@media only screen and (max-width: 640px) {
+    .hideWhenScreenSmall{
+        display:none;
+    }
+    .player_body{
+        right:8px;
+        bottom:125px;
+    }
+    .player_title i{
+        display: none;
+    }
+    .player_title marquee{
+        margin-right:0;
+    }
+    .el-message-box{
+        width:80%;
+    }
+    #room_create{
+        width:auto;
+        position: fixed;
+        left: 0;
+        right: 0;
+        top:0;
+        bottom:0;
+    }
+    .chat_room_history .content{
+        max-width:80%!important;
+    }
+    #login{
+        width:100%;
+    }
+    .player_body{
+        width:50px;
+    }
+    .searchSongBox{
+        left:10px!important;
+        right:10px!important;
+        bottom:160px!important;
+        padding:10px;
+        width:auto!important;
+    }
+    .pickedSongBox{
+        left:10px!important;
+        right:10px!important;
+        bottom:160px!important;
+        padding:10px;
+        width:auto!important;
+    }
+    .pickedSongBox{
+        left:10px!important;
+        right:10px!important;
+        bottom:160px!important;
+        padding:10px;
+        width:auto!important;
+    }
+    .showUserProfile{
+        left:0px!important;
+        right:0px!important;
+        bottom:160px!important;
+        padding:10px;
+        width:95%!important;
+    }
+    #room{
+        width:auto;
+        position: fixed;
+        left: 0;
+        right: 0;
+        top:0;
+        bottom:0;
+    }
+    #room .el-card__body{
+        padding:0;
+    }
+    .chat_room_history .item{
+        margin:0px 10px;
+    }
+    .chat_room_history{
+        padding-bottom: 80px;
+    }
+    .pet{
+        display: none;
+    }
+    .chat_room_toolbar button{
+        font-size:12px;
+    }
 }
