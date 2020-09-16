@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="css/element.css">
     <link rel="stylesheet" href="//at.alicdn.com/t/font_666204_trcuv9ja6ip.css">
     <link rel="stylesheet" href="css/vue.preview.css">
-    <link rel="stylesheet" href="css/main.css?xiiiiiix111112121231x">
+    <link rel="stylesheet" href="css/main.css?222">
     <script>
         var _hmt = _hmt || [];
         (function () {
@@ -98,6 +98,11 @@
                                             <img :src="item.user.user_head" onerror="this.src='images/nohead.jpg'"
                                                 :class="[room.roomInfo.room_type==1&&chat_room.song&&item.user.user_id==chat_room.song.user.user_id?'love':'']"
                                                 :title="[room.roomInfo.room_type==1&&chat_room.song&&item.user.user_id==chat_room.song.user.user_id?'正在播放Ta点的歌曲':'']" />
+
+                                            <el-tag size="mini" type="warning" class="isAdmin isFloat" title="管理员"
+                                                v-if="item.user.user_admin">管</el-tag>
+                                            <el-tag size="mini" type="success" class="isAdmin isFloat" title="房主"
+                                                v-if="item.user.user_id == room.roomInfo.room_user">房</el-tag>
                                             <!--  @mouseover="doGetUserInfoById(item.user.user_id)"
                                                 @mouseout="chat_room.data.hisUserInfo={};chat_room.dialog.showUserProfile=false;" -->
                                             <el-dropdown-menu slot="dropdown">
@@ -147,10 +152,6 @@
                                                 class="iconfont user_sex icon-xingbie-nan" title="男生"
                                                 v-if="item.user.user_sex==1"></i>
                                             {{urldecode(item.user.user_name)}}
-                                            <el-tag size="mini" type="warning" class="isAdmin" title="管理员"
-                                                v-if="item.user.user_admin">管</el-tag>
-                                            <el-tag size="mini" type="success" class="isAdmin" title="房主"
-                                                v-if="item.user.user_id == room.roomInfo.room_user">房</el-tag>
                                             <a :href="replaceProfileLink(item.user.app_url,item.user.user_extra)"
                                                 target="_blank" v-if="item.user.app_id>1">
                                                 <el-tag size="mini" type="info" class="isAdmin" title="来自第三方应用登录">
@@ -273,8 +274,9 @@
                                 <marquee scrollamount="1" v-if="room.roomInfo.room_type==3">
                                     《{{chat_room.voice.name}}》({{chat_room.voice.part}})
                                 </marquee>
-                                <i class="icon-systemprompt_fill iconfont" @click="player.voiceBar=!player.voiceBar"
-                                    title="调整音量"></i>
+                                <i class=" iconfont" @click="player.voiceBar=!player.voiceBar" title="调整音量"
+                                    style='font-weight:normal' :style="volume==0?'color:#999':'color:#fff'"
+                                    :class="volume==0?'icon-changyongtubiao-xianxingdaochu-zhuanqu-40':'icon-changyongtubiao-xianxingdaochu-zhuanqu-39'"></i>
                             </div>
                             <div class="player_name" @click="chat_room.at=chat_room.song.user" title="点击@点歌人"
                                 v-if="room.roomInfo.room_type==1">
@@ -425,9 +427,15 @@
                     custom-class="showUserProfile">
                     <div
                         style="position: relative;box-shadow:0px 0px 20px rgba(0,0,0,0.5);border-radius:10px;background-color: white;height:150px;">
-                        <img :src="getImageUrl(chat_room.data.hisUserInfo.user_head)"
-                            onerror="this.src='images/nohead.jpg'"
-                            style="border-radius: 100%;width:80px;height:80px;position: absolute;left:10px;top:10px;" />
+                        <div style="position: absolute;left:10px;top:10px;">
+                            <img :src="getImageUrl(chat_room.data.hisUserInfo.user_head)"
+                                onerror="this.src='images/nohead.jpg'"
+                                style="border-radius: 100%;width:80px;height:80px;" />
+                            <el-tag size="mini" type="warning" class="isAdmin isFloat" title="管理员"
+                                v-if="chat_room.data.hisUserInfo.user_admin">管</el-tag>
+                            <el-tag size="mini" type="success" class="isAdmin isFloat" title="房主"
+                                v-if="chat_room.data.hisUserInfo.user_id == room.roomInfo.room_user">房</el-tag>
+                        </div>
                         <div style="position: absolute;left:100px;top:20px;">
                             <div style="font-size:18px;font-weight: bold;color:#333;">
                                 <font color=orangered style="font-weight: bolder;">
@@ -439,10 +447,6 @@
                                     v-if="chat_room.data.hisUserInfo.user_sex==1"
                                     style="font-size: 16px; font-weight: normal;"></i>
                                 {{urldecode(chat_room.data.hisUserInfo.user_name)}}
-                                <el-tag size="mini" type="warning" class="isAdmin" title="管理员"
-                                    v-if="chat_room.data.hisUserInfo.user_admin">管</el-tag>
-                                <el-tag size="mini" type="success" class="isAdmin" title="房主"
-                                    v-if="chat_room.data.hisUserInfo.user_id == room.roomInfo.room_user">房</el-tag>
                                 <a :href="replaceProfileLink(chat_room.data.hisUserInfo.app_url,chat_room.data.hisUserInfo.user_extra)"
                                     target="_blank" v-if="chat_room.data.hisUserInfo.app_id>1">
                                     <el-tag size="mini" type="info" class="isAdmin" title="来自第三方应用登录">
@@ -641,13 +645,13 @@
                                 <i class="iconfont user_sex icon-xingbie-nv" title="女生" v-if="item.user_sex==0"></i><i
                                     class="iconfont user_sex icon-xingbie-nan" title="男生" v-if="item.user_sex==1"></i>
 
-                                <el-tag size="mini" type="info" class="from" v-if="item.user_shutdown">禁言</el-tag>
-                                <el-tag size="mini" type="info" class="from" v-if="item.user_songdown">禁歌</el-tag>
-                                {{urldecode(item.user_name)}}
                                 <el-tag size="mini" type="warning" class="from" v-if="item.user_admin" title="管理员">管
                                 </el-tag>
                                 <el-tag size="mini" type="success" class="from"
                                     v-if="item.user_id==room.roomInfo.room_user" title="房主">房</el-tag>
+                                <el-tag size="mini" type="info" class="from" v-if="item.user_shutdown">禁言</el-tag>
+                                <el-tag size="mini" type="info" class="from" v-if="item.user_songdown">禁歌</el-tag>
+                                {{urldecode(item.user_name)}}
                                 <a :href="replaceProfileLink(item.app_url,item.user_extra)" target="_blank"
                                     v-if="item.app_id>1">
                                     <el-tag size="mini" type="info" class="isAdmin" title="来自第三方应用登录">
