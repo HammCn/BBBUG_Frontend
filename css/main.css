@@ -673,12 +673,7 @@ audio {
 .isAdmin {
     margin-left: 2px;
     font-size: 12px;
-    cursor: pointer;    
-}
-.isFloat{
-    position: absolute;
-    right: -5px;
-    bottom: -5px;
+    cursor: pointer;
 }
 
 .room-title {
