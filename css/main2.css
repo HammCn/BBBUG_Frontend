@@ -75,7 +75,7 @@ body {
 
 .room_list {
     position: fixed;
-    right: 20px;
+    left: 20px;
     top: 20px;
     bottom: 20px;
     width: 320px;
@@ -177,13 +177,6 @@ body {
 .room_list .room_icon {
     color: #666;
     font-weight: bolder;
-}
-
-.chat_room .room_icon {
-    color: #666;
-    font-weight: bolder;
-    cursor: pointer;
-    color:orangered;
 }
 
 .showUserProfile {
@@ -835,35 +828,11 @@ audio {
     cursor: pointer;
 }
 
-.login{
-    position: fixed;
-    left:0;right:0;
-    top:0;bottom:0;
-    background: #eee;
-    justify-content:center;
-    align-items:center;
-    display:-webkit-flex;
+#login {
+    width: 500px;
 }
-.login_form{
-    width:400px;
-    background-color: white;
-    padding: 10px 20px;
-    padding-right: 30px;
-    padding-bottom: 30px;
-    border-radius: 10px;
-    position: relative;
-}
-.login_guest{
-    position: absolute;
-    right: 20px;
-    top:20px;
-}
-.login_form_title{
-    margin-bottom:20px;
-    padding:10px 20px;
-    font-size:18px;
-}
-.login .submit-area .el-link {
+
+#login .submit-area .el-link {
     margin-right: 5px;
 }
 
@@ -903,21 +872,6 @@ audio {
     .el-message-box {
         width: 80%;
     }
-    .el-dialog{
-        width:100%!important;
-        height:100%!important;
-        margin:0!important;
-    }
-    .showUserProfile {
-        left: 0px!important;
-        right: 0px!important;
-        bottom: 160px!important;
-        padding: 10px;
-        width: 95%!important;
-        width:auto!important;
-        height:auto!important;
-        margin-top:40vh!important;
-    }
     #room_create {
         width: auto;
         position: fixed;
@@ -926,17 +880,11 @@ audio {
         top: 0;
         bottom: 0;
     }
-    .login {
-        width: 100%;
-        position: fixed;
-        background-color: white;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-    }
     .chat_room_history .content {
         max-width: 80%!important;
+    }
+    #login {
+        width: 100%;
     }
     .player_body {
         width: 50px;
@@ -962,6 +910,24 @@ audio {
         padding: 10px;
         width: auto!important;
     }
+    .showUserProfile {
+        left: 0px!important;
+        right: 0px!important;
+        bottom: 160px!important;
+        padding: 10px;
+        width: 95%!important;
+    }
+    #room {
+        width: auto;
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+    }
+    #room .el-card__body {
+        padding: 0;
+    }
     .chat_room_history .item {
         margin: 0px 10px;
     }
@@ -974,4 +940,10 @@ audio {
     .chat_room_toolbar button {
         font-size: 12px;
     }
+}
+
+font-size: 12px;
+
+}
+
 }
