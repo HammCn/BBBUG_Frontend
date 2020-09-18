@@ -41,7 +41,7 @@
 
 <body>
     <div id="app" v-cloak>
-        <div id="main" v-loading.fullscreen.lock="loading">
+        <div id="main" v-loading.fullscreen.lock="loading" @contextmenu.prevent="doContextMenu($event)">
             <!-- 房间主面板 -->
             <el-card class="box-card singe chat_room" shadow="never" v-if="room.roomInfo">
                 <!-- <div class="top_area">
@@ -102,7 +102,7 @@
                 </div>
                 <div class="chat_room_box">
                     <div class="chat_room_history" id="chat_room_history" @click="hideAllDialog"
-                        @scroll="scrollEvent($event)">
+                        @scroll="scrollEvent($event)" >
                         <div v-for="(item,index) in chat_room.list">
                             <div v-if="item.type!='system'">
                                 <div :class="[item.user.user_id==userInfo.user_id?'item mine':'item']">
@@ -1194,6 +1194,9 @@
                 that.$previewRefresh();
             },
             methods: {
+                doContextMenu(e){
+                    return false;
+                },
                 doShowQrcode() {
                     this.$alert('<center><span class="item" style="color:red;font-size:14px;"><font color=black style="font-size:20px;">手机扫码立即穿梭</font><br><br><img width="200px" src="https://qr.hamm.cn?data=' + encodeURIComponent('https://bbbug.com/third?access_token=' + this.baseData.access_token) + '"/><br>请不要截图发给其他人,避免账号被盗</span></center>', {
                         dangerouslyUseHTMLString: true

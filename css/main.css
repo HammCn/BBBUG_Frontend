@@ -20,7 +20,21 @@ html {
     -webkit-text-size-adjust: none;
     -moz-text-size-adjust: none;
     -ms-text-size-adjust: none;
-    text-size-adjust: none
+    text-size-adjust: none;
+}
+*{
+    -moz-user-select:none; /*火狐*/
+    -webkit-user-select:none; /*webkit浏览器*/
+    -ms-user-select:none; /*IE10*/
+    -khtml-user-select:none; /*早期浏览器*/
+    user-select:none;
+}
+.chat_room_history .content, .chat_room_history .system span,.chat_room_history .item .user{
+    -moz-user-select:text; /*火狐*/
+    -webkit-user-select:text; /*webkit浏览器*/
+    -ms-user-select:text; /*IE10*/
+    -khtml-user-select:text; /*早期浏览器*/
+    user-select:text;
 }
 
 [v-cloak] {
