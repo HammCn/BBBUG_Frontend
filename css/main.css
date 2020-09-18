@@ -301,7 +301,14 @@ body {
     color: white;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
 }
-
+.lockscreen .copyright{
+    position: absolute;
+    right:20px;
+    bottom:20px;
+    color:rgba(255,255,255,0.3);
+    text-shadow:1px 1px 2px rgba(0,0,0,0.3);
+    font-size:12px;
+}
 .at_box {
     position: absolute;
     left: 10px;

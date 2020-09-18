@@ -806,6 +806,7 @@
                     class="musicHead love" /></div>
             <div class="lockTitle">{{lockScreenData.musicString}}</div>
             <div class="lockLrc">{{lockScreenData.nowMusicLrcText}}</div>
+            <div class="copyright">BBBUG.COM音乐聊天室</div>
         </div>
     </div>
     <script src="js/vue-2.6.10.min.js"></script>
@@ -823,7 +824,7 @@
     </style>
     <script>
         Vue.use(vuePhotoPreview, {});
-        let placeholder = "新版上线啦,快来体验一下把~~~老规矩,输入音量20可快速将音量设置为20";
+        let placeholder = "来来来,说点什么吧...";
         var BBBUG = new Vue({
             el: '#app',
             data() {
@@ -2563,6 +2564,11 @@
                         error() {
                             that.$prompt('请输入该房间的密码后进入', '加密房间', {
                                 confirmButtonText: '验证',
+                                showClose:false,
+                                closeOnClickModal:false,
+                                closeOnPressEscape:false,
+                                closeOnHashChange:false,
+                                center:true,
                                 showCancelButton: false,
                             }).then(function (password) {
                                 that.checkRoomPassword(room_id, password.value, function (result, msg) {
