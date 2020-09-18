@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="css/element.css">
     <link rel="stylesheet" href="//at.alicdn.com/t/font_666204_trcuv9ja6ip.css">
     <link rel="stylesheet" href="css/vue.preview.css">
-    <link rel="stylesheet" href="css/main.css?xiiiiiix111112121231x">
+    <link rel="stylesheet" href="css/main.css?1234">
     <script>
         var _hmt = _hmt || [];
         (function () {
@@ -273,8 +273,8 @@
                                 <marquee scrollamount="1" v-if="room.roomInfo.room_type==3">
                                     《{{chat_room.voice.name}}》({{chat_room.voice.part}})
                                 </marquee>
-                                <i class="icon-systemprompt_fill iconfont" @click="player.voiceBar=!player.voiceBar"
-                                    title="调整音量"></i>
+                                <i class=" iconfont" @click="player.voiceBar=!player.voiceBar"
+                                    title="调整音量" style='font-weight:normal' :style="volume==0?'color:#999':'color:#fff'" :class="volume==0?'icon-changyongtubiao-xianxingdaochu-zhuanqu-40':'icon-changyongtubiao-xianxingdaochu-zhuanqu-39'"></i>
                             </div>
                             <div class="player_name" @click="chat_room.at=chat_room.song.user" title="点击@点歌人"
                                 v-if="room.roomInfo.room_type==1">
@@ -1125,7 +1125,7 @@
                 that.$refs.audio.addEventListener("playing", function () {
                     that.nowPlaying = true;
                     that.lrcString = '歌词加载中...';
-                    that.$refs.audio.volume = localStorage.getItem('volume') ? parseFloat(parseInt(localStorage.getItem('volume')) / 100) : 0.8;
+                    that.$refs.audio.volume = parseFloat(that.volume / 100);
                     if (that.chat_room.song) {
                         that.chat_room.songPercent = parseInt(that.$refs.audio.currentTime / that.$refs.audio.duration * 100);
                     }
