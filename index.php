@@ -806,7 +806,7 @@
                     class="musicHead love" /></div>
             <div class="lockTitle">{{lockScreenData.musicString}}</div>
             <div class="lockLrc">{{lockScreenData.nowMusicLrcText}}</div>
-            <div class="copyright">BBBUG.COM音乐聊天室</div>
+            <div class="copyright" v-if="room.roomInfo">{{room.roomInfo.room_name}}</div>
         </div>
     </div>
     <script src="js/vue-2.6.10.min.js"></script>
