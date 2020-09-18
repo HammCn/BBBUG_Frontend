@@ -165,13 +165,16 @@ body {
 }
 
 .room_list .room_id {
-    font-size: 12px;
     position: absolute;
     right: 10px;
+    font-size: 12px;
     top: 10px;
+}
+.room_list .room_id span{
     background-color: #f5f5f5;
     color: #666;
     padding: 2px 5px;
+    border-radius:5px;
 }
 
 .room_list .room_icon {
@@ -332,6 +335,12 @@ body {
     -moz-animation: rotate 20s linear infinite;
     -o-animation: rotate 20s linear infinite;
     animation: rotate 20s linear infinite;
+}
+.love-fast {
+    -webkit-animation: rotate 5s linear infinite;
+    -moz-animation: rotate 5s linear infinite;
+    -o-animation: rotate 5s linear infinite;
+    animation: rotate 5s linear infinite;
 }
 
 .el-slider__button {
