@@ -1,11 +1,14 @@
+<?php
+require 'first.php';
+?>
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>BBBUG音乐聊天室</title>
+    <title><?php echo htmlspecialchars($room_title); ?></title>
     <meta charset="UTF-8">
-    <meta name='Keywords' content='划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包'>
-    <meta name='Description' content='BBBUG.COM，一个划水音乐聊天室，超多小哥哥小姐姐都在这里一起听歌、划水聊天、技术分享、表情包斗图，欢迎你的加入！'>
+    <meta name='Keywords' content="<?php echo htmlspecialchars($room_keyword); ?>">
+    <meta name='Description' content="<?php echo htmlspecialchars($room_desc); ?>">
     <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0;maximum-scale=1.0, user-scalable=no" />
     <meta name="format-detection" content="telephone=no" />
@@ -51,36 +54,31 @@
                 <div slot="header" class="clearfix">
                     <span>
                         <el-tag size="mini" type="info"
-                            style="margin: 0px 5px;color:#333;font-weight:bolder;font-size:14px;">
+                            style="margin: 0px 5px;color:#333;font-weight:bolder;font-size:14px;cursor:pointer;" :title="'房间积分: '+room.roomInfo.room_score+'分'">
                             ID:{{room.room_id}}
                         </el-tag>
                         <i class="iconfont room_icon icon-xiaoxi2" v-if="room.roomInfo.room_type==0"
-                            title="普通文字聊天房"></i>
+                            title="文字聊天房"></i>
                         <i class="iconfont room_icon icon-changyongtubiao-mianxing-61" v-if="room.roomInfo.room_type==1"
-                            title="一起听歌音乐房"></i>
+                            title="点歌音乐房"></i>
                         <i class="iconfont room_icon icon-shezhi3" v-if="room.roomInfo.room_type==2"
-                            title="听歌猜歌游戏房"></i>
-                        <i class="iconfont room_icon icon-book" v-if="room.roomInfo.room_type==3" title="听书故事相声房"></i>
+                            title="猜歌游戏房"></i>
+                        <i class="iconfont room_icon icon-book" v-if="room.roomInfo.room_type==3" title="有声故事房"></i>
                         <i class="iconfont room_icon icon-icon_voice" v-if="room.roomInfo.room_type==4"
-                            title="纯粹音乐播放器"></i>
+                            title="房主电台房"></i>
                         <b class="hideWhenScreenSmall">{{room.roomInfo.room_name}}
                             <i class="room_icon el-icon-lock" v-if="room.roomInfo.room_public==1" title="密码房间"></i></b>
-                        <el-link class="hideWhenScreenSmall" @click="doShowSettingBox"
+                        <el-link @click="doShowSettingBox"
                             v-if="room.roomInfo.room_user==userInfo.user_id || userInfo.user_admin">管理
                         </el-link>
                     </span>
                     <span style="float: right; padding: 3px 0" class="rightMenu">
                         <el-button-group style="text-align: right;">
+                            <el-button size="mini" @click="doShowRankDialog" style="color:orangered"
+                                v-html="title.rank_list" class="hideWhenScreenSmall"></el-button>
                             <el-button size="mini" @click="chat_room.dialog.showOnlineBox = true;doShowOnlineList()"
                                 v-html="'在线 (<font color=red style=\'font-weight:bolder;\'>'+chat_room.data.onlineList.length+'</font>)'">
                             </el-button>
-                            <el-button size="mini" @click="doShowQrcode" v-html="title.ios_app"
-                                class="hideWhenScreenSmall"></el-button>
-                            <el-button class="hideWhenScreenSmall" size="mini" v-html="title.invate_person"
-                                v-clipboard:copy="copyString" v-clipboard:success="onCopySuccess"></el-button>
-                            <el-button size="mini" @click="doEditMyProfile" v-html="title.my_profile"
-                                v-if="userInfo.user_id>0" class="hideWhenScreenSmall"></el-button>
-
                             <el-button size="mini" @click="doGetRoomList" style="color:orangered"
                                 v-html="title.exit_room" v-if="userInfo.user_id>0"></el-button>
                             <el-button size="mini" @click="doShowLoginBox" style="color:orangered" v-html="title.login"
@@ -89,7 +87,16 @@
                         <el-dropdown @command="handleSettingCommand">
                             <el-button size="mini" v-html="title.my_setting"></el-button>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item command="clearHistory">
+                                <el-dropdown-item command="doEditMyProfile" v-if="userInfo.user_id>0">
+                                    修改资料
+                                </el-dropdown-item>
+                                <el-dropdown-item v-clipboard:copy="copyString" v-clipboard:success="onCopySuccess">
+                                    邀请朋友
+                                </el-dropdown-item>
+                                <el-dropdown-item command="doShowQrcode" class="hideWhenScreenSmall">
+                                    穿梭手机
+                                </el-dropdown-item>
+                                <el-dropdown-item command="clearHistory" divided>
                                     清理记录
                                 </el-dropdown-item>
                                 <el-dropdown-item command="switchNotification">{{config.notification?'关闭通知':'打开通知'}}
@@ -102,9 +109,9 @@
                 </div>
                 <div class="chat_room_box">
                     <div class="chat_room_history" id="chat_room_history" @click="hideAllDialog"
-                        @scroll="scrollEvent($event)" >
+                        @scroll="scrollEvent($event)">
                         <div v-for="(item,index) in chat_room.list">
-                            <div v-if="item.type!='system'">
+                            <div v-if="item.type!='system'"  @mouseover="item.active=1" @mouseout="item.active=0">
                                 <div :class="[item.user.user_id==userInfo.user_id?'item mine':'item']">
                                     <!-- <img src="images/ajx.png" style="position: absolute;left:-4px;top:-4px;width:50px;height:50px;"/> -->
                                     <div class="head">
@@ -217,6 +224,8 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div v-if="item.time" class="time" style="cursor:pointer;" @click="doReply(item)"><div v-if="item.at && item.at.message"  >{{item.at.message.content}}</div>{{friendlyTime(item.time)}}<a style="margin-left:5px;color:orangered;pointer-events: none;" v-if="item.active">回复</a></div>
                                 </div>
                             </div>
                             <div v-if="item.type=='system'" class="system"><span
@@ -235,7 +244,7 @@
                                 </el-upload>
                             </el-button>
                             <el-button size="mini"
-                                @click="hideAllDialog();chat_room.dialog.searchImageBox=!chat_room.dialog.searchImageBox;"
+                                @click="hideAllDialog();chat_room.data.searchImageList = emojiList;chat_room.dialog.searchImageBox=true;"
                                 title="点击搜索表情">
                                 表情</el-button>
                             <el-button size="mini"
@@ -248,10 +257,22 @@
                                 @click="hideAllDialog();chat_room.dialog.searchSongBox=!chat_room.dialog.searchSongBox;doSearchSong()"
                                 title="点击打开歌曲搜索">
                                 搜索</el-button>
+                            <el-button size="mini"
+                                v-if="room.roomInfo.room_type==4 && room.roomInfo.room_user!=userInfo.user_id && room.roomInfo.room_addsong==0"
+                                @click="hideAllDialog();chat_room.dialog.searchSongBox=!chat_room.dialog.searchSongBox;doSearchSong()"
+                                title="点击打开歌曲搜索">
+                                点歌</el-button>
                             <el-button size="mini" @click="doShowSongList" v-if="room.roomInfo.room_type==1"
                                 title="当前已点的歌单列表">已点
                             </el-button>
+                            <el-button size="mini" @click="doShowSongList" v-if="room.roomInfo.room_type==4 && room.roomInfo.room_addsong==0"
+                                title="当前已点的歌单列表">已点
+                            </el-button>
                             <el-button size="mini" @click="doShowMySongList('count')" v-if="room.roomInfo.room_type==1"
+                                title="我点过的歌">
+                                我的
+                            </el-button>
+                            <el-button size="mini" @click="doShowMySongList('count')" v-if="room.roomInfo.room_type==4 && (room.roomInfo.room_user!=userInfo.user_id) && room.roomInfo.room_addsong==0"
                                 title="我点过的歌">
                                 我的
                             </el-button>
@@ -403,8 +424,8 @@
                         <el-button type="primary" @click="doSaveMyProfile">保存</el-button>
                     </span>
                 </el-dialog>
-                <el-dialog title="房间设置" :visible.sync="chat_room.dialog.editMyRoom" :modal-append-to-body='false'>
-                    <el-form status-icon>
+                <el-dialog title="房间设置" :visible.sync="chat_room.dialog.editMyRoom" :modal-append-to-body='false' top="50px">
+                    <el-form status-icon >
                         <el-form-item label="房间名称" label-width="70px">
                             <el-input size="small" autocomplete="off" placeholder=""
                                 v-model="chat_room.form.editMyRoom.room_name"></el-input>
@@ -412,6 +433,18 @@
                         <el-form-item label="房间公告" label-width="70px">
                             <el-input size="small" autocomplete="off" placeholder=""
                                 v-model="chat_room.form.editMyRoom.room_notice"></el-input>
+                        </el-form-item>
+                        <el-form-item label="二级域名" label-width="70px">
+                            <el-input size="small" autocomplete="off" placeholder="填写二级域名前缀"
+                                v-model="chat_room.form.editMyRoom.room_domain" v-if="chat_room.form.editMyRoom.room_domain_edit || !chat_room.form.editMyRoom.room_domain" >
+                                <el-button slot="prepend">
+                                    https://
+                                </el-button>
+                                <el-button slot="append">
+                                    .bbbug.com
+                                </el-button>
+                            </el-input>
+                            <div v-if="!chat_room.form.editMyRoom.room_domain_edit && chat_room.form.editMyRoom.room_domain"><a target="_blank" style="text-decoration:none;color:#666;" :href="'https://'+chat_room.form.editMyRoom.room_domain+'.bbbug.com'">https://{{chat_room.form.editMyRoom.room_domain}}.bbbug.com</a> <a style="text-decoration:none;color:orangered;cursor:pointer;" @click="chat_room.form.editMyRoom.room_domain_edit=true">修改</a></div>
                         </el-form-item>
                         <el-form-item label="房间权限">
                             <el-select size="small" v-model="chat_room.form.editMyRoom.room_public"
@@ -445,7 +478,7 @@
                                     :value="item.value"></el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="开启点歌" v-if="chat_room.form.editMyRoom.room_type==1">
+                        <el-form-item label="开启点歌" v-if="chat_room.form.editMyRoom.room_type==1 || chat_room.form.editMyRoom.room_type==4">
                             <el-select size="small" v-model="chat_room.form.editMyRoom.room_addsong"
                                 placeholder="请选择是否开启点歌" class="allLine" style="margin-left:70px;">
                                 <el-option v-for="(item,index) in chat_room.data.room_addsong" :label="item.title"
@@ -545,8 +578,11 @@
                                         <el-button v-if="room.roomInfo.room_type==1" type="warning" circle size="small"
                                             @click="doAddSong(scope.row)">点
                                         </el-button>
-                                        <el-button v-if="room.roomInfo.room_type==4" type="warning" circle size="small"
+                                        <el-button v-if="room.roomInfo.room_type==4 && (room.roomInfo.room_user==userInfo.user_id || userInfo.user_admin)" type="warning" circle size="small"
                                             @click="doPlaySong(scope.row)">播
+                                        </el-button>
+                                        <el-button v-if="room.roomInfo.room_type==4 && (room.roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)" type="warning" circle size="small"
+                                            @click="doAddSong(scope.row)">点
                                         </el-button>
                                     </span>
                                     <font color="#333">{{scope.row.name}}</font><br>
@@ -602,9 +638,9 @@
                             @click="chat_room.data.mySongListPage++;doGetMySongList(room.roomInfo.room_type==4?'recent':'count');">
                             查看更多({{chat_room.data.mySongListPage}})</el-link>
                     </span>
-                    <div class="list" v-loading="chat_room.loading.mySongBox">
-                        <el-table :data="chat_room.data.mySongList" stripe
+                    <div class="list" v-loading="chat_room.loading.mySongBox"
                             style="display:inline-block;max-height:300px;overflow-y:auto;" ref="mySongBox">
+                        <el-table :data="chat_room.data.mySongList" stripe>
                             <el-table-column>
                                 <template slot-scope="scope">
                                     <span style="float:right;">
@@ -615,7 +651,10 @@
                                             v-if="room.roomInfo.room_type==1">点
                                         </el-button>
                                         <el-button type="warning" circle size="small" @click="doPlaySong(scope.row)"
-                                            v-if="room.roomInfo.room_type==4">播
+                                            v-if="room.roomInfo.room_type==4 && room.roomInfo.room_user==userInfo.user_id">播
+                                        </el-button>
+                                        <el-button type="warning" circle size="small" @click="doAddSong(scope.row)"
+                                            v-if="room.roomInfo.room_type==4 && room.roomInfo.room_user!=userInfo.user_id">点
                                         </el-button>
                                     </span>
                                     <font color="#333">{{scope.row.name}}</font><br>
@@ -628,7 +667,7 @@
                     </div>
                 </el-popover>
                 <el-popover placement="top-start" popper-class="pickedSongBox"
-                    :title="'接下来要播放的歌曲 ('+chat_room.data.pickedSongList.length+')'" trigger="manual"
+                    :title="(room.roomInfo.room_type==1?'接下来要播放的歌曲 (':'等待房主播放的歌曲 (')+chat_room.data.pickedSongList.length+')'" trigger="manual"
                     v-model="chat_room.dialog.pickedSongBox">
                     <div class="list" v-loading="chat_room.loading.pickedSongBox">
                         <el-table :data="chat_room.data.pickedSongList" stripe style="display:inline-block;"
@@ -641,8 +680,15 @@
                                             删
                                         </el-button>
                                         <el-button :type="scope.row.user.user_id==userInfo.user_id?'warning':'success'"
-                                            circle size="small" @click="doPushSongTop(scope.row)">顶
+                                            circle size="small" @click="doPushSongTop(scope.row)" v-if="room.roomInfo.room_type==1">顶
                                         </el-button>
+                                        <el-button :type="scope.row.user.user_id==userInfo.user_id?'warning':'success'"
+                                            circle size="small" @click="doPushSongTop(scope.row)" v-if="room.roomInfo.room_type==4 && userInfo.user_id!=room.roomInfo.room_user && !userInfo.user_admin">顶
+                                        </el-button>
+                                        <el-button :type="scope.row.user.user_id==userInfo.user_id?'warning':'success'"
+                                            circle size="small" @click="doPlaySong(scope.row.song)" v-if="room.roomInfo.room_type==4 && (userInfo.user_id==room.roomInfo.room_user || userInfo.user_admin)">播
+                                        </el-button>
+
                                     </span>
                                     <font style="font-size:16px;font-weight:bolder;"
                                         :color="scope.row.user.user_id==userInfo.user_id||scope.row.at&&scope.row.at.user_id==userInfo.user_id?'orangered':'#333'">
@@ -751,13 +797,13 @@
                             <!-- <i class="room_icon el-icon-medal"></i>
                             <i class="room_icon el-icon-map-location"></i> -->
                             <div class="room_name">
-                                <i class="iconfont room_icon icon-xiaoxi2" v-if="row.room_type==0" title="普通文字聊天房"></i>
+                                <i class="iconfont room_icon icon-xiaoxi2" v-if="row.room_type==0" title="文字聊天房"></i>
                                 <i class="iconfont room_icon icon-changyongtubiao-mianxing-61" v-if="row.room_type==1"
-                                    title="一起听歌音乐房"></i>
-                                <i class="iconfont room_icon icon-shezhi3" v-if="row.room_type==2" title="听歌猜歌游戏房"></i>
-                                <i class="iconfont room_icon icon-book" v-if="row.room_type==3" title="听书故事相声房"></i>
+                                    title="点歌音乐房"></i>
+                                <i class="iconfont room_icon icon-shezhi3" v-if="row.room_type==2" title="猜歌游戏房"></i>
+                                <i class="iconfont room_icon icon-book" v-if="row.room_type==3" title="有声故事房"></i>
                                 <i class="iconfont room_icon icon-icon_voice" v-if="row.room_type==4"
-                                    title="纯粹音乐播放器"></i>
+                                    title="房主电台房"></i>
                                 {{ row.room_name }}
                                 <font color=orangered style="font-weight: bolder;" v-if="row.room_online>0">
                                     ({{row.room_online}})</font>
@@ -779,7 +825,54 @@
                     </div>
                 </el-drawer>
                 <!-- 房间列表结束 -->
-
+                <el-dialog title="周榜" :visible.sync="chat_room.dialog.showRankList" :modal-append-to-body='false'>
+                    <div style="margin-top: 20px;position: absolute;right: 20px;top: 0px;">
+                        <el-radio-group v-model="chat_room.data.rankType" size="mini" @change="doGetRankList">
+                            <el-radio-button label="人气"></el-radio-button>
+                            <el-radio-button label="点歌"></el-radio-button>
+                            <el-radio-button label="舔狗"></el-radio-button>
+                            <el-radio-button label="发言"></el-radio-button>
+                            <el-radio-button label="斗图"></el-radio-button>
+                            <el-radio-button label="切歌"></el-radio-button>
+                            <el-radio-button label="顶歌"></el-radio-button>
+                        </el-radio-group>
+                    </div>
+                    <div style="overflow-x:hidden;overflow-y: auto;max-height:300px;" v-loading="chat_room.loading.showRankList" ref="showRankList">
+                        <div v-for="(item,index) in chat_room.data.showRankList" v-key="item" class="rank_user">
+                            <div class="rankNum" v-if="index==0 && chat_room.data.rankType=='人气'" style="color:orangered;font-size:14px;">人气王</span></div>
+                            <div class="rankNum" v-if="index==0 && chat_room.data.rankType=='点歌'" style="color:orangered;font-size:14px;">情歌王</span></div>
+                            <div class="rankNum" v-if="index==0 && chat_room.data.rankType=='舔狗'" style="color:orangered;font-size:14px;">老舔狗</span></div>
+                            <div class="rankNum" v-if="index==0 && chat_room.data.rankType=='发言'" style="color:orangered;font-size:14px;">大水逼</span></div>
+                            <div class="rankNum" v-if="index==0 && chat_room.data.rankType=='斗图'" style="color:orangered;font-size:14px;">风骚王</span></div>
+                            <div class="rankNum" v-if="index==0 && chat_room.data.rankType=='切歌'" style="color:orangered;font-size:14px;">山歌王</span></div>
+                            <div class="rankNum" v-if="index==0 && chat_room.data.rankType=='顶歌'" style="color:orangered;font-size:14px;">千斤顶</span></div>
+                            <div class="rankNum" v-if="index<5 && index>0" style="color:orangered;">No.<span>{{index+1}}</span></div>
+                            <div class="rankNum" v-if="index>=5 && index<9" style="color:#333;">No.<span>{{index+1}}</span></div>
+                            <div class="rankNum" v-if="index>=9" style="color:#999;font-size:14px;">No.<span>{{index+1}}</span></div>
+                            <el-image style="width: 40px; height: 40px;position:absolute;left:50px;top:0;" :src="getImageUrl(item.user_head)||'images/nohead.jpg'" @click="doGetUserInfoById(item.user_id)"
+                                class='headimg'>
+                            </el-image>
+                            <div style="margin-left:100px;">
+                                <div class="user_name">{{urldecode(item.user_name)}}</div>
+                                <div class="user_remark">{{urldecode(item.user_remark)}}</div>
+                            </div>
+                            <span class="number" v-if="chat_room.data.rankType=='人气'">收到{{item.user_songrecv}}首</span>
+                            <span class="number" v-if="chat_room.data.rankType=='点歌'">点歌{{item.user_song}}首</span>
+                            <span class="number" v-if="chat_room.data.rankType=='舔狗'">送出{{item.user_songsend}}首</span>
+                            <span class="number" v-if="chat_room.data.rankType=='发言'">说{{item.user_chat}}句</span>
+                            <span class="number" v-if="chat_room.data.rankType=='斗图'">发{{item.user_img}}张</span>
+                            <span class="number" v-if="chat_room.data.rankType=='切歌'">被切{{item.user_pass}}首</span>
+                            <span class="number" v-if="chat_room.data.rankType=='顶歌'">顶了{{item.user_push}}首</span>
+                        </div>
+                    </div>
+                    <div class="giftTips" v-if="chat_room.data.rankType=='人气'">* 听说长得好看的才会收到很多人送的歌</div>
+                    <div class="giftTips" v-if="chat_room.data.rankType=='点歌'">* 不知道歌好不好听，反正点的倒是挺多的...</div>
+                    <div class="giftTips" v-if="chat_room.data.rankType=='舔狗'">* 不知道怎么想的，看着好看的就想给Ta送首歌...</div>
+                    <div class="giftTips" v-if="chat_room.data.rankType=='发言'">* 说这么多话的是大水逼无疑了...</div>
+                    <div class="giftTips" v-if="chat_room.data.rankType=='斗图'">* 听说表情包越多的人，心里越寂寞？</div>
+                    <div class="giftTips" v-if="chat_room.data.rankType=='切歌'">* 点的歌是有多难听,大家都不喜欢？</div>
+                    <div class="giftTips" v-if="chat_room.data.rankType=='顶歌'">* 我要听的,现在就要。</div>
+                </el-dialog>
                 <!-- 创建房间开始 -->
                 <el-dialog :visible.sync="room_create.showPage" :modal-append-to-body='false' title="创建一个你的私人房间">
                     <el-form :model="room_create.form" ref="room_create_form" label-width="60px">
@@ -865,7 +958,10 @@
         <div class="lockscreen" v-if="lockScreenData.ifLockSystem">
             <img :src="lockScreenData.musicHead" class="lockBg" />
             <div class="lockImg"><img v-if="lockScreenData.musicHead" :src="lockScreenData.musicHead"
-                    class="musicHead love" /></div>
+                    class="musicHead love" />
+                <div class="lockCover"></div>
+                <div class="lockBar"></div>
+            </div>
             <div class="lockTitle">{{lockScreenData.musicString}}</div>
             <div class="lockLrc">{{lockScreenData.nowMusicLrcText}}</div>
             <div class="copyright" v-if="room.roomInfo">{{room.roomInfo.room_name}}</div>
@@ -896,6 +992,7 @@
                         type: 'info',
                         timer: null,
                     },
+                    emojiList:[],
                     guestUserInfo: {
                         myRoom: false,
                         user_admin: false,
@@ -959,6 +1056,7 @@
                         my_profile: "我的",
                         ios_app: "手机版",
                         exit_room: "换房",
+                        rank_list:'排行榜',
                         login: "登录"
                     },
                     chat_room: {
@@ -969,9 +1067,10 @@
                         voice: false,
                         songPercent: 0,
                         list: [],
-                        history_key: "temp2_",
+                        history_key: "history_20200919_",
 
                         dialog: {
+                            showRankList:false,
                             editMyProfile: false,
                             editMyRoom: false,
                             searchImageBox: false,
@@ -981,15 +1080,20 @@
                             showUserProfile: false,
                             mySongBox: false,
                             searchVoiceBox: false,
+                            showRankList:false,
+
                         },
                         loading: {
-                            searchImageBox: true,
+                            showRankList:true,
+                            searchImageBox: false,
                             searchSongBox: true,
                             pickedSongBox: true,
                             mySongBox: true,
                             searchVoiceBox: true,
                         },
                         data: {
+                            rankType:'',
+                            showRankList:[],
                             searchImageList: [],
                             searchSongList: [],
                             pickedSongList: [],
@@ -1052,9 +1156,11 @@
                                 room_robot: 0,
                                 room_public: 0,
                                 room_playone: 0,
+                                room_domain:"",
+                                room_domain_edit:false,
                             },
                             searchImageBox: {
-                                keyword: "哈哈哈"
+                                keyword: ""
                             },
                             searchSongBox: {
                                 keyword: ""
@@ -1068,7 +1174,7 @@
                     },
                     room: {
                         search_id: "",
-                        room_id: 0,
+                        room_id: <?php echo $room_id; ?>,
                         roomInfo: false,
                         list: [],
                         showDialog: false,
@@ -1077,19 +1183,19 @@
                         cancelSearchImage: false,
                         typeList: [{
                             value: 0,
-                            title: "普通文字聊天房"
+                            title: "文字聊天房"
                         }, {
                             value: 1,
-                            title: "一起听歌音乐房"
+                            title: "点歌音乐房"
                         }, {
                             value: 2,
-                            title: "听歌猜歌游戏房"
+                            title: "猜歌游戏房"
                         }, {
                             value: 3,
-                            title: "听书故事相声房"
+                            title: "有声故事房"
                         }, {
                             value: 4,
-                            title: "纯粹音乐播放器"
+                            title: "房主电台房"
                         }],
                         form: {
                             room_name: "",
@@ -1126,16 +1232,24 @@
             mounted() {
                 let that = this;
                 document.addEventListener('paste', that.getClipboardFiles);
-
-                that.$alert('欢迎来到BBBBUG聊天室', '房间公告', {
+                that.emojiList = [];
+                for(let i=1;i<=30;i++){
+                    that.emojiList.push('https://bbbug.com/images/emoji/'+i+'.png');
+                }
+                that.chat_room.data.searchImageList = that.emojiList;
+                that.$alert('<?php echo $room_notice; ?>', '房间公告', {
                     confirmButtonText: '确定',
                     callback: function () {
                         that.initAudioControllers();
                         that.callParentFunction('noticeClicked', 'success');
                     }
                 });
-
-                that.volume = parseInt(localStorage.getItem('volume') || 50);
+                that.volume = localStorage.getItem('volume') == null ? 50 : parseInt(localStorage.getItem('volume'));
+                if (that.volume == 0) {
+                    that.config.playMusic = false;
+                } else {
+                    that.config.playMusic = true;
+                }
                 that.request({
                     url: "system/time",
                     success(res) {
@@ -1147,7 +1261,7 @@
                 window.onkeydown = function (e) {
                     switch (e.keyCode) {
                         case 27:
-                            if (that.room.roomInfo.room_type == 1 && that.chat_room.song) {
+                            if ((that.room.roomInfo.room_type == 1 || that.room.roomInfo.room_type == 4) && that.chat_room.song) {
                                 that.lockScreenData.ifLockSystem = !that.lockScreenData.ifLockSystem;
                                 if (that.lockScreenData.ifLockSystem) {
                                     document.title = '音乐播放器';
@@ -1163,29 +1277,25 @@
                 that.ctrlEnabled = localStorage.getItem('ctrlEnable') == 'ctrl_enter' ? true : false;
                 that.login.form.user_account = localStorage.getItem('user_account') || '';
                 that.baseData.access_token = localStorage.getItem('access_token') || '';
-                let room_id = that.getRoomIdFromUrl();
-                if (room_id) {
-                    localStorage.setItem('room_id', room_id);
-                    location.replace("/");
-                    return;
+
+                if(that.room.room_id == 888){
+                    room_id = localStorage.getItem('room_id');
+                    if(room_id){
+                        that.room.room_id = parseInt(room_id);
+                    }
                 }
-                room_id = parseInt(localStorage.getItem('room_id'));
-                if (!room_id) {
-                    room_id = 888;
-                }
-                that.room.room_id = room_id;
                 if (that.baseData.access_token) {
                     that.getMyInfo(function (result) {
                         if (result) {
-                            that.doJoinRoomById(room_id);
+                            that.doJoinRoomById(that.room.room_id);
                         } else {
                             that.doLogout();
-                            that.doJoinRoomById(room_id);
+                            that.doJoinRoomById(that.room.room_id);
                         }
                     });
                 } else {
                     that.doLogout();
-                    that.doJoinRoomById(room_id);
+                    that.doJoinRoomById(that.room.room_id);
                 }
 
             },
@@ -1194,7 +1304,54 @@
                 that.$previewRefresh();
             },
             methods: {
-                doContextMenu(e){
+                doGetRankList() {
+                    var that = this;
+                    that.chat_room.loading.showRankList = true;
+                    let rankType = 'songrecv';
+                    console.log(that.chat_room.data.rankType);
+                    switch (that.chat_room.data.rankType) {
+                        case '发言':
+                            rankType = 'chat';
+                            break;
+                        case '斗图':
+                            rankType = 'img';
+                            break;
+                        case '点歌':
+                            rankType = 'song';
+                            break;
+                        case '切歌':
+                            rankType = 'pass';
+                            break;
+                        case '顶歌':
+                            rankType = 'push';
+                            break;
+                        case '舔狗':
+                            rankType = 'songsend';
+                            break;
+                        case '人气':
+                            rankType = 'songrecv';
+                            break;
+                        default:
+                    }
+
+                    that.request({
+                        url: "user/getRankList",
+                        data: {
+                            type: rankType
+                        },
+                        success:function(res){
+                            that.$refs.showRankList.scrollTop =0;
+                            that.chat_room.data.showRankList = res.data;
+                            that.chat_room.loading.showRankList = false;
+                        }
+                    });
+                },
+                doShowRankDialog() {
+                    this.chat_room.data.rankType = '人气';
+                    this.chat_room.dialog.showRankList = true;
+                    this.doGetRankList();
+                },
+                doContextMenu(e) {
                     return false;
                 },
                 doShowQrcode() {
@@ -1272,8 +1429,14 @@
                 doVolumeChanged() {
                     let that = this;
                     that.volume = parseInt(that.volume);
+                    if (that.volume == 0) {
+                        that.config.playMusic = false;
+                    } else {
+                        that.config.playMusic = true;
+                    }
                     that.$refs.audio.volume = parseFloat(that.volume / 100);
                     localStorage.setItem('volume', that.volume);
+                    localStorage.setItem('volume_old', that.volume);
                     clearTimeout(that.player.volumeChangeTimer);
                     that.player.volumeChangeTimer = setTimeout(function () {
                         that.player.voiceBar = false;
@@ -1297,6 +1460,14 @@
                         this.ctrlEnabled = true;
                     }
                     localStorage.setItem('ctrlEnable', cmd);
+                },
+                doReply(item){
+                    let that = this;
+                    that.chat_room.at = {
+                        user_id:item.user.user_id,
+                        user_name:item.user.user_name,
+                        message:item
+                    };
                 },
                 commandUserHead(cmd) {
                     let that = this;
@@ -1421,7 +1592,6 @@
                         if (result) {
                             localStorage.setItem('room_id', that.room.room_id);
                             that.initWebsocket();
-                            that.doSearchImage();
                             that.doSearchSong();
                             if (that.userInfo.user_needmotify && that.userInfo.user_app == 1) {
                                 that.$confirm('完善资料并修改密码,下次就可以直接用密码登录啦!', '资料待完善', {
@@ -1475,14 +1645,21 @@
                     that.audioUrl = "";
                     that.chat_room.song = null;
                     that.lrcString = '歌词加载中...';
-                    that.copyString = '欢迎来' + that.room.roomInfo.room_name + "一起听歌聊天呀:\n" + location.href + "#" + that.room.room_id;
+                    that.copyString = '欢迎来' + that.room.roomInfo.room_name + "一起听歌聊天呀:\n" + location.href +  that.room.room_id;
+                    if(that.room.roomInfo.room_domain && that.room.roomInfo.room_domainstatus){
+                        if(location.href.indexOf('bbbug.com')<0){
+                            //使用的独立域名
+                            that.copyString = '欢迎来' + that.room.roomInfo.room_name + "一起听歌聊天呀:\n" +location.href;
+                        }else{
+                            that.copyString = '欢迎来' + that.room.roomInfo.room_name + "一起听歌聊天呀:\nhttps://" + that.room.roomInfo.room_domain+".bbbug.com";
+                        }
+                    }
                     that.chat_room.songPercent = 0;
                     that.$refs.audio.currentTime = 0;
                 },
                 audioPlaying() {
                     let that = this;
                     console.log('Playing');
-                    that.$refs.audio.volume = parseFloat(that.volume / 100);
                     that.nowPlaying = true;
                     that.lrcString = '歌词加载中...';
                     that.$refs.audio.volume = parseFloat(that.volume / 100);
@@ -1585,7 +1762,7 @@
                     if (that.$refs.audio.duration > 0 && that.$refs.audio.duration != NaN) {
                         that.chat_room.songPercent = parseInt(that.$refs.audio.currentTime / that.$refs.audio.duration * 100);
                         let lrcText = '';
-                        if (that.room.roomInfo.room_type != 1 && that.room.roomInfo.room_type != 2) {
+                        if (that.room.roomInfo.room_type != 1 && that.room.roomInfo.room_type != 2 && that.room.roomInfo.room_type != 4) {
                             that.lrcString = '';
                             return false;
                         }
@@ -1605,6 +1782,8 @@
                                 that.lockScreenData.nowMusicLrcText = lrcText;
                                 return;
                             }
+                        } else {
+                            console.log('没有读取到歌词')
                         }
                         that.lrcString = '';
                     }
@@ -1674,6 +1853,9 @@
                 },
                 addSystemMessage(msg, color = '#999', bgColor = '#eee') {
                     let that = this;
+                    if (that.chat_room.list.length > 100) {
+                        that.chat_room.list.shift();
+                    }
                     that.chat_room.list.push({
                         type: "system",
                         content: msg,
@@ -1730,7 +1912,15 @@
                             }
                             that.room.roomInfo = res.data;
                             that.addSystemMessage(res.data.room_notice ? res.data.room_notice : ('欢迎来到' + res.data.room_name + '!'));
-                            that.copyString = '欢迎来' + res.data.room_name + "一起听歌聊天呀:\n" + location.href + "#" + that.room.room_id;
+                            that.copyString = '欢迎来' + that.room.roomInfo.room_name + "一起听歌聊天呀:\n" + location.href +  that.room.room_id;
+                            if(that.room.roomInfo.room_domain && that.room.roomInfo.room_domainstatus){
+                                if(location.href.indexOf('bbbug.com')<0){
+                                    //使用的独立域名
+                                    that.copyString = '欢迎来' + that.room.roomInfo.room_name + "一起听歌聊天呀:\n" +location.href;
+                                }else{
+                                    that.copyString = '欢迎来' + that.room.roomInfo.room_name + "一起听歌聊天呀:\nhttps://" + that.room.roomInfo.room_domain+".bbbug.com";
+                                }
+                            }
                             document.title = res.data.room_name;
                             that.doShowOnlineList();
                             if (that.websocket.connection) {
@@ -1747,10 +1937,14 @@
                         },
                         error(res) {
                             that.$message.error(res.msg);
-                            localStorage.removeItem('room_id');
-                            setTimeout(function () {
-                                that.do_room_return_to_room();
-                            }, 3000);
+                            if(res.code==301){
+                                that.$alert(res.msg, '房间封禁', {
+                                    confirmButtonText: '确定',
+                                    callback: function () {
+                                        that.doJoinRoomById(888);
+                                    }
+                                });
+                            }
                             if (callback) {
                                 callback(false);
                             }
@@ -1782,26 +1976,26 @@
                                 that.websocket.isConnected = true;
                                 that.websocket.hardStop = false;
                                 that.doWebsocketHeartBeat();
-                                // that.chat_room.list.push({
-                                //     desc: "聊天室支持第三方接入啦,快来给你的网站接入一个自己的音乐聊天室吧>>>",
-                                //     img: "logo.png",
-                                //     key: "edc937ec77f8a6e786c1e1c5c9288f21c0316db5883754",
-                                //     link: "https://doc.bbbug.com/2811812.html",
-                                //     sha: "cbe2db8e9a6bad851cb4b94540a583c3bbf5ab78",
-                                //     title: "BBBUG聊天室第三方接入文档",
-                                //     type: "link",
-                                //     user: {
-                                //         app_id: 1,
-                                //         app_name: "BBBUG",
-                                //         app_url: "https://bbbug.com",
-                                //         user_admin: true,
-                                //         user_head: "https://api.bbbug.com/uploads/thumb/image/20200828/7e9ac63489f863a2e690fdb74931565b.jpg",
-                                //         user_id: 1,
-                                //         user_sex: 0,
-                                //         user_name: "机器人",
-                                //         user_remark: "别@我,我只是个测试帐号",
-                                //     }
-                                // });
+                                that.chat_room.list.push({
+                                    desc: "聊天室已支持绑定房间二级域名和第三方独立域名,快来看看吧>>>",
+                                    img: "logo.png",
+                                    key: "edc937ec77f8a6e786c1e1c5c9288f21c0316db5883754",
+                                    link: "https://doc.bbbug.com/2883813.html",
+                                    sha: "cbe2db8e9a6bad851cb4b94540a583c3bbf5ab78",
+                                    title: "重要更新",
+                                    type: "link",
+                                    user: {
+                                        app_id: 1,
+                                        app_name: "BBBUG",
+                                        app_url: "https://bbbug.com",
+                                        user_admin: true,
+                                        user_head: "https://api.bbbug.com/uploads/thumb/image/20200828/7e9ac63489f863a2e690fdb74931565b.jpg",
+                                        user_id: 1,
+                                        user_sex: 0,
+                                        user_name: "机器人",
+                                        user_remark: "别@我,我只是个测试帐号",
+                                    }
+                                });
                                 // that.chat_room.list.push({
                                 //     key: "edc937ec77f8a6e786c1e1c5c9288f21c0316db5883754",
                                 //     sha: "cbe2db8e9a6bad851cb4b94540a583c3bbf5ab78",
@@ -1840,6 +2034,24 @@
                         that.config.lockScreen = true;
                     }
                 },
+                friendlyTime: function(time) {
+                    var now = parseInt(Date.parse(new Date()) / 1000);
+                    if (now - time <= 60) {
+                        return '刚刚';
+                    } else if (now - time > 60 && now - time <= 3600) {
+                        return parseInt((now - time) / 60) + '分钟前'
+                    } else if (now - time > 3600 && now - time <= 86400) {
+                        return parseInt((now - time) / 3600) + '小时前'
+                    } else if (now - time > 86400 && now - time <= 86400 * 7) {
+                        return parseInt((now - time) / 86400) + '天前'
+                    } else if (now - time > 86400 * 7 && now - time <= 86400 * 30) {
+                        return parseInt((now - time) / 86400 / 7) + '周前'
+                    } else if (now - time > 86400 * 30 && now - time <= 86400 * 30 * 12) {
+                        return parseInt((now - time) / 86400 / 30) + '月前'
+                    } else {
+                        return parseInt((now - time) / 86400 / 365) + '年前'
+                    }
+                },
                 messageController(data) {
                     let that = this;
                     try {
@@ -1847,11 +2059,12 @@
                         if (that.chat_room.list.length > 100) {
                             that.chat_room.list.shift();
                         }
+                        obj.time = parseInt(new Date().valueOf()/1000);
                         switch (obj.type) {
                             case 'text':
                                 if (obj.user.user_id == that.userInfo.user_id) {
                                     for (let i = that.chat_room.list.length - 1; i >= 0; i--) {
-                                        if (that.chat_room.list[i].type == 'text' && that.chat_room.list[i].sha == 'loading') {
+                                        if (that.chat_room.list[i].sha == 'loading') {
                                             that.chat_room.list.splice(i, 1);
                                             break;
                                         }
@@ -1906,6 +2119,14 @@
                                 that.saveMessageHistory();
                                 break;
                             case 'link':
+                                if (obj.user.user_id == that.userInfo.user_id) {
+                                    for (let i = that.chat_room.list.length - 1; i >= 0; i--) {
+                                        if (that.chat_room.list[i].sha == 'loading') {
+                                            that.chat_room.list.splice(i, 1);
+                                            break;
+                                        }
+                                    }
+                                }
                                 for (let i = 0; i < that.chat_room.list.length; i++) {
                                     if (that.chat_room.list[i].key == obj.key) {
                                         that.chat_room.list.splice(i, 1);
@@ -1919,6 +2140,17 @@
                             case 'img':
                             case 'system':
                             case 'jump':
+                                if (obj.user.user_id == that.userInfo.user_id) {
+                                    for (let i = that.chat_room.list.length - 1; i >= 0; i--) {
+                                        if (that.chat_room.list[i].sha == 'loading') {
+                                            that.chat_room.list.splice(i, 1);
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (that.chat_room.list.length > 100) {
+                                    that.chat_room.list.shift();
+                                }
                                 that.chat_room.list.push(obj);
                                 that.saveMessageHistory();
                                 break;
@@ -2115,10 +2347,29 @@
                                     }
                                 }
                             }
-                            that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\n" + location.href + "#" + that.room.room_id;
+                            that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\n" + location.href + that.room.room_id;
+                            if(that.room.roomInfo.room_domain && that.room.roomInfo.room_domainstatus){
+                                if(location.href.indexOf('bbbug.com')<0){
+                                    //使用的独立域名
+                                    that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\n" +location.href;
+                                }else{
+                                    that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\nhttps://" + that.room.roomInfo.room_domain+".bbbug.com";
+                                }
+                            }
                             break;
                         case 2:
                             that.addSystemTips("仔细听,猜猜是什么歌曲(直接在聊天框输入答案发送即可)");
+                        case 4:
+                            that.getMusicLrc();
+                            that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\n" + location.href + that.room.room_id;
+                            if(that.room.roomInfo.room_domain && that.room.roomInfo.room_domainstatus){
+                                if(location.href.indexOf('bbbug.com')<0){
+                                    //使用的独立域名
+                                    that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\n" +location.href;
+                                }else{
+                                    that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\nhttps://" + that.room.roomInfo.room_domain+".bbbug.com";
+                                }
+                            }
                     }
 
                 },
@@ -2154,6 +2405,12 @@
                 handleSettingCommand(cmd) {
                     let that = this;
                     switch (cmd) {
+                        case 'doEditMyProfile':
+                            that.doEditMyProfile();
+                            break;
+                        case 'doShowQrcode':
+                            that.doShowQrcode();
+                            break;
                         case 'clearHistory':
                             that.clearHistory();
                             break;
@@ -2186,8 +2443,9 @@
                     that.config.playMusic = !that.config.playMusic;
                     if (that.config.playMusic) {
                         that.addSystemTips('音乐已打开');
-                        that.volume = 50;
+                        that.volume = parseInt(localStorage.getItem('volume_old')) || 50;
                         localStorage.setItem('volume', that.volume);
+                        localStorage.setItem('volume_old', that.volume);
                         that.$refs.audio.volume = parseFloat(that.volume / 100);
                     } else {
                         that.addSystemTips('音乐已静音');
@@ -2317,6 +2575,7 @@
                             page: that.chat_room.data.mySongListPage
                         },
                         success(res) {
+                            that.$refs.mySongBox.scrollTop =0;
                             that.chat_room.loading.mySongBox = false;
                             that.chat_room.data.mySongList = res.data;
                             if (that.chat_room.data.mySongListPage > 1) {
@@ -2391,6 +2650,7 @@
                 },
                 doPlaySong(row) {
                     let that = this;
+                    console.log(row);
                     that.chat_room.form.pickSong = row;
                     that.request({
                         url: "song/playSong",
@@ -2400,13 +2660,13 @@
                         },
                         success(res) {
                             that.$message.success(res.msg);
+                            that.doSongListUpdate();
                         }
                     });
                 },
                 doSearchImage() {
                     let that = this;
                     if (!that.chat_room.form.searchImageBox.keyword) {
-                        that.chat_room.loading.searchImageBox = true;
                         return;
                     }
                     that.chat_room.loading.searchImageBox = true;
@@ -2452,6 +2712,8 @@
                         success(res) {
                             that.$message.success(res.msg);
                             that.addSystemTips('你选择了不喜欢这首歌,已自动静音,下首歌自动开启音乐.');
+                            that.volume = 0;
+                            that.config.playMusic = false;
                             that.$refs.audio.volume = 0;
                         }
                     });
@@ -2627,6 +2889,8 @@
                     that.chat_room.form.editMyRoom.room_robot = that.room.roomInfo.room_robot;
                     that.chat_room.form.editMyRoom.room_public = that.room.roomInfo.room_public;
                     that.chat_room.form.editMyRoom.room_playone = that.room.roomInfo.room_playone;
+                    that.chat_room.form.editMyRoom.room_domain = that.room.roomInfo.room_domain;
+                    that.chat_room.form.editMyRoom.room_domain_edit = that.room.roomInfo.room_domain ? false: true;
                     that.chat_room.form.editMyRoom.room_password = '';
                     that.chat_room.dialog.editMyRoom = true;
                 },
@@ -2653,9 +2917,15 @@
                                 return;
                             } else {
                                 that.volume = volume;
+                                if (that.volume == 0) {
+                                    that.config.playMusic = false;
+                                } else {
+                                    that.config.playMusic = true;
+                                }
                                 that.$refs.audio.volume = parseFloat(volume / 100);
                                 this.addSystemTips("音量已经设置为" + volume + "%");
                                 localStorage.setItem('volume', volume);
+                                localStorage.setItem('volume_old', volume);
                                 that.chat_room.message = '';
                                 return;
                             }
@@ -2682,10 +2952,23 @@
                         success(res) {
                             that.chat_room.message = '';
                             that.chat_room.at = false;
+
+                            for (let i = that.chat_room.list.length - 1; i >= 0; i--) {
+                                if (that.chat_room.list[i].sha == 'loading') {
+                                    that.chat_room.list.splice(i, 1);
+                                    break;
+                                }
+                            }
                         },
                         error(res) {
                             that.$message.error(res.msg);
                             that.chat_room.message = msg;
+                            for (let i = that.chat_room.list.length - 1; i >= 0; i--) {
+                                if (that.chat_room.list[i].sha == 'loading') {
+                                    that.chat_room.list.splice(i, 1);
+                                    break;
+                                }
+                            }
                         }
                     });
                 },
@@ -2743,44 +3026,56 @@
                             that.room.roomInfo = room;
                             that.doGetRoomData();
                         },
-                        error() {
-                            that.$prompt('请输入该房间的密码后进入', '加密房间', {
-                                confirmButtonText: '验证',
-                                showClose: false,
-                                closeOnClickModal: false,
-                                closeOnPressEscape: false,
-                                closeOnHashChange: false,
-                                center: true,
-                                showCancelButton: false,
-                            }).then(function (password) {
-                                that.checkRoomPassword(room_id, password.value, function (result, msg) {
-                                    if (result) {
-                                        localStorage.setItem('room_id', room_id);
-                                        that.lrcString = '';
-                                        that.lockScreenData.nowMusicLrcText = '';
-                                        that.doGetRoomData();
-                                    } else {
-                                        if (that.room.roomInfo) {
-                                            that.$alert(msg, '密码错误', {
-                                                confirmButtonText: '确定',
-                                                callback: function () { }
-                                            });
-                                        } else {
-                                            that.$confirm(msg, '密码错误', {
-                                                confirmButtonText: '重试',
-                                                cancelButtonText: '去大厅',
-                                                type: 'warning'
-                                            }).then(function () {
-                                                that.doJoinRoomById(room_id);
-                                            }).catch(function () {
-                                                that.doJoinRoomById(888);
-                                            });
+                        error(res) {
+                            if(res.code==301){
+                                that.$alert(res.msg, '房间封禁', {
+                                    confirmButtonText: '确定',
+                                    callback: function () {
+                                        if(!that.room.roomInfo){
+                                            that.doJoinRoomById(888);
                                         }
-
                                     }
                                 });
-                            }).catch(function (e) {
-                            });
+                            }else{
+                                that.$prompt('请输入该房间的密码后进入', '加密房间', {
+                                    confirmButtonText: '验证',
+                                    showClose: false,
+                                    closeOnClickModal: false,
+                                    closeOnPressEscape: false,
+                                    closeOnHashChange: false,
+                                    center: true,
+                                    showCancelButton: that.room.roomInfo ? true : false,
+                                }).then(function (password) {
+                                    that.checkRoomPassword(room_id, password.value, function (result, msg) {
+                                        if (result) {
+                                            that.room.room_id = room_id;
+                                            localStorage.setItem('room_id', room_id);
+                                            that.lrcString = '';
+                                            that.lockScreenData.nowMusicLrcText = '';
+                                            that.doGetRoomData();
+                                        } else {
+                                            if (that.room.roomInfo) {
+                                                that.$alert(msg, '密码错误', {
+                                                    confirmButtonText: '确定',
+                                                    callback: function () { }
+                                                });
+                                            } else {
+                                                that.$confirm(msg, '密码错误', {
+                                                    confirmButtonText: '重试',
+                                                    cancelButtonText: '去大厅',
+                                                    type: 'warning'
+                                                }).then(function () {
+                                                    that.doJoinRoomById(room_id);
+                                                }).catch(function () {
+                                                    that.doJoinRoomById(888);
+                                                });
+                                            }
+
+                                        }
+                                    });
+                                }).catch(function (e) {
+                                });
+                            }
                         },
                     });
                 },

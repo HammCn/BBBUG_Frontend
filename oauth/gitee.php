@@ -32,10 +32,10 @@ if (!empty($_GET['code'])) {
             $arr = json_decode($result['body'], true);
             if ($arr['code'] == 200) {
                 $access_token = $arr['data']['access_token'];
-                header('Location: /third/?access_token=' . $access_token);
+                header('Location: ' . urldecode($_COOKIE['localhost']) . '/third/?access_token=' . $access_token);
                 die;
             }
         }
     }
 }
-header('Location: /');
+header('Location: ' . (urldecode($_COOKIE['localhost']) || '/'));

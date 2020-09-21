@@ -29,7 +29,7 @@ html {
     -khtml-user-select:none; /*早期浏览器*/
     user-select:none;
 }
-.chat_room_history .content, .chat_room_history .system span,.chat_room_history .item .user{
+.chat_room_history .content, .chat_room_history .system span,.chat_room_history .item .user,input,textarea{
     -moz-user-select:text; /*火狐*/
     -webkit-user-select:text; /*webkit浏览器*/
     -ms-user-select:text; /*IE10*/
@@ -86,7 +86,12 @@ body {
 ::-webkit-scrollbar-corner {
     background: transparent;
 }
-
+.giftTips{
+    font-size: 12px;
+    color: #999;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
 .room_list {
     position: fixed;
     right: 20px;
@@ -235,7 +240,7 @@ body {
     z-index: 999;
     background-color: #fff;
     text-align: center;
-    padding-top: 150px;
+    padding-top: 50px;
 }
 
 .lockBg {
@@ -298,11 +303,15 @@ body {
     left: 0;
     top: 0;
 }
-
+.lockImg{
+    display: inline-block;
+    position: relative;
+    padding: 30px;
+}
 .lockImg img {
     border-radius: 100%;
-    width: 150px;
-    height: 150px;
+    width: 300px;
+    height: 300px;
 }
 
 .lockTitle {
@@ -317,6 +326,28 @@ body {
     margin-top: 30px;
     color: white;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+}
+.lockCover{
+    background: transparent url(../images/player_bg.png);
+    background-size: 360px 360px;
+    width: 360px;
+    height: 360px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+.lockBar{
+    background: transparent url(../images/player_bar.png) top left no-repeat;
+    width: 150px;
+    background-size: 150px auto;
+    height: 400px;
+    position: absolute;
+    left: -20px;
+    right: 0;
+    top: -50px;
+    bottom: 0;
 }
 .lockscreen .copyright{
     position: absolute;
@@ -512,6 +543,60 @@ body {
     height: 38px;
     border: 1px solid #eee;
     cursor: pointer;
+}
+
+
+.rank_user {
+    margin-bottom: 20px;
+    vertical-align: middle;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+    height:40px;
+    margin-top:20px;
+}
+
+.rank_user img {
+    border-radius: 100%;
+    width: 38px;
+    height: 38px;
+    border: 1px solid #eee;
+    cursor: pointer;
+}
+
+.rank_user * {
+    vertical-align: middle;
+}
+.rank_user .number{
+    position: absolute;
+    right:10px;
+    top:0px;
+}
+.rank_user .user_name{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size:16px;
+    color:#333;
+}
+.rank_user .user_remark{
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size:12px;
+    color:#999;
+}
+
+.rank_user .rankNum{
+    font-size:16px;
+    color:#333;
+    font-weight:bold;
+    position: absolute;
+    left:0;
+    top:8px;
 }
 
 .online_user * {
@@ -763,6 +848,35 @@ audio {
 .chat_room_history .item {
     position: relative;
     margin: 20px 30px;
+    padding-bottom:20px;
+}
+.chat_room_history .item .time{
+    font-size:12px;
+    color:#ccc;
+    text-align:left;
+    margin:0px 50px;
+    margin-top:-10px;
+    padding-bottom:20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position:absolute;
+    left:0;
+    max-width:40%;
+}
+.chat_room_history .item .time div{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size:14px;
+    color:#999;
+}
+.chat_room_history .mine .time{
+    font-size:12px;
+    color:#aaa;
+    text-align:right;
+    right:0;
+    left:auto;
 }
 
 .chat_room_history .item .head {
