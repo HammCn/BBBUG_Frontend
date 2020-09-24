@@ -87,10 +87,12 @@ body {
     background: transparent;
 }
 .giftTips{
-    font-size: 12px;
+    text-align: right;
     color: #999;
     margin-top: 10px;
     margin-bottom: 10px;
+    display: inline-block;
+    width: 100%;
 }
 .room_list {
     position: fixed;
@@ -344,7 +346,7 @@ body {
     background-size: 150px auto;
     height: 400px;
     position: absolute;
-    left: -20px;
+    left: 180px;
     right: 0;
     top: -50px;
     bottom: 0;
@@ -370,7 +372,30 @@ body {
     font-size: 12px;
     color: #999;
 }
-
+.video_player{
+    display:block;
+    position: fixed;
+    right:5px;
+    top:60px;
+    /* pointer-events:none; */
+}
+.video_player span{
+    color: #ccc;
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+.video_player_full{
+    bottom:121px;
+    left:0;
+    right:0;
+}
+.video_player_full iframe{
+    width:100%;
+    height:100%;
+}
 .el-form-item {
     margin-bottom: 20px;
 }
@@ -729,6 +754,7 @@ body {
     overflow: hidden;
     overflow-y: scroll;
     padding-bottom: 80px;
+    /* z-index:-1; */
     /* background: #fff url(/images/footer.png) no-repeat;
     background-size:  100% 300px;
     background-position: bottom center; */
