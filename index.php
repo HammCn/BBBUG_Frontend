@@ -174,7 +174,7 @@ require 'first.php';
                                             <el-tag size="mini" type="warning" class="isAdmin" title="管理员"
                                                 v-if="item.user.user_admin">管</el-tag>
                                             <el-tag size="mini" type="success" class="isAdmin" title="房主"
-                                                v-if="item.user.user_id == room.roomInfo.room_user">房</el-tag>
+                                                v-if="!item.user.user_admin&&item.user.user_id == room.roomInfo.room_user">房</el-tag>
                                             <a :href="replaceProfileLink(item.user.app_url,item.user.user_extra)"
                                                 target="_blank" v-if="item.user.app_id>1">
                                                 <el-tag size="mini" type="info" class="isAdmin" title="来自第三方应用登录">
@@ -398,6 +398,9 @@ require 'first.php';
                             <iframe :src="'https://hy.hamm.cn/iframe/'+getHuyaId(room.roomInfo.room_huya)" height="261px" width="400px" frameborder="0"></iframe>
                             <span @click="chat_room.isVideoFullScreen=!chat_room.isVideoFullScreen;">全屏</span>
                         </div>
+                    <div v-if="room.roomInfo && room.roomInfo.room_pet" style="position:fixed;left:10px;top:80px;z-index:0;">
+                        <img :src="'images/dog/'+room.roomInfo.room_pet+'.png'" style="max-width:200px;" :title="room.roomInfo.room_name+'的宠物挂件'"/>
+                    </div>
                 </div>
                 <el-dialog title="修改资料" :visible.sync="chat_room.dialog.editMyProfile" :modal-append-to-body='false'>
                     <el-form status-icon>
@@ -536,7 +539,7 @@ require 'first.php';
                                 <el-tag size="mini" type="warning" class="isAdmin" title="管理员"
                                     v-if="chat_room.data.hisUserInfo.user_admin">管</el-tag>
                                 <el-tag size="mini" type="success" class="isAdmin" title="房主"
-                                    v-if="chat_room.data.hisUserInfo.user_id == room.roomInfo.room_user">房</el-tag>
+                                    v-if="!chat_room.data.hisUserInfo.user_admin&&chat_room.data.hisUserInfo.user_id == room.roomInfo.room_user">房</el-tag>
                                 <a :href="replaceProfileLink(chat_room.data.hisUserInfo.app_url,chat_room.data.hisUserInfo.user_extra)"
                                     target="_blank" v-if="chat_room.data.hisUserInfo.app_id>1">
                                     <el-tag size="mini" type="info" class="isAdmin" title="来自第三方应用登录">
@@ -769,7 +772,7 @@ require 'first.php';
                                 <el-tag size="mini" type="warning" class="from" v-if="item.user_admin" title="管理员">管
                                 </el-tag>
                                 <el-tag size="mini" type="success" class="from"
-                                    v-if="item.user_id==room.roomInfo.room_user" title="房主">房</el-tag>
+                                    v-if="!item.user_admin&&item.user_id==room.roomInfo.room_user" title="房主">房</el-tag>
                                 <a :href="replaceProfileLink(item.app_url,item.user_extra)" target="_blank"
                                     v-if="item.app_id>1">
                                     <el-tag size="mini" type="info" class="isAdmin" title="来自第三方应用登录">
@@ -821,18 +824,19 @@ require 'first.php';
                                 <i class="iconfont room_icon icon-video" v-if="row.room_type==5"
                                     title="虎牙直播房"></i>
                                 {{ row.room_name }}
-                                <font color=orangered style="font-weight: bolder;" v-if="row.room_online>0">
-                                    ({{row.room_online}})</font>
                             </div>
                             <div class="room_id"><i class="room_icon el-icon-lock" v-if="row.room_public==1"
                                     title="密码房间"></i><span>ID:{{row.room_id}}</span></div>
                             <img class="room_img" :src="http2https(row.user_head)" onerror="this.src='images/nohead.jpg'" />
                             <div class="room_master">
                                 <div class="room_info">
-                                    <div class="room_user">{{urldecode(row.user_name)}}
-                                        <el-tag size="mini" type="warning" class="isAdmin" title="管理员"
+                                    <div class="room_user">
+                                        {{urldecode(row.user_name)}}
+                                        <!-- <el-tag size="mini" type="warning" class="isAdmin" title="管理员"
                                             v-if="row.user_admin">管
-                                        </el-tag>
+                                        </el-tag> -->
+                                        <font color=orangered style="font-weight: bolder;" v-if="row.room_online>0">
+                                    ({{row.room_online}})</font>
                                     </div>
                                     <div class="room_notice">{{row.room_notice||"房间未填写公告"}}</div>
                                 </div>
@@ -1260,7 +1264,7 @@ require 'first.php';
                     that.emojiList.push('https://bbbug.com/images/emoji/'+i+'.png');
                 }
                 that.chat_room.data.searchImageList = that.emojiList;
-                that.$alert('<?php echo $room_notice; ?>', '房间公告', {
+                that.$alert('<?php echo $room_notice; ?>', 'Welcome', {
                     confirmButtonText: '确定',
                     callback: function () {
                         that.initAudioControllers();
@@ -1981,13 +1985,35 @@ require 'first.php';
                         },
                         error(res) {
                             that.$message.error(res.msg);
-                            if(res.code==301){
-                                that.$alert(res.msg, '房间封禁', {
-                                    confirmButtonText: '确定',
-                                    callback: function () {
-                                        that.doJoinRoomById(888);
-                                    }
-                                });
+                            switch(res.code){
+                                case 301:
+                                    that.websocket.hardStop = true;
+                                    that.websocket.connection.send('bye');
+                                    that.$alert(res.msg, '房间封禁', {
+                                        confirmButtonText: '确定',
+                                        callback: function () {
+                                            that.doJoinRoomById(888);
+                                        }
+                                    });
+                                break;
+                                case 302:
+                                    that.websocket.hardStop = true;
+                                    that.websocket.connection.send('bye');
+                                    that.$alert(res.msg, '房间密码变更', {
+                                        confirmButtonText: '确定',
+                                        callback: function () {
+                                            that.doJoinRoomById(888);
+                                        }
+                                    });
+                                break;
+                                default:
+                                    that.$alert(res.msg, '进入失败', {
+                                        confirmButtonText: '确定',
+                                        callback: function () {
+                                            that.doJoinRoomById(888);
+                                        }
+                                    });
+                                    callback(false);
                             }
                             if (callback) {
                                 callback(false);
@@ -2114,7 +2140,7 @@ require 'first.php';
                                         }
                                     }
                                 }
-                                if (obj.user.user_id == 1) {
+                                if (obj.user.user_id == 10000) {
                                     if (obj.content == 'clear') {
                                         that.chat_room.list = [];
 
@@ -2686,6 +2712,7 @@ require 'first.php';
                         },
                         success(res) {
                             // this.$message.success('表情发送成功');
+                            that.chat_room.dialog.searchImageBox=false;
                         }
                     });
                 },
@@ -3132,54 +3159,67 @@ require 'first.php';
                             that.doGetRoomData();
                         },
                         error(res) {
-                            if(res.code==301){
-                                that.$alert(res.msg, '房间封禁', {
-                                    confirmButtonText: '确定',
-                                    callback: function () {
-                                        if(!that.room.roomInfo){
-                                            that.doJoinRoomById(888);
-                                        }
-                                    }
-                                });
-                            }else{
-                                that.$prompt('请输入该房间的密码后进入', '加密房间', {
-                                    confirmButtonText: '验证',
-                                    showClose: false,
-                                    closeOnClickModal: false,
-                                    closeOnPressEscape: false,
-                                    closeOnHashChange: false,
-                                    center: true,
-                                    showCancelButton: that.room.roomInfo ? true : false,
-                                }).then(function (password) {
-                                    that.checkRoomPassword(room_id, password.value, function (result, msg) {
-                                        if (result) {
-                                            that.room.room_id = room_id;
-                                            localStorage.setItem('room_id', room_id);
-                                            that.lrcString = '';
-                                            that.lockScreenData.nowMusicLrcText = '';
-                                            that.doGetRoomData();
-                                        } else {
-                                            if (that.room.roomInfo) {
-                                                that.$alert(msg, '密码错误', {
-                                                    confirmButtonText: '确定',
-                                                    callback: function () { }
-                                                });
-                                            } else {
-                                                that.$confirm(msg, '密码错误', {
-                                                    confirmButtonText: '重试',
-                                                    cancelButtonText: '去大厅',
-                                                    type: 'warning'
-                                                }).then(function () {
-                                                    that.doJoinRoomById(room_id);
-                                                }).catch(function () {
-                                                    that.doJoinRoomById(888);
-                                                });
+                            switch(res.code){
+                                case 301:
+                                    that.$alert(res.msg, '房间封禁', {
+                                        confirmButtonText: '确定',
+                                        callback: function () {
+                                            if(!that.room.roomInfo){
+                                                that.doJoinRoomById(888);
                                             }
-
                                         }
                                     });
-                                }).catch(function (e) {
-                                });
+                                break;
+                                case 302:
+                                    that.$prompt('请输入该房间的密码后进入', '加密房间', {
+                                        confirmButtonText: '验证',
+                                        showClose: false,
+                                        closeOnClickModal: false,
+                                        closeOnPressEscape: false,
+                                        closeOnHashChange: false,
+                                        center: true,
+                                        showCancelButton: that.room.roomInfo ? true : false,
+                                    }).then(function (password) {
+                                        that.checkRoomPassword(room_id, password.value, function (result, msg) {
+                                            if (result) {
+                                                that.room.room_id = room_id;
+                                                localStorage.setItem('room_id', room_id);
+                                                that.lrcString = '';
+                                                that.lockScreenData.nowMusicLrcText = '';
+                                                that.doGetRoomData();
+                                            } else {
+                                                if (that.room.roomInfo) {
+                                                    that.$alert(msg, '密码错误', {
+                                                        confirmButtonText: '确定',
+                                                        callback: function () { }
+                                                    });
+                                                } else {
+                                                    that.$confirm(msg, '密码错误', {
+                                                        confirmButtonText: '重试',
+                                                        cancelButtonText: '去大厅',
+                                                        type: 'warning'
+                                                    }).then(function () {
+                                                        that.doJoinRoomById(room_id);
+                                                    }).catch(function () {
+                                                        that.doJoinRoomById(888);
+                                                    });
+                                                }
+
+                                            }
+                                        });
+                                    }).catch(function (e) {
+                                    });
+                                break;
+                                default:
+                                    that.$confirm(res.msg, '进入失败', {
+                                        confirmButtonText: '重试',
+                                        cancelButtonText: '去大厅',
+                                        type: 'warning'
+                                    }).then(function () {
+                                        that.doJoinRoomById(room_id);
+                                    }).catch(function () {
+                                        that.doJoinRoomById(888);
+                                    });
                             }
                         },
                     });
@@ -3193,6 +3233,7 @@ require 'first.php';
                                 loading: true,
                                 data: that.room_create.form,
                                 success(res) {
+                                    that.room_create.showPage=false;
                                     that.getMyInfo();
                                     that.$confirm('你的私人房间创建成功,是否立即进入?', '创建成功', {
                                         confirmButtonText: '进入',

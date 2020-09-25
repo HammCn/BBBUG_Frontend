@@ -143,6 +143,7 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     vertical-align: middle;
+    padding-right:60px;
 }
 
 .room_list .room_master {
