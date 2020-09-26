@@ -2125,7 +2125,13 @@ require 'first.php';
                 messageController(data) {
                     let that = this;
                     try {
-                        let obj = JSON.parse(decodeURIComponent(data));
+                        let obj = {};
+                        try{
+                            obj = JSON.parse(decodeURIComponent(data));
+                        }catch(e){
+                            obj = JSON.parse(data);
+                        }
+                        console.log(obj);
                         if (that.chat_room.list.length > 100) {
                             that.chat_room.list.shift();
                         }
