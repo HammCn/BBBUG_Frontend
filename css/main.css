@@ -755,6 +755,7 @@ body {
     overflow: hidden;
     overflow-y: scroll;
     padding-bottom: 80px;
+    scroll-behavior: smooth;
     /* z-index:-1; */
     /* background: #fff url(/images/footer.png) no-repeat;
     background-size:  100% 300px;
@@ -1145,4 +1146,12 @@ audio {
     .chat_room_toolbar button {
         font-size: 12px;
     }
+}
+
+
+.scroll-to-bottom {
+    z-index: 100;
+    position: fixed;
+    right: 10px;
+    bottom: 200px;
 }

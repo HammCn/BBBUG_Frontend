@@ -298,6 +298,7 @@ require 'first.php';
                                 声音库
                             </el-button>
                         </el-button-group>
+                        <el-button class="scroll-to-bottom" size="mini" v-if="showScrollToBottomBtn" @click="scrollToBottom">回到底部</el-button>
                         <div v-if="((room.roomInfo.room_type==1||room.roomInfo.room_type==2||room.roomInfo.room_type==4) && chat_room.song) || (room.roomInfo.room_type==3 && chat_room.voice)"
                             class="player_body" id="player_body" ref="player_body" title="综合考虑,我还是安安静静待在这里吧">
                             <img class="player_bg" :src="chat_room.song.song.pic"
@@ -571,7 +572,7 @@ require 'first.php';
                 </el-dialog>
                 <el-popover placement="top-start" popper-class="searchImageBox" trigger="manual"
                     v-model="chat_room.dialog.searchImageBox">
-                    <el-input v-model="chat_room.form.searchImageBox.keyword" placeholder="输入关键词搜索表情包"
+                    <el-input v-model="chat_room.form.searchImageBox.keyword" placeholder="输入关键词搜索表情包" clearable
                         @keydown.13.native="doSearchImage">
                         <el-button slot="append" icon="el-icon-search" @click="doSearchImage" title="点击搜索">
                         </el-button>
@@ -584,7 +585,7 @@ require 'first.php';
 
                 <el-popover placement="top-start" popper-class="searchSongBox" trigger="manual"
                     v-model="chat_room.dialog.searchSongBox">
-                    <el-input v-model="chat_room.form.searchSongBox.keyword" placeholder="输入歌名/歌手搜索歌曲"
+                    <el-input v-model="chat_room.form.searchSongBox.keyword" placeholder="输入歌名/歌手搜索歌曲" clearable
                         @keydown.13.native="doSearchSong">
                         <el-button slot="append" icon="el-icon-search" @click="doSearchSong" title="点击搜索">
                         </el-button>
@@ -993,6 +994,7 @@ require 'first.php';
     <script src="js/element.js"></script>
     <script src="js/vue-clipboard.min.js"></script>
     <script src="js/vue.preview.js"></script>
+    <script src="js/scroll-helper.js"></script>
     <style>
         audio {
             /* position: fixed;
@@ -1250,7 +1252,8 @@ require 'first.php';
                         startLeft: 10,
                         startTop: 70,
                         isMoving: false
-                    }
+                    },
+                    showScrollToBottomBtn: false,
                 }
             },
             created() {
@@ -2103,6 +2106,12 @@ require 'first.php';
                     } else {
                         that.config.lockScreen = true;
                     }
+                    // 聊天记录区域滚动相关处理
+                    const func = scrollFuncs[e.target.id];
+                    func && func(e, this);
+                },
+                scrollToBottom() {
+                    scrollFuncs.scrollToBottom();
                 },
                 friendlyTime: function(time) {
                     var now = parseInt(Date.parse(new Date()) / 1000);
