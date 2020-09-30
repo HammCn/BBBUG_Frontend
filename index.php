@@ -1,5 +1,8 @@
 <?php
 require 'first.php';
+if(strpos($_SERVER['HTTP_USER_AGENT'],"Triden")){
+    die('<center><h1>屌毛,你的浏览器不配访问bbbug.com</h1><hr><h4>Sorry but fuck your internet explore!</h4></center>');
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -106,6 +109,9 @@ require 'first.php';
                                 <el-dropdown-item command="switchNotification">{{config.notification?'关闭通知':'打开通知'}}
                                 </el-dropdown-item>
                                 <el-dropdown-item command="doLogout" v-if="userInfo.user_id>0">退出登录
+                                </el-dropdown-item>
+                                <el-dropdown-item command="contactUs" divided>
+                                    合作接入
                                 </el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
@@ -2491,6 +2497,9 @@ require 'first.php';
                             break;
                         case 'clearHistory':
                             that.clearHistory();
+                            break;
+                        case 'contactUs':
+                            window.open('https://doc.bbbug.com');
                             break;
                         case 'switchNotification':
                             that.config.notification = !that.config.notification;
