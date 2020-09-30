@@ -186,6 +186,7 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],"Triden")){
                                                 <el-tag size="mini" type="info" class="isAdmin" title="来自第三方应用登录">
                                                     {{item.user.app_name}}</el-tag>
                                             </a>
+                                            <span title="国庆快乐·中国牛逼" v-if="item.user.user_icon" style="cursor:pointer;font-size:12px;background-color:#F06557;color:yellow;text-align:center;line-height:14px;padding:1px 3px;border-radius:3px;display:inline-block;"><i class="iconfont icon-icon_star_fill" style="font-size:14px;"></i></font>
                                         </div>
                                         <div v-if="item.sha=='loading'" class="love-fast"
                                             style="position:absolute;right:30px;bottom:14px;color:#666;font-size:16px;font-weight:bolder">
