@@ -755,7 +755,7 @@ body {
     overflow: hidden;
     overflow-y: scroll;
     padding-bottom: 80px;
-    scroll-behavior: smooth;
+    /*scroll-behavior: smooth;*/
     /* z-index:-1; */
     /* background: #fff url(/images/footer.png) no-repeat;
     background-size:  100% 300px;
