@@ -943,18 +943,17 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],"Triden")){
                             游客
                         </el-link>
                     </div>
-                    <el-form-item prop="user_account" label="邮箱" :rules="[
-                { required: true, message: '你确定不告诉我邮箱???', trigger: 'blur' },
-                { type: 'email', message: '你这个邮箱地址怕是有错误呀...', trigger: ['blur', 'change'] }
+                    <el-form-item prop="user_account" label="账号" :rules="[
+                { required: true, message: '账号必须填写才能登录啊...', trigger: 'blur' },
               ]">
-                        <el-input v-model="login.form.user_account" placeholder="请输入你的邮箱帐号"
+                        <el-input v-model="login.form.user_account" placeholder="支持邮箱/ID/验证码登录"
                             @input="do_login_email_changed">
                         </el-input>
                     </el-form-item>
                     <el-form-item prop="user_password" label="密码" :rules="[
                 { required: true, message: '不填写密码如何登录???', trigger: 'blur' }
               ]">
-                        <el-input v-model="login.form.user_password" type="password" placeholder="请输入你的登录密码或验证码"
+                        <el-input v-model="login.form.user_password" type="password" placeholder="登录密码或验证码"
                             @keydown.13.native="do_login_form_submit('login_form')">
                             <el-button slot="append" icon="el-icon-message" @click="doSendRandCode" title="发送验证码到邮箱">
                             </el-button>
