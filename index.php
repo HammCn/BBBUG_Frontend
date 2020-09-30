@@ -240,6 +240,8 @@ require 'first.php';
                                     :style="{backgroundColor:item.bgColor||'#eee',color:item.color||'#999'}">{{(item.content)}}</span>
                             </div>
                         </div>
+                        
+                        <el-button class="scroll-to-bottom" size="mini" v-if="showScrollToBottomBtn" @click="scrollToBottom">回到底部</el-button>
                     </div>
                     <el-alert :title="systemTips.msg" v-if="systemTips.msg" :type="systemTips.type" effect="dark">
                     </el-alert>
@@ -298,7 +300,6 @@ require 'first.php';
                                 声音库
                             </el-button>
                         </el-button-group>
-                        <el-button class="scroll-to-bottom" size="mini" v-if="showScrollToBottomBtn" @click="scrollToBottom">回到底部</el-button>
                         <div v-if="((room.roomInfo.room_type==1||room.roomInfo.room_type==2||room.roomInfo.room_type==4) && chat_room.song) || (room.roomInfo.room_type==3 && chat_room.voice)"
                             class="player_body" id="player_body" ref="player_body" title="综合考虑,我还是安安静静待在这里吧">
                             <img class="player_bg" :src="chat_room.song.song.pic"
@@ -1500,6 +1501,12 @@ require 'first.php';
                         user_name:item.user.user_name,
                         message:item
                     };
+                    this.focusInput();
+                },
+                focusInput() {
+                    const textarea = document.querySelector(".chat_room_message");
+                    // 艾特后自动聚焦
+                    textarea.focus();
                 },
                 commandUserHead(cmd) {
                     let that = this;
@@ -1507,6 +1514,7 @@ require 'first.php';
                         case 'at':
                             that.chat_room.at = cmd.row;
                             that.chat_room.dialog.showOnlineBox =false;
+                            this.focusInput();
                             break;
                         case 'pullback':
                             that.request({
@@ -2193,7 +2201,8 @@ require 'first.php';
                                                 that.$notify({
                                                     title: that.urldecode(obj.user.user_name) + "@了你：",
                                                     message: that.urldecode(obj.content),
-                                                    duration: 0
+                                                    duration: 0,
+                                                    offset: 70,
                                                 });
                                             }
                                         }
