@@ -946,7 +946,7 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],"Triden")){
                     <el-form-item prop="user_account" label="账号" :rules="[
                 { required: true, message: '账号必须填写才能登录啊...', trigger: 'blur' },
               ]">
-                        <el-input v-model="login.form.user_account" placeholder="支持邮箱/ID/验证码登录"
+                        <el-input v-model="login.form.user_account" placeholder="支持ID/邮箱登录"
                             @input="do_login_email_changed">
                         </el-input>
                     </el-form-item>
