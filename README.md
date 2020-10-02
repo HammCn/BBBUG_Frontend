@@ -1,5 +1,5 @@
 <p align="left">
-<h1>BBBUG聊天室 前端</h1>
+<h1>BBBUG聊天室</h1>
 </p>
 <p align="left">
 <a href="https://gitee.com/bbbug_com/ChatWEB/stargazers" target="_blank"><img src="https://svg.hamm.cn/gitee.svg?type=star&user=bbbug_com&project=ChatWEB"/></a>
