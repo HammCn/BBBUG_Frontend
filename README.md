@@ -43,5 +43,10 @@ Vue.js / ElementUI
 3. 提交代码
 4. 新建 Pull Request
 ```
+### 贡献名单
+[@Hamm](https://gitee.com/hamm)
+[@kiripa](https://gitee.com/kiripa)
+[查看更多](https://gitee.com/bbbug_com/ChatWEB/contributors?ref=master)
+
 ### 晒个截图
 ![BBBUG](https://images.gitee.com/uploads/images/2020/1002/115359_813314a3_145025.png "截屏2020-10-02 11.51.35.png")
