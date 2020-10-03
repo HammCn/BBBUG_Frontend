@@ -1,4 +1,5 @@
 <?php
+require_once("config.php");
 function curlHelper($url, $method = 'GET', $data = null, $header = [], $cookies = "")
 {
     $ch = curl_init();

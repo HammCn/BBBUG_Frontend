@@ -1,5 +1,55 @@
 <?php
-require 'first.php';
+require 'common.php';
+$domain = strtolower($_SERVER['HTTP_HOST']);
+$room_id = 888;
+$room_title = 'BBBUG音乐聊天室';
+$room_desc = 'BBBUG.COM，一个划水音乐聊天室，超多小哥哥小姐姐都在这里一起听歌、划水聊天、技术分享、表情包斗图，欢迎你的加入！';
+$room_keyword = '划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包';
+$room_notice = '欢迎来到BBBUG音乐聊天室！';
+
+if(strpos($domain,'bbbug.com')!==false || strpos($domain,'hamm.cn')!==false){
+    //我方域名
+    if(strpos($domain,'.hamm.cn')!==false){
+        header('Location: https://404.hamm.cn');die;
+    }
+    if($domain != 'bbbug.com'){
+        //是 *.bbbug.com
+        $subDomain = str_replace('.bbbug.com', '', $domain);
+        if ($subDomain != 'bbbug.com') {
+            $result = curlHelper('https://api.bbbug.com/api/room/getRoomByDomain?room_domain=' . $subDomain);
+            $arr = json_decode($result['body'], true);
+            if ($arr['code'] == 200) {
+                $room_id = $arr['data']['room_id'];
+                $room_title = $arr['data']['room_name'];
+                $room_notice = $arr['data']['room_notice'];
+                $room_desc = $arr['data']['room_name'] . '，超多小哥哥小姐姐都在这里一起听歌、划水聊天、技术分享、表情包斗图，欢迎你的加入！';
+                $room_keyword = $arr['data']['room_name'] . ',划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包';
+            }
+        }
+    }
+}else{
+    $cname = dns_get_record($domain,DNS_CNAME);
+    if(count($cname)>0){
+        $subDomain = str_replace('.bbbug.com', '', $cname[0]['target']);
+        if ($subDomain != $cname[0]['target']) {
+            $result = curlHelper('https://api.bbbug.com/api/room/getRoomByDomain?room_domain=' . $subDomain);
+            $arr = json_decode($result['body'], true);
+            if ($arr['code'] == 200) {
+                $room_id = $arr['data']['room_id'];
+                $room_title = $arr['data']['room_name'];
+                $room_notice = $arr['data']['room_notice'];
+                $room_desc = $arr['data']['room_name'] . '，超多小哥哥小姐姐都在这里一起听歌、划水聊天、技术分享、表情包斗图，欢迎你的加入！';
+                $room_keyword = $arr['data']['room_name'] . ',划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包';
+            }
+        }
+    }else{
+        //没有查询到cname
+        header('Location: https://404.hamm.cn');die;
+    }
+}
+
+setcookie('localhost', ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? $_SERVER['REQUEST_SCHEME']) . "://" . $_SERVER['HTTP_HOST'], time() + 86400 * 31,'/','bbbug.com');
+
 if(strpos($_SERVER['HTTP_USER_AGENT'],"Triden")){
     die('<center><h1>屌毛,你的浏览器不配访问bbbug.com</h1><hr><h4>Sorry but fuck your internet explore!</h4></center>');
 }
@@ -963,15 +1013,15 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],"Triden")){
                         <span style="float:left;">
                             第三方：
                             <el-link class='hideWhenScreenSmall'
-                                @click="location.replace('https://gitee.com/oauth/authorize?client_id=d2c3e3c6f5890837a69c65585cc14488e4075709db1e89d4cb4c64ef1712bdbb&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Fgitee.php&response_type=code')">
+                                @click="location.replace('https://gitee.com/oauth/authorize?client_id=<?php echo $config['gitee']['oauth_id'];?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Fgitee.php&response_type=code')">
                                 码云
                             </el-link>
                             <el-link
-                                @click="location.replace('https://graph.qq.com/oauth2.0/authorize?client_id=101904044&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Fqq.php&response_type=code&state=bbbug')">
+                                @click="location.replace('https://graph.qq.com/oauth2.0/authorize?client_id=<?php echo $config['qq']['oauth_id'];?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Fqq.php&response_type=code&state=bbbug')">
                                 QQ
                             </el-link>
                             <el-link class='hideWhenScreenSmall'
-                                @click="location.replace('https://www.oschina.net/action/oauth2/authorize?client_id=utwQOfbgBgBcwBolfNft&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Foschina.php&response_type=code')">
+                                @click="location.replace('https://www.oschina.net/action/oauth2/authorize?client_id=<?php echo $config['oschina']['oauth_id'];?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Foschina.php&response_type=code')">
                                 开源中国
                             </el-link>
                         </span>

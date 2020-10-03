@@ -1,7 +1,7 @@
 <?php
-require_once "common.php";
-$cliend_id = 'd2c3e3c6f5890837a69c65585cc14488e4075709db1e89d4cb4c64ef1712bdbb';
-$client_key = '1fc2656d09b4510302c8c52fa8f2ac6e8697a5acf8962bc52df7e073676ac6cb';
+require_once "../common.php";
+$cliend_id = $config['gitee']['oauth_id'];
+$client_key = $config['gitee']['oauth_key'];
 $redirect_uri = urlencode('https://bbbug.com/oauth/gitee.php');
 if (!empty($_GET['code'])) {
     $code = $_GET['code'];
@@ -22,8 +22,8 @@ if (!empty($_GET['code'])) {
             $user = json_decode($result['body'], true);
 
             $result = curlHelper('https://api.bbbug.com/api/user/openlogin', 'POST', [
-                'appid' => '1001',
-                'appkey' => 'b7af4123783b54840cdd7ac2eb067de2d802f80d',
+                'appid' => $config['gitee']['app_id'],
+                'appkey' => $config['gitee']['app_key'],
                 'nickname' => $user['name'],
                 'head' => $user['avatar_url'],
                 'openid' => $user['id'],

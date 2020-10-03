@@ -1,7 +1,7 @@
 <?php
-require_once "common.php";
-$cliend_id = '101904044';
-$client_key = 'b3e2cace11af99c7354409422ecbab51';
+require_once "../common.php";
+$cliend_id = $config['qq']['oauth_id'];
+$client_key = $config['qq']['oauth_key'];
 $redirect_uri = urlencode('https://bbbug.com/oauth/qq.php');
 if (!empty($_GET['code'])) {
     $code = $_GET['code'];
@@ -20,8 +20,8 @@ if (!empty($_GET['code'])) {
                     $user = json_decode($result['body'], true);
                     if ($user['ret'] == 0) {
                         $result = curlHelper('https://api.bbbug.com/api/user/openlogin', 'POST', [
-                            'appid' => '1003',
-                            'appkey' => '12345123783b54840dq12ac2eb067de2d802f80d',
+                            'appid' => $config['qq']['app_id'],
+                            'appkey' => $config['qq']['app_key'],
                             'nickname' => $user['nickname'],
                             'head' => $user['figureurl_qq_2'] ?? $user['figureurl_qq_1'],
                             'openid' => $openid,

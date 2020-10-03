@@ -1,7 +1,7 @@
 <?php
-require_once "common.php";
-$cliend_id = 'utwQOfbgBgBcwBolfNft';
-$client_key = 'VrJp7q4FSiucXA6nBQOae9flTBBllnbx';
+require_once "../common.php";
+$cliend_id = $config['oschina']['oauth_id'];
+$client_key = $config['oschina']['oauth_key'];
 $redirect_uri = urlencode('https://bbbug.com/oauth/oschina.php');
 if (!empty($_GET['code'])) {
     $code = $_GET['code'];
@@ -16,8 +16,8 @@ if (!empty($_GET['code'])) {
         if ($result['detail']['http_code'] == 200) {
             $user = json_decode($result['body'], true);
             $result = curlHelper('https://api.bbbug.com/api/user/openlogin', 'POST', [
-                'appid' => '1002',
-                'appkey' => 'b7af4123783b54840dq12ac2eb067de2d802f80d',
+                'appid' => $config['oschina']['app_id'],
+                'appkey' => $config['oschina']['app_key'],
                 'nickname' => $user['name'],
                 'head' => explode('!', $user['avatar'])[0],
                 'openid' => $user['id'],
