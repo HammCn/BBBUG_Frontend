@@ -7,12 +7,12 @@ $room_desc = 'BBBUG.COM，一个划水音乐聊天室，超多小哥哥小姐姐
 $room_keyword = '划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包';
 $room_notice = '欢迎来到BBBUG音乐聊天室！';
 
-if(strpos($domain,'bbbug.com')!==false || strpos($domain,'hamm.cn')!==false){
+if (strpos($domain, 'bbbug.com') !== false || strpos($domain, 'hamm.cn') !== false) {
     //我方域名
-    if(strpos($domain,'.hamm.cn')!==false){
+    if (strpos($domain, '.hamm.cn') !== false) {
         header('Location: https://404.hamm.cn');die;
     }
-    if($domain != 'bbbug.com'){
+    if ($domain != 'bbbug.com') {
         //是 *.bbbug.com
         $subDomain = str_replace('.bbbug.com', '', $domain);
         if ($subDomain != 'bbbug.com') {
@@ -27,9 +27,9 @@ if(strpos($domain,'bbbug.com')!==false || strpos($domain,'hamm.cn')!==false){
             }
         }
     }
-}else{
-    $cname = dns_get_record($domain,DNS_CNAME);
-    if(count($cname)>0){
+} else {
+    $cname = dns_get_record($domain, DNS_CNAME);
+    if (count($cname) > 0) {
         $subDomain = str_replace('.bbbug.com', '', $cname[0]['target']);
         if ($subDomain != $cname[0]['target']) {
             $result = curlHelper('https://api.bbbug.com/api/room/getRoomByDomain?room_domain=' . $subDomain);
@@ -42,15 +42,15 @@ if(strpos($domain,'bbbug.com')!==false || strpos($domain,'hamm.cn')!==false){
                 $room_keyword = $arr['data']['room_name'] . ',划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包';
             }
         }
-    }else{
+    } else {
         //没有查询到cname
         header('Location: https://404.hamm.cn');die;
     }
 }
 
-setcookie('localhost', ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? $_SERVER['REQUEST_SCHEME']) . "://" . $_SERVER['HTTP_HOST'], time() + 86400 * 31,'/','bbbug.com');
+setcookie('localhost', ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? $_SERVER['REQUEST_SCHEME']) . "://" . $_SERVER['HTTP_HOST'], time() + 86400 * 31, '/', 'bbbug.com');
 
-if(strpos($_SERVER['HTTP_USER_AGENT'],"Triden")){
+if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
     die('<center><h1>屌毛,你的浏览器不配访问bbbug.com</h1><hr><h4>Sorry but fuck your internet explore!</h4></center>');
 }
 ?>
@@ -297,7 +297,7 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],"Triden")){
                                     :style="{backgroundColor:item.bgColor||'#eee',color:item.color||'#999'}">{{(item.content)}}</span>
                             </div>
                         </div>
-                        
+
                         <el-button class="scroll-to-bottom" size="mini" v-if="showScrollToBottomBtn" @click="scrollToBottom">回到底部</el-button>
                     </div>
                     <el-alert :title="systemTips.msg" v-if="systemTips.msg" :type="systemTips.type" effect="dark">
@@ -1013,15 +1013,15 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],"Triden")){
                         <span style="float:left;">
                             第三方：
                             <el-link class='hideWhenScreenSmall'
-                                @click="location.replace('https://gitee.com/oauth/authorize?client_id=<?php echo $config['gitee']['oauth_id'];?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Fgitee.php&response_type=code')">
+                                @click="location.replace('https://gitee.com/oauth/authorize?client_id=<?php echo $config['gitee']['oauth_id']; ?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Fgitee.php&response_type=code')">
                                 码云
                             </el-link>
                             <el-link
-                                @click="location.replace('https://graph.qq.com/oauth2.0/authorize?client_id=<?php echo $config['qq']['oauth_id'];?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Fqq.php&response_type=code&state=bbbug')">
+                                @click="location.replace('https://graph.qq.com/oauth2.0/authorize?client_id=<?php echo $config['qq']['oauth_id']; ?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Fqq.php&response_type=code&state=bbbug')">
                                 QQ
                             </el-link>
                             <el-link class='hideWhenScreenSmall'
-                                @click="location.replace('https://www.oschina.net/action/oauth2/authorize?client_id=<?php echo $config['oschina']['oauth_id'];?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Foschina.php&response_type=code')">
+                                @click="location.replace('https://www.oschina.net/action/oauth2/authorize?client_id=<?php echo $config['oschina']['oauth_id']; ?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Foschina.php&response_type=code')">
                                 开源中国
                             </el-link>
                         </span>
@@ -1140,6 +1140,8 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],"Triden")){
                         login: "登录"
                     },
                     chat_room: {
+                        historyLoading:false,
+                        historyMax:50,
                         songSendUser: false,
                         message: "",
                         at: null,
@@ -1884,12 +1886,18 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],"Triden")){
                 },
                 loadMessageHistory(){
                     let that = this;
+                    if(that.chat_room.historyLoading){
+                        return;
+                    }
+                    that.chat_room.historyLoading=true;
                     that.request({
                         url: "message/getMessageList",
                         data: {
-                            room_id: that.room.room_id
+                            room_id: that.room.room_id,
+                            per_page:that.chat_room.historyMax,
                         },
                         success(res) {
+                            that.chat_room.historyLoading=false;
                             that.chat_room.list = [];
                             for(let i=0;i<res.data.length;i++){
                                 let _obj = false;
@@ -1968,7 +1976,7 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],"Triden")){
                 },
                 addSystemMessage(msg, color = '#999', bgColor = '#eee') {
                     let that = this;
-                    if (that.chat_room.list.length > 100) {
+                    if (that.chat_room.list.length > that.chat_room.historyMax) {
                         that.chat_room.list.shift();
                     }
                     that.chat_room.list.push({
@@ -2205,7 +2213,7 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],"Triden")){
                             obj = JSON.parse(data);
                         }
                         console.log(obj);
-                        if (that.chat_room.list.length > 100) {
+                        if (that.chat_room.list.length > that.chat_room.historyMax) {
                             that.chat_room.list.shift();
                         }
                         obj.time = parseInt(new Date().valueOf()/1000);
@@ -2285,7 +2293,7 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],"Triden")){
                                         }
                                     }
                                 }
-                                if (that.chat_room.list.length > 100) {
+                                if (that.chat_room.list.length > that.chat_room.historyMax) {
                                     that.chat_room.list.shift();
                                 }
                                 that.chat_room.list.push(obj);
@@ -2302,7 +2310,7 @@ if(strpos($_SERVER['HTTP_USER_AGENT'],"Triden")){
                                         }
                                     }
                                 }
-                                if (that.chat_room.list.length > 100) {
+                                if (that.chat_room.list.length > that.chat_room.historyMax) {
                                     that.chat_room.list.shift();
                                 }
                                 that.chat_room.list.push(obj);
