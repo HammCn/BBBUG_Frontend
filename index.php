@@ -136,7 +136,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                             </el-button>
                             <el-button size="mini" v-clipboard:copy="copyString" v-clipboard:success="onCopySuccess" v-html="title.invate_person">
                             </el-button>
-                            <el-button size="mini" @click="doGetRoomList" style="color:orangered"
+                            <el-button size="mini" @click="doGetRoomList" 
                                 v-html="title.exit_room" v-if="userInfo.user_id>0"></el-button>
                             <el-button size="mini" @click="doShowLoginBox" style="color:orangered" v-html="title.login"
                                 v-if="userInfo.user_id<0"></el-button>
