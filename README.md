@@ -49,4 +49,4 @@ Vue.js / ElementUI
 [查看更多](https://gitee.com/bbbug_com/ChatWEB/contributors?ref=master)
 
 ### 晒个截图
-![BBBUG](https://images.gitee.com/uploads/images/2020/1002/115359_813314a3_145025.png "截屏2020-10-02 11.51.35.png")
+![BBBUG](https://images.gitee.com/uploads/images/2020/1006/174921_be0cca24_145025.png "截屏2020-10-06下午5.48.15.png")
