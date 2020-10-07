@@ -2431,105 +2431,110 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                 },
                 doPlayMusic(obj) {
                     let that = this;
-                    if (that.chat_room.song) {
-                        //is playing
-                        if (obj.song.mid == that.chat_room.song.song.mid && that.room.roomInfo.room_type != 4) {
-                            return;
+                    // if (that.chat_room.song) {
+                    //     //is playing
+                    //     if (obj.song.mid == that.chat_room.song.song.mid && that.room.roomInfo.room_type != 4) {
+                    //         return;
+                    //     }
+                    // }
+                    that.chat_room.song = false;
+                    that.audioUrl = "";
+                    setTimeout(function(){
+                        obj.song.pic = that.http2https(obj.song.pic);
+                        console.log(that.chat_room.song);
+                        that.chat_room.songPercent = 0;
+                        that.chat_room.song = obj;
+                        that.isAudioCurrentTimeChanged = false;
+                        that.audioUrl = "https://api.bbbug.com/api/song/playurl?mid=" + obj.song.mid;
+                        that.lockScreenData.musicHead = obj.song.pic || 'images/nohead.jpg';
+                        that.lockScreenData.musicString = "《" + obj.song.name + "》(" + obj.song.singer + ") ";
+                        if (obj.at) {
+                            that.addSystemMessage("正在播放 " + that.urldecode(obj.user.user_name) + " 送给 " + that.urldecode(obj.at.user_name) + " 的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ", 'white', 'lightsalmon');
                         }
-                    }
-                    obj.song.pic = that.http2https(obj.song.pic);
-                    that.isAudioCurrentTimeChanged = false;
-                    that.audioUrl = "https://api.bbbug.com/api/song/playurl?mid=" + obj.song.mid;
-                    that.chat_room.song = obj;
-                    that.chat_room.songPercent = 0;
-                    that.lockScreenData.musicHead = obj.song.pic || 'images/nohead.jpg';
-                    that.lockScreenData.musicString = "《" + obj.song.name + "》(" + obj.song.singer + ") ";
-                    if (obj.at) {
-                        that.addSystemMessage("正在播放 " + that.urldecode(obj.user.user_name) + " 送给 " + that.urldecode(obj.at.user_name) + " 的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ", 'white', 'lightsalmon');
-                    }
-                    switch (that.room.roomInfo.room_type) {
-                        case 1:
-                            that.getMusicLrc();
-                            if (obj.user.user_id == that.userInfo.user_id) {
-                                if (that.config.notification) {
-                                    let isNotificated = false;
-                                    if (window.Notification && Notification.permission !== "denied") {
-                                        Notification.requestPermission(function (status) { // 请求权限
-                                            if (status === 'granted') {
-                                                // 弹出一个通知
-                                                var n = new Notification("正在播放你点的歌", {
-                                                    body: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
-                                                    icon: ""
-                                                });
-                                                isNotificated = true;
-                                                // 两秒后关闭通知
-                                                setTimeout(function () {
-                                                    n.close();
-                                                }, 5000);
-                                            }
-                                        });
-                                    }
-                                    if (!isNotificated) {
-                                        that.$notify({
-                                            title: "正在播放你点的歌曲",
-                                            message: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
-                                            duration: 5
-                                        });
+                        switch (that.room.roomInfo.room_type) {
+                            case 1:
+                                that.getMusicLrc();
+                                if (obj.user.user_id == that.userInfo.user_id) {
+                                    if (that.config.notification) {
+                                        let isNotificated = false;
+                                        if (window.Notification && Notification.permission !== "denied") {
+                                            Notification.requestPermission(function (status) { // 请求权限
+                                                if (status === 'granted') {
+                                                    // 弹出一个通知
+                                                    var n = new Notification("正在播放你点的歌", {
+                                                        body: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
+                                                        icon: ""
+                                                    });
+                                                    isNotificated = true;
+                                                    // 两秒后关闭通知
+                                                    setTimeout(function () {
+                                                        n.close();
+                                                    }, 5000);
+                                                }
+                                            });
+                                        }
+                                        if (!isNotificated) {
+                                            that.$notify({
+                                                title: "正在播放你点的歌曲",
+                                                message: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
+                                                duration: 5
+                                            });
+                                        }
                                     }
                                 }
-                            }
-                            if (obj.at.user_id == that.userInfo.user_id) {
-                                if (that.config.notification) {
-                                    let isNotificated = false;
-                                    if (window.Notification && Notification.permission !== "denied") {
-                                        Notification.requestPermission(function (status) { // 请求权限
-                                            if (status === 'granted') {
-                                                // 弹出一个通知
-                                                var n = new Notification("正在播放 " + that.urldecode(obj.user.user_name) + " 送你的歌", {
-                                                    body: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
-                                                    icon: ""
-                                                });
-                                                isNotificated = true;
-                                                // 两秒后关闭通知
-                                                setTimeout(function () {
-                                                    n.close();
-                                                }, 5000);
-                                            }
-                                        });
+                                if (obj.at.user_id == that.userInfo.user_id) {
+                                    if (that.config.notification) {
+                                        let isNotificated = false;
+                                        if (window.Notification && Notification.permission !== "denied") {
+                                            Notification.requestPermission(function (status) { // 请求权限
+                                                if (status === 'granted') {
+                                                    // 弹出一个通知
+                                                    var n = new Notification("正在播放 " + that.urldecode(obj.user.user_name) + " 送你的歌", {
+                                                        body: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
+                                                        icon: ""
+                                                    });
+                                                    isNotificated = true;
+                                                    // 两秒后关闭通知
+                                                    setTimeout(function () {
+                                                        n.close();
+                                                    }, 5000);
+                                                }
+                                            });
+                                        }
+                                        if (!isNotificated) {
+                                            that.$notify({
+                                                title: "正在播放 " + that.urldecode(obj.user.user_name) + " 送你的歌",
+                                                message: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
+                                                duration: 5
+                                            });
+                                        }
                                     }
-                                    if (!isNotificated) {
-                                        that.$notify({
-                                            title: "正在播放 " + that.urldecode(obj.user.user_name) + " 送你的歌",
-                                            message: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
-                                            duration: 5
-                                        });
+                                }
+                                that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\n" + location.href + that.room.room_id;
+                                if(that.room.roomInfo.room_domain && that.room.roomInfo.room_domainstatus){
+                                    if(location.href.indexOf('bbbug.com')<0){
+                                        //使用的独立域名
+                                        that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\n" +location.href;
+                                    }else{
+                                        that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\nhttps://" + that.room.roomInfo.room_domain+".bbbug.com";
                                     }
                                 }
-                            }
-                            that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\n" + location.href + that.room.room_id;
-                            if(that.room.roomInfo.room_domain && that.room.roomInfo.room_domainstatus){
-                                if(location.href.indexOf('bbbug.com')<0){
-                                    //使用的独立域名
-                                    that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\n" +location.href;
-                                }else{
-                                    that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\nhttps://" + that.room.roomInfo.room_domain+".bbbug.com";
+                                break;
+                            case 2:
+                                that.addSystemTips("仔细听,猜猜是什么歌曲(直接在聊天框输入答案发送即可)");
+                            case 4:
+                                that.getMusicLrc();
+                                that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\n" + location.href + that.room.room_id;
+                                if(that.room.roomInfo.room_domain && that.room.roomInfo.room_domainstatus){
+                                    if(location.href.indexOf('bbbug.com')<0){
+                                        //使用的独立域名
+                                        that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\n" +location.href;
+                                    }else{
+                                        that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\nhttps://" + that.room.roomInfo.room_domain+".bbbug.com";
+                                    }
                                 }
-                            }
-                            break;
-                        case 2:
-                            that.addSystemTips("仔细听,猜猜是什么歌曲(直接在聊天框输入答案发送即可)");
-                        case 4:
-                            that.getMusicLrc();
-                            that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\n" + location.href + that.room.room_id;
-                            if(that.room.roomInfo.room_domain && that.room.roomInfo.room_domainstatus){
-                                if(location.href.indexOf('bbbug.com')<0){
-                                    //使用的独立域名
-                                    that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\n" +location.href;
-                                }else{
-                                    that.copyString = that.room.roomInfo.room_name + " 正在播放《" + obj.song.name + "》(" + obj.song.singer + "),快来和大家一起听吧：\nhttps://" + that.room.roomInfo.room_domain+".bbbug.com";
-                                }
-                            }
-                    }
+                        }
+                    },100);
 
                 },
                 getImageUrl(url) {
