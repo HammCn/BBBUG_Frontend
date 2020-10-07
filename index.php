@@ -1680,7 +1680,6 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                     }
                     if (that.websocket.isConnected) {
                         setTimeout(function () {
-                            console.log('等待断开');
                             that.doGetRoomData();
                         }, 1000);
                         return;
@@ -1757,7 +1756,6 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                 },
                 audioPlaying() {
                     let that = this;
-                    console.log('Playing');
                     that.nowPlaying = true;
                     that.lrcString = '歌词加载中...';
                     that.$refs.audio.volume = parseFloat(that.volume / 100);
@@ -1801,7 +1799,6 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                 },
                 audioCanPlay() {
                     let that = this;
-                    console.log('canplay');
                     if (!that.isAudioCurrentTimeChanged) {
                         let nowTimeStamps = parseInt((new Date().valueOf() - that.timeDiff) / 1000);
                         let now = 0;
@@ -1842,7 +1839,6 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                 audioError(e) {
                     let that = this;
                     if (that.audioUrl) {
-                        console.log('发生了点错误');
                         that.$refs.audio.src = that.$refs.audio.src;
                         that.$refs.audio.load();
                         that.$refs.audio.play();
@@ -2212,7 +2208,6 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         }catch(e){
                             obj = JSON.parse(data);
                         }
-                        console.log(obj);
                         if (that.chat_room.list.length > that.chat_room.historyMax) {
                             that.chat_room.list.shift();
                         }
