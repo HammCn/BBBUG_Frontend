@@ -1037,15 +1037,15 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                     <el-form-item class="submit-area" style="margin-left:10px;">
                         <span style="float:left;">
                             第三方：
-                            <el-link v-if="room.roomInfo.room_single==0"  class='hideWhenScreenSmall'
-                                @click="location.replace('https://gitee.com/oauth/authorize?client_id=<?php echo $config['gitee']['oauth_id']; ?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Fgitee.php&response_type=code')">
-                                码云
-                            </el-link>
                             <el-link
                                 @click="location.replace('https://graph.qq.com/oauth2.0/authorize?client_id=<?php echo $config['qq']['oauth_id']; ?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Fqq.php&response_type=code&state=<?php echo urlencode($redirectUrl);?>')">
                                 QQ
                             </el-link>
-                            <el-link v-if="room.roomInfo.room_single==0" class='hideWhenScreenSmall'
+                            <el-link v-if="room.roomInfo.room_single==0 && room.roomInfo.room_url==''"  class='hideWhenScreenSmall'
+                                @click="location.replace('https://gitee.com/oauth/authorize?client_id=<?php echo $config['gitee']['oauth_id']; ?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Fgitee.php&response_type=code')">
+                                码云
+                            </el-link>
+                            <el-link v-if="room.roomInfo.room_single==0 && room.roomInfo.room_url==''" class='hideWhenScreenSmall'
                                 @click="location.replace('https://www.oschina.net/action/oauth2/authorize?client_id=<?php echo $config['oschina']['oauth_id']; ?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Foschina.php&response_type=code')">
                                 开源中国
                             </el-link>
