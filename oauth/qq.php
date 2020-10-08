@@ -5,6 +5,7 @@ $client_key = $config['qq']['oauth_key'];
 $redirect_uri = urlencode('https://bbbug.com/oauth/qq.php');
 if (!empty($_GET['code'])) {
     $code = $_GET['code'];
+    $state = urldecode($_GET['state']);
     $url = "https://graph.qq.com/oauth2.0/token?grant_type=authorization_code&code={$code}&client_id={$cliend_id}&redirect_uri={$redirect_uri}&client_secret=" . $client_key;
     $result = curlHelper($url);
     if ($result['detail']['http_code'] == 200) {
@@ -30,7 +31,7 @@ if (!empty($_GET['code'])) {
                         $arr = json_decode($result['body'], true);
                         if ($arr['code'] == 200) {
                             $access_token = $arr['data']['access_token'];
-                            header('Location: ' . urldecode($_COOKIE['localhost']) . '/third/?access_token=' . $access_token);
+                            header('Location: ' . ($state ? $state . '?access_token=' . $access_token : urldecode($_COOKIE['localhost']) . '/third/?access_token=' . $access_token));
                             die;
                         }
                     }

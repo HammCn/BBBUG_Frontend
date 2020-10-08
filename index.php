@@ -6,7 +6,7 @@ $room_title = 'BBBUG音乐聊天室';
 $room_desc = 'BBBUG.COM，一个划水音乐聊天室，超多小哥哥小姐姐都在这里一起听歌、划水聊天、技术分享、表情包斗图，欢迎你的加入！';
 $room_keyword = '划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包';
 $room_notice = '欢迎来到BBBUG音乐聊天室！';
-
+$room_url = '';
 if (strpos($domain, 'bbbug.com') !== false || strpos($domain, 'hamm.cn') !== false) {
     //我方域名
     if (strpos($domain, '.hamm.cn') !== false) {
@@ -24,6 +24,7 @@ if (strpos($domain, 'bbbug.com') !== false || strpos($domain, 'hamm.cn') !== fal
                 $room_notice = $arr['data']['room_notice'];
                 $room_desc = $arr['data']['room_name'] . '，超多小哥哥小姐姐都在这里一起听歌、划水聊天、技术分享、表情包斗图，欢迎你的加入！';
                 $room_keyword = $arr['data']['room_name'] . ',划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包';
+                $room_url = $arr['data']['room_url'];
             }
         }
     }
@@ -40,6 +41,7 @@ if (strpos($domain, 'bbbug.com') !== false || strpos($domain, 'hamm.cn') !== fal
                 $room_notice = $arr['data']['room_notice'];
                 $room_desc = $arr['data']['room_name'] . '，超多小哥哥小姐姐都在这里一起听歌、划水聊天、技术分享、表情包斗图，欢迎你的加入！';
                 $room_keyword = $arr['data']['room_name'] . ',划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包';
+                $room_url = $arr['data']['room_url'];
             }
         }
     } else {
@@ -47,8 +49,31 @@ if (strpos($domain, 'bbbug.com') !== false || strpos($domain, 'hamm.cn') !== fal
         header('Location: https://404.hamm.cn');die;
     }
 }
+$redirectUrl = $room_url ?? ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? $_SERVER['REQUEST_SCHEME']) . "://" . $_SERVER['HTTP_HOST'];
 
-setcookie('localhost', ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? $_SERVER['REQUEST_SCHEME']) . "://" . $_SERVER['HTTP_HOST'], time() + 86400 * 31, '/', 'bbbug.com');
+if(!empty($_GET['access_token'])){
+    $access_token = $_GET['access_token'];
+    ?>
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Login</title>
+</head>
+<body>
+    <script>
+        localStorage.setItem('access_token','<?php echo $access_token;?>');
+        localStorage.setItem('room_id','<?php echo $room_id;?>');
+        location.replace('/');
+    </script>
+</body>
+</html>
+    <?php
+    die;
+}
+
 
 if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
     die('<center><h1>屌毛,你的浏览器不配访问bbbug.com</h1><hr><h4>Sorry but fuck your internet explore!</h4></center>');
@@ -107,7 +132,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                 <div slot="header" class="clearfix">
                     <span>
                         <el-tag size="mini" type="info"
-                            style="margin: 0px 5px;color:#333;font-weight:bolder;font-size:14px;cursor:pointer;" :title="'房间积分: '+room.roomInfo.room_score+'分'">
+                            style="margin: 0px 5px;color:#333;font-weight:bolder;font-size:14px;cursor:pointer;" :title="'房间积分: '+room.roomInfo.room_score+'分'" v-if="room.roomInfo.room_single==0">
                             ID:{{room.room_id}}
                         </el-tag>
                         <i class="iconfont room_icon icon-xiaoxi2" v-if="room.roomInfo.room_type==0"
@@ -130,14 +155,14 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                     <span style="float: right; padding: 3px 0" class="rightMenu">
                         <el-button-group style="text-align: right;">
                             <el-button size="mini" @click="doShowRankDialog" style="color:orangered"
-                                v-html="title.rank_list" class="hideWhenScreenSmall"></el-button>
+                                v-html="title.rank_list" class="hideWhenScreenSmall" v-if="room.roomInfo.room_single==0"></el-button>
                             <el-button size="mini" @click="chat_room.dialog.showOnlineBox = true;doShowOnlineList()"
                                 v-html="'在线 (<font color=red style=\'font-weight:bolder;\'>'+chat_room.data.onlineList.length+'</font>)'">
                             </el-button>
                             <el-button size="mini" v-clipboard:copy="copyString" v-clipboard:success="onCopySuccess" v-html="title.invate_person">
                             </el-button>
                             <el-button size="mini" @click="doGetRoomList" 
-                                v-html="title.exit_room" v-if="userInfo.user_id>0"></el-button>
+                                v-html="title.exit_room" v-if="userInfo.user_id>0 && room.roomInfo.room_single==0"></el-button>
                             <el-button size="mini" @click="doShowLoginBox" style="color:orangered" v-html="title.login"
                                 v-if="userInfo.user_id<0"></el-button>
                         </el-button-group>
@@ -150,7 +175,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                 <!-- <el-dropdown-item v-clipboard:copy="copyString" v-clipboard:success="onCopySuccess">
                                     邀请朋友
                                 </el-dropdown-item> -->
-                                <el-dropdown-item command="doShowQrcode" class="hideWhenScreenSmall">
+                                <el-dropdown-item command="doShowQrcode" class="hideWhenScreenSmall" v-if="room.roomInfo.room_single==0">
                                     穿梭手机
                                 </el-dropdown-item>
                                 <el-dropdown-item command="clearHistory" divided>
@@ -1012,15 +1037,15 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                     <el-form-item class="submit-area" style="margin-left:10px;">
                         <span style="float:left;">
                             第三方：
-                            <el-link class='hideWhenScreenSmall'
+                            <el-link v-if="room.roomInfo.room_single==0"  class='hideWhenScreenSmall'
                                 @click="location.replace('https://gitee.com/oauth/authorize?client_id=<?php echo $config['gitee']['oauth_id']; ?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Fgitee.php&response_type=code')">
                                 码云
                             </el-link>
                             <el-link
-                                @click="location.replace('https://graph.qq.com/oauth2.0/authorize?client_id=<?php echo $config['qq']['oauth_id']; ?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Fqq.php&response_type=code&state=bbbug')">
+                                @click="location.replace('https://graph.qq.com/oauth2.0/authorize?client_id=<?php echo $config['qq']['oauth_id']; ?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Fqq.php&response_type=code&state=<?php echo urlencode($redirectUrl);?>')">
                                 QQ
                             </el-link>
-                            <el-link class='hideWhenScreenSmall'
+                            <el-link v-if="room.roomInfo.room_single==0" class='hideWhenScreenSmall'
                                 @click="location.replace('https://www.oschina.net/action/oauth2/authorize?client_id=<?php echo $config['oschina']['oauth_id']; ?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Foschina.php&response_type=code')">
                                 开源中国
                             </el-link>
