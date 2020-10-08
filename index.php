@@ -25,6 +25,9 @@ if (strpos($domain, 'bbbug.com') !== false || strpos($domain, 'hamm.cn') !== fal
                 $room_desc = $arr['data']['room_name'] . '，超多小哥哥小姐姐都在这里一起听歌、划水聊天、技术分享、表情包斗图，欢迎你的加入！';
                 $room_keyword = $arr['data']['room_name'] . ',划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包';
                 $room_url = $arr['data']['room_url'];
+            }else{
+                //没有查询到cname
+                header('Location: https://bbbug.com');die;
             }
         }
     }
@@ -49,32 +52,11 @@ if (strpos($domain, 'bbbug.com') !== false || strpos($domain, 'hamm.cn') !== fal
         header('Location: https://404.hamm.cn');die;
     }
 }
-$redirectUrl = $room_url ?? ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? $_SERVER['REQUEST_SCHEME']) . "://" . $_SERVER['HTTP_HOST'];
-
-if(!empty($_GET['access_token'])){
-    $access_token = $_GET['access_token'];
-    ?>
-<!DOCTYPE html>
-<html lang="zh-cn">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-    <title>Login</title>
-</head>
-<body>
-    <script>
-        localStorage.setItem('access_token','<?php echo $access_token;?>');
-        localStorage.setItem('room_id','<?php echo $room_id;?>');
-        location.replace('/');
-    </script>
-</body>
-</html>
-    <?php
-    die;
+$redirectUrl = ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? $_SERVER['REQUEST_SCHEME']) . "://" . $_SERVER['HTTP_HOST'];
+if($room_url){
+    $redirectUrl = $room_url;
 }
-
-
+setcookie('localhost',$redirectUrl,time()+3600,'/','bbbug.com');
 if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
     die('<center><h1>屌毛,你的浏览器不配访问bbbug.com</h1><hr><h4>Sorry but fuck your internet explore!</h4></center>');
 }

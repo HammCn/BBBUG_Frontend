@@ -31,7 +31,7 @@ if (!empty($_GET['code'])) {
                         $arr = json_decode($result['body'], true);
                         if ($arr['code'] == 200) {
                             $access_token = $arr['data']['access_token'];
-                            header('Location: ' . ($state ? $state . '?access_token=' . $access_token : urldecode($_COOKIE['localhost']) . '/third/?access_token=' . $access_token));
+                            header('Location: ' . ($state ? $state . '/third/?access_token=' . $access_token : urldecode($_COOKIE['localhost']) . '/third/?access_token=' . $access_token));
                             die;
                         }
                     }
