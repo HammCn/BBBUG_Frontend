@@ -23,6 +23,27 @@ const scrollFuncs = {
     } else {
       vue.showScrollToBottomBtn = false;
     }
+  },
+
+  /**
+   * 滚动到指定消息
+   * @param {*} msgid 
+   */
+  scrollToChat: function (msgid) {
+    const chatRoom = document.querySelector('#chat_room_history');
+    const chat = document.querySelector(`#msgid_${msgid}`);
+    chatRoom.scrollTop = chat.offsetTop - 100;
+    chat.style.backgroundColor = 'rgba(251, 114, 153,0.1)';
+    chat.style.transition = 'all 600ms';
+    setTimeout(() => {
+      chat.style.transition = 'all 2000ms';
+      chat.style.backgroundColor = 'transparent';
+      setTimeout(() => {
+        chat.style.transition = 'unset';
+      }, 2000);
+    }, 3000);
   }
+
+
 
 }

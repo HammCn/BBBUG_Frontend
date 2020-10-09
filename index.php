@@ -179,7 +179,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                 <div class="chat_room_box">
                     <div class="chat_room_history" id="chat_room_history" @click="hideAllDialog"
                         @scroll="scrollEvent($event)">
-                        <div v-for="(item,index) in chat_room.list">
+                        <div v-for="(item,index) in chat_room.list" v-bind:key="'msgid-'+item.message_id" :id="'msgid_'+item.message_id">
                             <div v-if="item.type!='system'"  @mouseover="item.active=1" @mouseout="item.active=0">
                                 <div :class="[item.user.user_id==userInfo.user_id?'item mine':'item']">
                                     <!-- <img src="images/ajx.png" style="position: absolute;left:-4px;top:-4px;width:50px;height:50px;"/> -->
@@ -1329,6 +1329,13 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
             },
             mounted() {
                 let that = this;
+                // 重写notify，设置默认偏移
+                const notifyFunc = this.$notify;
+                that.$notify = function (obj) {
+                    notifyFunc(
+                        Object.assign({offset: 70}, obj)
+                    )
+                }
                 document.addEventListener('paste', that.getClipboardFiles);
                 that.emojiList = [];
                 for(let i=1;i<=30;i++){
@@ -2266,11 +2273,13 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                                 });
                                             }
                                             if (!isNotificated) {
+                                                console.log("@", obj)
                                                 that.$notify({
                                                     title: that.urldecode(obj.user.user_name) + "@了你：",
-                                                    message: that.urldecode(obj.content),
+                                                    message: that.urldecode(obj.content) + `<span class="notify-at-goto" onclick="scrollFuncs.scrollToChat(${obj.message_id})">[查看]</span>`,
                                                     duration: 0,
-                                                    offset: 70,
+                                                    dangerouslyUseHTMLString: true
+                                                    // offset: 70,
                                                 });
                                             }
                                         }
@@ -2281,7 +2290,8 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                         that.$notify({
                                             title: that.urldecode(obj.user.user_name) + "说：",
                                             message: that.urldecode(obj.content),
-                                            duration: 5000
+                                            duration: 5000,
+                                            // offset: 70,
                                         });
                                     }
                                 }
