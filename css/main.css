@@ -763,6 +763,10 @@ body {
     background-position: bottom center; */
 }
 
+.chat_room_history > div {
+    padding: 10px 0 0 0;
+}
+
 .submit-area .el-form-item__content {
     margin-left: 10px!important;
 }
@@ -1161,4 +1165,11 @@ audio {
     right: 10px;
     bottom: 215px;
     font-weight:normal;
+}
+
+.notify-at-goto {
+    display: inline-block;
+    padding: 0 8px;
+    color: #0098ff;
+    cursor: pointer;
 }
