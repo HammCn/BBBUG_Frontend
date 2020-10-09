@@ -7,49 +7,51 @@ $room_desc = 'BBBUG.COM，一个划水音乐聊天室，超多小哥哥小姐姐
 $room_keyword = '划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包';
 $room_notice = '欢迎来到BBBUG音乐聊天室！';
 $room_url = '';
-if (strpos($domain, 'bbbug.com') !== false || strpos($domain, 'hamm.cn') !== false) {
-    //我方域名
-    if (strpos($domain, '.hamm.cn') !== false) {
-        header('Location: https://404.hamm.cn');die;
-    }
-    if ($domain != 'bbbug.com') {
-        //是 *.bbbug.com
-        $subDomain = str_replace('.bbbug.com', '', $domain);
-        if ($subDomain != 'bbbug.com') {
-            $result = curlHelper('https://api.bbbug.com/api/room/getRoomByDomain?room_domain=' . $subDomain);
-            $arr = json_decode($result['body'], true);
-            if ($arr['code'] == 200) {
-                $room_id = $arr['data']['room_id'];
-                $room_title = $arr['data']['room_name'];
-                $room_notice = $arr['data']['room_notice'];
-                $room_desc = $arr['data']['room_name'] . '，超多小哥哥小姐姐都在这里一起听歌、划水聊天、技术分享、表情包斗图，欢迎你的加入！';
-                $room_keyword = $arr['data']['room_name'] . ',划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包';
-                $room_url = $arr['data']['room_url'];
-            }else{
-                //没有查询到cname
-                header('Location: https://bbbug.com');die;
-            }
+if(true){ //开发调试可直接改为false 跳过域名处理业务
+    if (strpos($domain, 'bbbug.com') !== false || strpos($domain, 'hamm.cn') !== false) {
+        //我方域名
+        if (strpos($domain, '.hamm.cn') !== false) {
+            header('Location: https://404.hamm.cn');die;
         }
-    }
-} else {
-    $cname = dns_get_record($domain, DNS_CNAME);
-    if (count($cname) > 0) {
-        $subDomain = str_replace('.bbbug.com', '', $cname[0]['target']);
-        if ($subDomain != $cname[0]['target']) {
-            $result = curlHelper('https://api.bbbug.com/api/room/getRoomByDomain?room_domain=' . $subDomain);
-            $arr = json_decode($result['body'], true);
-            if ($arr['code'] == 200) {
-                $room_id = $arr['data']['room_id'];
-                $room_title = $arr['data']['room_name'];
-                $room_notice = $arr['data']['room_notice'];
-                $room_desc = $arr['data']['room_name'] . '，超多小哥哥小姐姐都在这里一起听歌、划水聊天、技术分享、表情包斗图，欢迎你的加入！';
-                $room_keyword = $arr['data']['room_name'] . ',划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包';
-                $room_url = $arr['data']['room_url'];
+        if ($domain != 'bbbug.com') {
+            //是 *.bbbug.com
+            $subDomain = str_replace('.bbbug.com', '', $domain);
+            if ($subDomain != 'bbbug.com') {
+                $result = curlHelper('https://api.bbbug.com/api/room/getRoomByDomain?room_domain=' . $subDomain);
+                $arr = json_decode($result['body'], true);
+                if ($arr['code'] == 200) {
+                    $room_id = $arr['data']['room_id'];
+                    $room_title = $arr['data']['room_name'];
+                    $room_notice = $arr['data']['room_notice'];
+                    $room_desc = $arr['data']['room_name'] . '，超多小哥哥小姐姐都在这里一起听歌、划水聊天、技术分享、表情包斗图，欢迎你的加入！';
+                    $room_keyword = $arr['data']['room_name'] . ',划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包';
+                    $room_url = $arr['data']['room_url'];
+                }else{
+                    //没有查询到cname
+                    header('Location: https://bbbug.com');die;
+                }
             }
         }
     } else {
-        //没有查询到cname
-        header('Location: https://404.hamm.cn');die;
+        $cname = dns_get_record($domain, DNS_CNAME);
+        if (count($cname) > 0) {
+            $subDomain = str_replace('.bbbug.com', '', $cname[0]['target']);
+            if ($subDomain != $cname[0]['target']) {
+                $result = curlHelper('https://api.bbbug.com/api/room/getRoomByDomain?room_domain=' . $subDomain);
+                $arr = json_decode($result['body'], true);
+                if ($arr['code'] == 200) {
+                    $room_id = $arr['data']['room_id'];
+                    $room_title = $arr['data']['room_name'];
+                    $room_notice = $arr['data']['room_notice'];
+                    $room_desc = $arr['data']['room_name'] . '，超多小哥哥小姐姐都在这里一起听歌、划水聊天、技术分享、表情包斗图，欢迎你的加入！';
+                    $room_keyword = $arr['data']['room_name'] . ',划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包';
+                    $room_url = $arr['data']['room_url'];
+                }
+            }
+        } else {
+            //没有查询到cname
+            header('Location: https://404.hamm.cn');die;
+        }
     }
 }
 $redirectUrl = ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? $_SERVER['REQUEST_SCHEME']) . "://" . $_SERVER['HTTP_HOST'];
