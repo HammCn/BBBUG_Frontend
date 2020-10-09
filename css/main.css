@@ -1173,3 +1173,11 @@ audio {
     color: #0098ff;
     cursor: pointer;
 }
+
+.quote {
+    display: block;
+    padding: 3px 5px;
+    margin: 3px;
+    background-color: #efefef;
+    border-radius: 4px;
+}

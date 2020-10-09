@@ -32,6 +32,10 @@ const scrollFuncs = {
   scrollToChat: function (msgid) {
     const chatRoom = document.querySelector('#chat_room_history');
     const chat = document.querySelector(`#msgid_${msgid}`);
+    if (!chat) {
+      Vue.prototype.$message.error("无法定位到该消息！");
+      return;
+    }
     chatRoom.scrollTop = chat.offsetTop - 100;
     chat.style.backgroundColor = 'rgba(251, 114, 153,0.1)';
     chat.style.transition = 'all 600ms';

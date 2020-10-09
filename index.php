@@ -299,7 +299,10 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                         </div>
                                     </div>
 
-                                    <div v-if="item.time" class="time" style="cursor:pointer;" @click="doReply(item)"><div v-if="item.at && item.at.message">{{item.at.message.type=='text'?item.at.message.content:'[图片]'}}</div>{{friendlyTime(item.time)}}<a style="margin-left:5px;color:orangered;pointer-events: none;" v-if="item.active">回复</a></div>
+                                    <div v-if="item.time" class="time" style="cursor:pointer;" @click="doReply(item)">
+                                        <div class="quote" v-if="item.at && item.at.message" @click.stop="scrollToChat(item.at.message.message_id)">{{item.at.message.type=='text'?item.at.message.content:'[图片]'}}</div>{{friendlyTime(item.time)}}
+                                        <a style="margin-left:5px;color:orangered;pointer-events: none;" v-if="item.active">回复</a>
+                                    </div>
                                 </div>
                             </div>
                             <div v-if="item.type=='system'" class="system"><span
@@ -2215,6 +2218,9 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         return parseInt((now - time) / 86400 / 365) + '年前'
                     }
                 },
+                scrollToChat: function(msgid) {
+                    scrollFuncs.scrollToChat(msgid);
+                },
                 messageController(data) {
                     let that = this;
                     try {
@@ -2273,7 +2279,6 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                                 });
                                             }
                                             if (!isNotificated) {
-                                                console.log("@", obj)
                                                 that.$notify({
                                                     title: that.urldecode(obj.user.user_name) + "@了你：",
                                                     message: that.urldecode(obj.content) + `<span class="notify-at-goto" onclick="scrollFuncs.scrollToChat(${obj.message_id})">[查看]</span>`,
@@ -2281,6 +2286,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                                     dangerouslyUseHTMLString: true
                                                     // offset: 70,
                                                 });
+                                                
                                             }
                                         }
                                     }
