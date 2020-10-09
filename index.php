@@ -179,9 +179,9 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                 <div class="chat_room_box">
                     <div class="chat_room_history" id="chat_room_history" @click="hideAllDialog"
                         @scroll="scrollEvent($event)">
-                        <div v-for="(item,index) in chat_room.list" v-bind:key="'msgid-'+item.message_id" :id="'msgid_'+item.message_id">
-                            <div v-if="item.type!='system'"  @mouseover="item.active=1" @mouseout="item.active=0">
-                                <div :class="[item.user.user_id==userInfo.user_id?'item mine':'item']">
+                        <div v-for="(item,index) in chat_room.list">
+                            <div v-if="item.type!='system'"  @mouseover="item.active=1" @mouseout="item.active=0" v-bind:key="'msgid-'+(item.message_id||0)" :id="'msgid_'+item.message_id || 0" style="padding:10px 0px 0px 0px;">
+                                <div :class="[item.user.user_id==userInfo.user_id?'item mine':'item']" >
                                     <!-- <img src="images/ajx.png" style="position: absolute;left:-4px;top:-4px;width:50px;height:50px;"/> -->
                                     <div class="head">
                                         <el-dropdown trigger="click" @command="commandUserHead" :index="index">

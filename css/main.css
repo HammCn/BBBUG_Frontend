@@ -763,9 +763,6 @@ body {
     background-position: bottom center; */
 }
 
-.chat_room_history > div {
-    padding: 10px 0 0 0;
-}
 
 .submit-area .el-form-item__content {
     margin-left: 10px!important;
