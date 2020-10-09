@@ -60,7 +60,7 @@ if($room_url){
 }
 setcookie('localhost',$redirectUrl,time()+3600,'/','bbbug.com');
 if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
-    die('<center><h1>屌毛,你的浏览器不配访问bbbug.com</h1><hr><h4>Sorry but fuck your internet explore!</h4></center>');
+    die('<center><h1>屌毛,你的浏览器不配访问bbbug.com</h1><hr><h4>Sorry but fuck your internet explore!</h4><br><br><br><img src="images/linus.jpg" height="300px"/></center>');
 }
 ?>
 <!DOCTYPE html>
