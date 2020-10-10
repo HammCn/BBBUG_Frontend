@@ -2178,6 +2178,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                 that.messageController(event.data);
                             };
                             that.websocket.connection.onclose = function (event) {
+                                console.log(event);
                                 that.websocket.isConnected = false;
                                 if (!that.websocket.hardStop) {
                                     that.doWebsocketError();
@@ -3218,7 +3219,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                     that.websocket.heartBeatTimer = setTimeout(function () {
                         that.websocket.connection.send('heartBeat');
                         that.doWebsocketHeartBeat();
-                    }, 30000);
+                    }, 10000);
                 },
                 doWebsocketError() {
                     let that = this;
