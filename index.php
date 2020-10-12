@@ -7,7 +7,7 @@ $room_desc = 'BBBUG.COM，一个划水音乐聊天室，超多小哥哥小姐姐
 $room_keyword = '划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包';
 $room_notice = '欢迎来到BBBUG音乐聊天室！';
 $room_url = '';
-if(true){ //开发调试可直接改为false 跳过域名处理业务
+if (true) { //开发调试可直接改为false 跳过域名处理业务
     if (strpos($domain, 'bbbug.com') !== false || strpos($domain, 'hamm.cn') !== false) {
         //我方域名
         if (strpos($domain, '.hamm.cn') !== false) {
@@ -26,7 +26,7 @@ if(true){ //开发调试可直接改为false 跳过域名处理业务
                     $room_desc = $arr['data']['room_name'] . '，超多小哥哥小姐姐都在这里一起听歌、划水聊天、技术分享、表情包斗图，欢迎你的加入！';
                     $room_keyword = $arr['data']['room_name'] . ',划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包';
                     $room_url = $arr['data']['room_url'];
-                }else{
+                } else {
                     //没有查询到cname
                     header('Location: https://bbbug.com');die;
                 }
@@ -55,10 +55,10 @@ if(true){ //开发调试可直接改为false 跳过域名处理业务
     }
 }
 $redirectUrl = ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? $_SERVER['REQUEST_SCHEME']) . "://" . $_SERVER['HTTP_HOST'];
-if($room_url){
+if ($room_url) {
     $redirectUrl = $room_url;
 }
-setcookie('localhost',$redirectUrl,time()+3600,'/','bbbug.com');
+setcookie('localhost', $redirectUrl, time() + 3600, '/', 'bbbug.com');
 if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
     die('<center><h1>屌毛,你的浏览器不配访问bbbug.com</h1><hr><h4>Sorry but fuck your internet explore!</h4><br><br><br><img src="images/linus.jpg" height="300px"/></center>');
 }
@@ -145,7 +145,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                             </el-button>
                             <el-button size="mini" v-clipboard:copy="copyString" v-clipboard:success="onCopySuccess" v-html="title.invate_person">
                             </el-button>
-                            <el-button size="mini" @click="doGetRoomList" 
+                            <el-button size="mini" @click="doGetRoomList"
                                 v-html="title.exit_room" v-if="userInfo.user_id>0 && room.roomInfo.room_single==0"></el-button>
                             <el-button size="mini" @click="doShowLoginBox" style="color:orangered" v-html="title.login"
                                 v-if="userInfo.user_id<0"></el-button>
@@ -1025,7 +1025,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         <span style="float:left;">
                             第三方：
                             <el-link
-                                @click="location.replace('https://graph.qq.com/oauth2.0/authorize?client_id=<?php echo $config['qq']['oauth_id']; ?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Fqq.php&response_type=code&state=<?php echo urlencode($redirectUrl);?>')">
+                                @click="location.replace('https://graph.qq.com/oauth2.0/authorize?client_id=<?php echo $config['qq']['oauth_id']; ?>&redirect_uri=https%3A%2F%2Fbbbug.com%2Foauth%2Fqq.php&response_type=code&state=<?php echo urlencode($redirectUrl); ?>')">
                                 QQ
                             </el-link>
                             <el-link v-if="room.roomInfo.room_single==0 && room.roomInfo.room_url==''"  class='hideWhenScreenSmall'
@@ -1152,6 +1152,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         login: "登录"
                     },
                     chat_room: {
+                        timerForWebTitle:false,
                         historyLoading:false,
                         historyMax:50,
                         songSendUser: false,
@@ -2287,7 +2288,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                                     dangerouslyUseHTMLString: true
                                                     // offset: 70,
                                                 });
-                                                
+
                                             }
                                         }
                                     }
@@ -2303,7 +2304,16 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                     }
                                 }
                                 that.chat_room.list.push(obj);
-
+                                document.title = that.urldecode(obj.user.user_name) + "说："+that.urldecode(obj.content);
+                                clearTimeout(that.chat_room.timerForWebTitle);
+                                that.callParentFunction('onTextMessage',obj);
+                                that.chat_room.timerForWebTitle = setTimeout(function(){
+                                    if (that.lockScreenData.ifLockSystem) {
+                                        document.title = '音乐播放器';
+                                    } else {
+                                        document.title = that.room.roomInfo.room_name;
+                                    }
+                                },3000);
                                 break;
                             case 'link':
                                 if (obj.user.user_id == that.userInfo.user_id) {
