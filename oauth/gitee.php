@@ -20,7 +20,6 @@ if (!empty($_GET['code'])) {
         $result = curlHelper($url);
         if ($result['detail']['http_code'] == 200) {
             $user = json_decode($result['body'], true);
-
             $result = curlHelper('https://api.bbbug.com/api/user/openlogin', 'POST', [
                 'appid' => $config['gitee']['app_id'],
                 'appkey' => $config['gitee']['app_key'],

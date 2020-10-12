@@ -24,6 +24,7 @@ if (!empty($_GET['code'])) {
                             'appid' => $config['qq']['app_id'],
                             'appkey' => $config['qq']['app_key'],
                             'nickname' => $user['nickname'],
+                            'sex'=>$user['gender'] == '男'?1:0,
                             'head' => $user['figureurl_qq_2'] ?? $user['figureurl_qq_1'],
                             'openid' => $openid,
                             'extra' => $openid,
