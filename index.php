@@ -300,7 +300,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                     </div>
 
                                     <div v-if="item.time" class="time" style="cursor:pointer;" @click="doReply(item)">
-                                        <div class="quote" v-if="item.at && item.at.message" @click.stop="scrollToChat(item.at.message.message_id)">{{item.at.message.type=='text'?item.at.message.content:'[图片]'}}</div>{{friendlyTime(item.time)}}
+                                        <div class="quote" v-if="item.at && item.at.message" @click.stop="scrollToChat(item.at.message.message_id)">{{item.at.message.type=='text'?urldecode(item.at.message.content):'[图片]'}}</div>{{friendlyTime(item.time)}}
                                         <a style="margin-left:5px;color:orangered;pointer-events: none;" v-if="item.active">回复</a>
                                     </div>
                                 </div>
