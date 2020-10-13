@@ -15,7 +15,6 @@ if (!empty($_GET['code'])) {
         $result = curlHelper($url);
         if ($result['detail']['http_code'] == 200) {
             $user = json_decode($result['body'], true);
-            print_r($user);die;
             $result = curlHelper('https://api.bbbug.com/api/user/openlogin', 'POST', [
                 'appid' => $config['oschina']['app_id'],
                 'appkey' => $config['oschina']['app_key'],
