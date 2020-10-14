@@ -1346,6 +1346,25 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                     that.emojiList.push('https://bbbug.com/images/emoji/'+i+'.png');
                 }
                 that.chat_room.data.searchImageList = that.emojiList;
+
+
+                that.ctrlEnabled = localStorage.getItem('ctrlEnable') == 'ctrl_enter' ? true : false;
+                that.login.form.user_account = localStorage.getItem('user_account') || '';
+                that.baseData.access_token = localStorage.getItem('access_token') || '';
+
+                if(that.room.room_id == 888){
+                    room_id = localStorage.getItem('room_id');
+                    if(room_id){
+                        that.room.room_id = parseInt(room_id);
+                    }
+                }
+                that.volume = localStorage.getItem('volume') == null ? 50 : parseInt(localStorage.getItem('volume'));
+                if (that.volume == 0) {
+                    that.config.playMusic = false;
+                } else {
+                    that.config.playMusic = true;
+                }
+
                 that.$alert('<?php echo $room_notice; ?>', 'Welcome', {
                     confirmButtonText: '确定',
                     callback: function () {
@@ -1366,12 +1385,6 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         that.callParentFunction('noticeClicked', 'success');
                     }
                 });
-                that.volume = localStorage.getItem('volume') == null ? 50 : parseInt(localStorage.getItem('volume'));
-                if (that.volume == 0) {
-                    that.config.playMusic = false;
-                } else {
-                    that.config.playMusic = true;
-                }
                 that.request({
                     url: "system/time",
                     success(res) {
@@ -1396,16 +1409,6 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         default:
                     }
                 };
-                that.ctrlEnabled = localStorage.getItem('ctrlEnable') == 'ctrl_enter' ? true : false;
-                that.login.form.user_account = localStorage.getItem('user_account') || '';
-                that.baseData.access_token = localStorage.getItem('access_token') || '';
-
-                if(that.room.room_id == 888){
-                    room_id = localStorage.getItem('room_id');
-                    if(room_id){
-                        that.room.room_id = parseInt(room_id);
-                    }
-                }
 
             },
             updated() {
@@ -1667,6 +1670,9 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                 getMusicLrc() {
                     let that = this;
                     that.musicLrcObj = {};
+                    if(that.room.roomInfo.room_type==2){
+                        return;
+                    }
                     that.request({
                         url: 'song/getLrc',
                         data: {
@@ -1873,6 +1879,10 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                 },
                 audioTimeUpdate() {
                     let that = this;
+                    if(that.room.roomInfo.room_type==2){
+                        that.lrcString = '猜歌游戏进行中，请在上面输入歌曲名字即可参与游戏啦~';
+                        return;
+                    }
                     if (that.$refs.audio.duration > 0 && that.$refs.audio.duration != NaN) {
                         that.chat_room.songPercent = parseInt(that.$refs.audio.currentTime / that.$refs.audio.duration * 100);
                         let lrcText = '';
@@ -2482,6 +2492,12 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         that.chat_room.song = obj;
                         that.isAudioCurrentTimeChanged = false;
                         that.audioUrl = "https://api.bbbug.com/api/song/playurl?mid=" + obj.song.mid;
+                        
+                        that.volume = localStorage.getItem('volume') == null ? 50 : parseInt(localStorage.getItem('volume'));
+                        localStorage.setItem('volume', that.volume);
+                        localStorage.setItem('volume_old', that.volume);
+                        that.$refs.audio.volume = parseFloat(that.volume / 100);
+
                         that.lockScreenData.musicHead = obj.song.pic || 'images/nohead.jpg';
                         that.lockScreenData.musicString = "《" + obj.song.name + "》(" + obj.song.singer + ") ";
                         if (obj.at) {
