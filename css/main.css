@@ -474,7 +474,6 @@ body {
     cursor: pointer;
     font-size: 16px;
 }
-
 .player_img {
     width: 55px;
     height: 55px;
@@ -755,7 +754,7 @@ body {
     bottom: 120px;
     overflow: hidden;
     overflow-y: scroll;
-    padding-bottom: 80px;
+    padding-bottom: 90px;
     /*scroll-behavior: smooth;*/
     /* z-index:-1; */
     /* background: #fff url(/images/footer.png) no-repeat;
@@ -880,8 +879,12 @@ audio {
 
 .chat_room_history .item {
     position: relative;
-    margin: 20px 30px;
-    padding-bottom:20px;
+    margin: 0px 30px;
+}
+.chat_room_history .item .user_sex{
+    position: absolute;
+    left:30px;
+    top:30px;
 }
 .chat_room_history .item .time{
     font-size:12px;
@@ -929,14 +932,14 @@ audio {
     width: 40px;
     height: 40px;
     border-radius: 100%;
-    border: 1px solid #eee;
+    border:1px solid #eee;
     cursor: pointer;
 }
-
 .chat_room_history .item .body {
     margin-left: 50px;
     margin-top: 20px;
     text-align: left;
+    padding-bottom:20px;
 }
 
 .chat_room_history .mine .body {
@@ -1146,7 +1149,7 @@ audio {
         margin: 0px 10px;
     }
     .chat_room_history {
-        padding-bottom: 80px;
+        padding-bottom: 90px;
     }
     .pet {
         display: none;

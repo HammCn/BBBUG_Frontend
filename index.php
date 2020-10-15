@@ -80,7 +80,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
     <meta name="MobileOptimized" content="480">
     <meta name="HandheldFriendly" content="True">
     <link rel="stylesheet" href="css/element.css">
-    <link rel="stylesheet" href="//at.alicdn.com/t/font_666204_trcuv9ja6ip.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_666204_dnb0dnily7q.css">
     <link rel="stylesheet" href="css/vue.preview.css">
     <link rel="stylesheet" href="css/main.css?<?php echo time(); ?>">
     <script>
@@ -179,11 +179,11 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                 <div class="chat_room_box">
                     <div class="chat_room_history" id="chat_room_history" @click="hideAllDialog"
                         @scroll="scrollEvent($event)">
-                        <div v-for="(item,index) in chat_room.list">
-                            <div v-if="item.type!='system'"  @mouseover="item.active=1" @mouseout="item.active=0" v-bind:key="'msgid-'+(item.message_id||0)" :id="'msgid_'+item.message_id || 0" style="padding:10px 0px 0px 0px;">
+                        <div v-for="(item,index) in chat_room.list" >
+                            <div v-if="item.type!='system'"  @mouseover="item.active=1" @mouseout="item.active=0" v-bind:key="'msgid-'+(item.message_id||0)" :id="'msgid_'+item.message_id || 0" style="padding-top:5px;" >
                                 <div :class="[item.user.user_id==userInfo.user_id?'item mine':'item']" >
                                     <!-- <img src="images/ajx.png" style="position: absolute;left:-4px;top:-4px;width:50px;height:50px;"/> -->
-                                    <div class="head">
+                                    <div class="head" :class="item.user.user_sex==1?'user_sex_male':'user_sex_female'" :title="item.user.user_sex==1?'男生':'女生'">
                                         <el-dropdown trigger="click" @command="commandUserHead" :index="index">
                                             <img :src="http2https(item.user.user_head)" onerror="this.src='images/nohead.jpg'"
                                                 :class="[room.roomInfo.room_type==1&&chat_room.song&&item.user.user_id==chat_room.song.user.user_id?'love':'']"
@@ -223,29 +223,30 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                         </el-dropdown>
                                     </div>
                                     <div class="body">
-                                        <div class="user">
-                                            <i class="iconfont icon-apple1 user_device" title="iOS客户端在线"
+                                        <div class="user" >
+                                            <!-- <i class="iconfont icon-apple1 user_device" title="iOS客户端在线"
                                                 v-if="item.user.user_device=='iPhone' || item.user.user_device=='iPad' || item.user.user_device=='iPod'"></i>
                                             <i class="iconfont icon-apple1 user_device" title="Mac在线"
                                                 v-if="item.user.user_device=='MacOS'"></i>
                                             <i class="iconfont icon-windows-fill user_device" title="Windows在线"
                                                 v-if="item.user.user_device=='Windows'"></i>
                                             <i class="iconfont icon-android1 user_device" title="Android在线"
-                                                v-if="item.user.user_device=='Android'"></i>
-                                            <i class="iconfont user_sex icon-xingbie-nv" title="女生"
+                                                v-if="item.user.user_device=='Android'"></i> -->
+                                            <!-- <i class="iconfont user_sex icon-xingbie-nv" title="女生"
                                                 v-if="item.user.user_sex==0"></i><i
                                                 class="iconfont user_sex icon-xingbie-nan" title="男生"
-                                                v-if="item.user.user_sex==1"></i> {{urldecode(item.user.user_name)}}
+                                                v-if="item.user.user_sex==1"></i> -->
+                                            {{urldecode(item.user.user_name)}}
                                             <el-tag size="mini" type="warning" class="isAdmin" title="管理员"
                                                 v-if="item.user.user_admin">管</el-tag>
                                             <el-tag size="mini" type="success" class="isAdmin" title="房主"
                                                 v-if="!item.user.user_admin&&item.user.user_id == room.roomInfo.room_user">房</el-tag>
-                                            <a :href="replaceProfileLink(item.user.app_url,item.user.user_extra)"
+                                            <!-- <a :href="replaceProfileLink(item.user.app_url,item.user.user_extra)"
                                                 target="_blank" v-if="item.user.app_id>1">
                                                 <el-tag size="mini" type="info" class="isAdmin" title="来自第三方应用登录">
                                                     {{item.user.app_name}}</el-tag>
-                                            </a>
-                                            <span title="国庆快乐·中国牛逼" v-if="item.user.user_icon" style="cursor:pointer;font-size:12px;background-color:#F06557;color:yellow;text-align:center;line-height:14px;padding:1px 3px;border-radius:3px;display:inline-block;"><i class="iconfont icon-icon_star_fill" style="font-size:14px;"></i></font>
+                                            </a> -->
+                                            <span title="程序员节彩蛋徽章&#10;10-20至10-24期间&#10;点歌超过64首即可获得" v-if="item.user.user_icon" style="cursor:pointer;font-size:12px;background-color:#333;color:#fff;text-align:center;line-height:14px;padding:1px 2px;border-radius:3px;display:inline-block;"><i class="iconfont icon-bug" style="font-size:14px;"></i></font>
                                         </div>
                                         <div v-if="item.sha=='loading'" class="love-fast"
                                             style="position:absolute;right:30px;bottom:14px;color:#666;font-size:16px;font-weight:bolder">
@@ -297,11 +298,11 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                                 <span v-if="!item.jump.room_public">公开房间</span>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div v-if="item.time" class="time" style="cursor:pointer;" @click="doReply(item)">
-                                        <div class="quote" v-if="item.at && item.at.message" @click.stop="scrollToChat(item.at.message.message_id)">{{item.at.message.type=='text'?urldecode(item.at.message.content):'[图片]'}}</div>{{friendlyTime(item.time)}}
-                                        <a style="margin-left:5px;color:orangered;pointer-events: none;" v-if="item.active">回复</a>
+                                        <div v-if="item.time" class="time" style="cursor:pointer;" @click="doReply(item)">
+                                            <span class="quote" v-if="item.at && item.at.message" @click.stop="scrollToChat(item.at.message.message_id)">{{item.at.message.type=='text'?urldecode(item.at.message.content):'[图片]'}}</span>{{friendlyTime(item.time)}}
+                                            <a style="margin-left:5px;color:orangered;pointer-events: none;" v-if="item.active">回复</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
