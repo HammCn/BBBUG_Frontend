@@ -22,6 +22,7 @@
 
 IM后端采用 Node 实现 ```Websocket``` 服务，```Nginx``` 做Wss代理，前端采用 ```ElementUI&vue``` 实现，后端使用 ```StartAdmin``` 做管理平台。 Websocket.js 为后端Websocket实现代码，可自行安装相关包后使用pm2等进程管理工具将后端websocket持久化运行。
 
+
 ### 使用说明
 
 clone当前项目，创建php运行环境(简单的项目初始化采用了php)，部署即可访问。
