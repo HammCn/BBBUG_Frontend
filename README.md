@@ -8,6 +8,7 @@
 <img src="https://svg.hamm.cn/badge.svg?key=License&value=GPL-3.0"/>
 </p>
 
+
 ### 介绍
 
 一个集音乐/聊天/看直播等一体的在线聊天室，支持了Gitee/OSChina/QQ等OAuth登录，支持多房间和创建私人房间，支持房间加密和切换房间模式，支持绑定二级域名与顶级域名，提供了第三方网站的快速接入方案。此仓库为PC站前端仓库。开发者QQ群：1140258698
