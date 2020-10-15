@@ -669,10 +669,10 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                         <el-button v-if="room.roomInfo.room_type==1" type="warning" circle size="small"
                                             @click="doAddSong(scope.row)">点
                                         </el-button>
-                                        <el-button v-if="room.roomInfo.room_type==4 && (room.roomInfo.room_user==userInfo.user_id || userInfo.user_admin)" type="warning" circle size="small"
+                                        <el-button v-if="room.roomInfo.room_type==4 && room.roomInfo.room_user==userInfo.user_id" type="warning" circle size="small"
                                             @click="doPlaySong(scope.row)">播
                                         </el-button>
-                                        <el-button v-if="room.roomInfo.room_type==4 && (room.roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)" type="warning" circle size="small"
+                                        <el-button v-if="room.roomInfo.room_type==4 && room.roomInfo.room_user!=userInfo.user_id" type="warning" circle size="small"
                                             @click="doAddSong(scope.row)">点
                                         </el-button>
                                     </span>
@@ -771,10 +771,10 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                             circle size="small" @click="doPushSongTop(scope.row)" v-if="room.roomInfo.room_type==1">顶
                                         </el-button>
                                         <el-button :type="scope.row.user.user_id==userInfo.user_id?'warning':'success'"
-                                            circle size="small" @click="doPushSongTop(scope.row)" v-if="room.roomInfo.room_type==4 && userInfo.user_id!=room.roomInfo.room_user && !userInfo.user_admin">顶
+                                            circle size="small" @click="doPushSongTop(scope.row)" v-if="room.roomInfo.room_type==4 && userInfo.user_id!=room.roomInfo.room_user">顶
                                         </el-button>
                                         <el-button :type="scope.row.user.user_id==userInfo.user_id?'warning':'success'"
-                                            circle size="small" @click="doPlaySong(scope.row.song)" v-if="room.roomInfo.room_type==4 && (userInfo.user_id==room.roomInfo.room_user || userInfo.user_admin)">播
+                                            circle size="small" @click="doPlaySong(scope.row.song)" v-if="room.roomInfo.room_type==4 && userInfo.user_id==room.roomInfo.room_user">播
                                         </el-button>
 
                                     </span>
