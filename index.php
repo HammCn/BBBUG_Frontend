@@ -162,10 +162,10 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                 <el-dropdown-item command="doShowQrcode" class="hideWhenScreenSmall" v-if="room.roomInfo.room_single==0">
                                     穿梭手机
                                 </el-dropdown-item>
-                                <el-dropdown-item command="clearHistory" divided>
-                                    清理记录
+                                <el-dropdown-item command="switchNotification" divided>{{config.notification?'关闭通知':'打开通知'}}
                                 </el-dropdown-item>
-                                <el-dropdown-item command="switchNotification">{{config.notification?'关闭通知':'打开通知'}}
+                                <el-dropdown-item command="clearHistory" v-if="room.roomInfo.room_user==userInfo.user_id||userInfo.user_admin">
+                                    清理记录
                                 </el-dropdown-item>
                                 <el-dropdown-item command="doLogout" v-if="userInfo.user_id>0">退出登录
                                 </el-dropdown-item>
@@ -1496,6 +1496,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                     }
                                     break;
                                 case 401:
+                                    that.callParentFunction('needLogin', 'please login first!');
                                     if (_data.login) {
                                         _data.login();
                                     } else {
@@ -2247,6 +2248,10 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         }
                         obj.time = parseInt(new Date().valueOf()/1000);
                         switch (obj.type) {
+                            case 'clear':
+                                    that.chat_room.list = [];
+                                    that.addSystemTips("历史聊天记录清理成功");
+                                break;
                             case 'text':
                                 if (obj.user.user_id == that.userInfo.user_id) {
                                     for (let i = that.chat_room.list.length - 1; i >= 0; i--) {
@@ -2671,13 +2676,20 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                 },
                 clearHistory() {
                     var that = this;
-                    that.$confirm('是否确认清空本地聊天记录?', '删除聊天记录', {
+                    that.$confirm('是否确认清空当前房间聊天记录?', '删除聊天记录', {
                         confirmButtonText: '删除',
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(function () {
-                        that.chat_room.list = [];
-                        that.addSystemTips("历史聊天记录清理成功");
+                        that.request({
+                            url: "message/clear",
+                            data: {
+                                room_id: that.room.room_id,
+                            },
+                            success(res) {
+                                that.$message.success('删除房间聊天记录成功');
+                            }
+                        });
                     }).catch(function () { });
                 },
                 handleImageUploadSuccess(res, file) {
