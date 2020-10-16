@@ -246,7 +246,9 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                                 <el-tag size="mini" type="info" class="isAdmin" title="来自第三方应用登录">
                                                     {{item.user.app_name}}</el-tag>
                                             </a> -->
-                                            <span title="程序员节彩蛋徽章&#10;10-20至10-24期间&#10;点歌超过64首即可获得" v-if="item.user.user_icon" style="cursor:pointer;font-size:12px;background-color:#333;color:#fff;text-align:center;line-height:14px;padding:1px 2px;border-radius:3px;display:inline-block;"><i class="iconfont icon-bug" style="font-size:14px;"></i></font>
+                                            <span title="程序员节彩蛋徽章&#10;10-20至10-24期间&#10;点歌超过64首即可获得" v-if="item.user.user_icon" style="
+                                            cursor:pointer;height:17px;background-color:#333;color:#fff;text-align:center;padding:1px 3px;border-radius:3px;display:inline-block;vertical-align: middle;
+                                            "><i class="iconfont icon-bug" style="font-size:16px;"></i></font>
                                         </div>
                                         <div v-if="item.sha=='loading'" class="love-fast"
                                             style="position:absolute;right:30px;bottom:14px;color:#666;font-size:16px;font-weight:bolder">
@@ -3458,6 +3460,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                     let that = this;
                     that.userInfo = that.guestUserInfo;
                     that.baseData.access_token = that.guestUserInfo.access_token;
+                    localStorage.setItem('access_token',that.baseData.access_token);
                     that.login.showPage = false;
                 },
                 doShowLoginBox() {
