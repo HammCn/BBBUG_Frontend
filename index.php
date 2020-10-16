@@ -2253,7 +2253,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         switch (obj.type) {
                             case 'clear':
                                     that.chat_room.list = [];
-                                    that.addSystemTips("历史聊天记录清理成功");
+                                    that.addSystemMessage("管理员" + that.urldecode(obj.user.user_name) + "清空了你的聊天记录", '#f00', '#eee');
                                 break;
                             case 'text':
                                 if (obj.user.user_id == that.userInfo.user_id) {
