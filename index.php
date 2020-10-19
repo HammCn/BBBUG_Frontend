@@ -153,6 +153,9 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         <el-dropdown @command="handleSettingCommand">
                             <el-button size="mini" v-html="title.my_setting"></el-button>
                             <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item command="doGlobalMusicSwitch">
+                                    {{globalMusicSwitch?'关闭音乐':'打开音乐'}}
+                                </el-dropdown-item>
                                 <el-dropdown-item command="doEditMyProfile" v-if="userInfo.user_id>0">
                                     修改资料
                                 </el-dropdown-item>
@@ -329,6 +332,8 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                 @click="hideAllDialog();chat_room.data.searchImageList = emojiList;chat_room.dialog.searchImageBox=true;"
                                 title="点击搜索表情">
                                 表情</el-button>
+                        </el-button-group>
+                        <el-button-group class="" v-if="globalMusicSwitch">
                             <el-button size="mini"
                                 v-if="room.roomInfo.room_type==1 && !(room.roomInfo.room_addsong==1 && room.roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)"
                                 @click="hideAllDialog();chat_room.dialog.searchSongBox=!chat_room.dialog.searchSongBox;doSearchSong()"
@@ -371,6 +376,11 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                 v-if="room.roomInfo.room_type==3 && (room.roomInfo.room_user == userInfo.user_id || userInfo.user_admin)">
                                 声音库
                             </el-button>
+                        </el-button-group>
+                        <el-button-group class="" v-if="!globalMusicSwitch">
+                            <el-button size="mini" @click="doGlobalMusicSwitch"
+                                title="打开房间音乐">
+                                打开音乐</el-button>
                         </el-button-group>
                         <div v-if="((room.roomInfo.room_type==1||room.roomInfo.room_type==2||room.roomInfo.room_type==4) && chat_room.song) || (room.roomInfo.room_type==3 && chat_room.voice)"
                             class="player_body" id="player_body" ref="player_body" title="综合考虑,我还是安安静静待在这里吧">
@@ -1096,6 +1106,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         user_name: "Ghost",
                         access_token: "45af3cfe44942c956e026d5fd58f0feffbd3a237",
                     },
+                    globalMusicSwitch:true,
                     timeDiff: 0, //与服务器时间偏移
                     apiUrl: "https://api.bbbug.com/api/",
                     audioUrl: "",
@@ -1349,7 +1360,8 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                     that.emojiList.push('https://bbbug.com/images/emoji/'+i+'.png');
                 }
                 that.chat_room.data.searchImageList = that.emojiList;
-
+            
+                that.globalMusicSwitch = localStorage.getItem('globalMusicSwitch') ? false:true;
 
                 that.ctrlEnabled = localStorage.getItem('ctrlEnable') == 'ctrl_enter' ? true : false;
                 that.login.form.user_account = localStorage.getItem('user_account') || '';
@@ -2151,26 +2163,25 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                 that.websocket.isConnected = true;
                                 that.websocket.hardStop = false;
                                 that.doWebsocketHeartBeat();
-                                // that.chat_room.list.push({
-                                //     desc: "聊天室已支持绑定房间二级域名和第三方独立域名,快来看看吧>>>",
-                                //     img: "logo.png",
-                                //     key: "edc937ec77f8a6e786c1e1c5c9288f21c0316db5883754",
-                                //     link: "https://doc.bbbug.com/2883813.html",
-                                //     sha: "cbe2db8e9a6bad851cb4b94540a583c3bbf5ab78",
-                                //     title: "重要更新",
-                                //     type: "link",
-                                //     user: {
-                                //         app_id: 1,
-                                //         app_name: "BBBUG",
-                                //         app_url: "https://bbbug.com",
-                                //         user_admin: true,
-                                //         user_head: "https://api.bbbug.com/uploads/thumb/image/20200828/7e9ac63489f863a2e690fdb74931565b.jpg",
-                                //         user_id: 1,
-                                //         user_sex: 0,
-                                //         user_name: "机器人",
-                                //         user_remark: "别@我,我只是个测试帐号",
-                                //     }
-                                // });
+                                that.chat_room.list.push({
+                                    desc: "嘤嘤嘤,快给我们的项目点个Star好不好呀,有兴趣的话也欢迎来一起贡献代码呀~",
+                                    img: "",
+                                    key: "edc937ec77f8a6e786c1e1c5c9288f21c0316db5883754",
+                                    link: "https://gitee.com/bbbug_com",
+                                    sha: "cbe2db8e9a6bad851cb4b94540a583c3bbf5ab78",
+                                    title: "BBBUG项目开发团队开源地址",
+                                    type: "link",
+                                    user: {
+                                        app_id: 1,
+                                        app_name: "BBBUG",
+                                        app_url: "https://bbbug.com",
+                                        user_admin: true,
+                                        user_head: "https://api.bbbug.com/uploads/thumb/image/20200828/7e9ac63489f863a2e690fdb74931565b.jpg",
+                                        user_id: 1,
+                                        user_sex: 0,
+                                        user_name: "BBBUG机器人",
+                                    }
+                                });
                                 // that.chat_room.list.push({
                                 //     key: "edc937ec77f8a6e786c1e1c5c9288f21c0316db5883754",
                                 //     sha: "cbe2db8e9a6bad851cb4b94540a583c3bbf5ab78",
@@ -2451,7 +2462,9 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                 break;
                             case 'playSong':
                                 if (obj.song && (that.room.roomInfo.room_type == 1 || that.room.roomInfo.room_type == 2 || that.room.roomInfo.room_type == 4)) {
-                                    that.doPlayMusic(obj);
+                                    if(that.globalMusicSwitch){
+                                        that.doPlayMusic(obj);
+                                    }
                                 }
                                 break;
                             case 'online':
@@ -2622,9 +2635,31 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         that.$message.error(res.msg);
                     }
                 },
+                doGlobalMusicSwitch(){
+                    let that = this;
+                    if(that.globalMusicSwitch){
+                        that.$confirm('是否确认直到手动开启前禁止房间自动播放音乐?', '房间静音', {
+                            confirmButtonText: '关闭音乐',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(function () {
+                            that.globalMusicSwitch = false;
+                            that.audioUrl = '';
+                            that.chat_room.song=null;
+                            localStorage.setItem('globalMusicSwitch',that.globalMusicSwitch);
+                        }).catch(function () { });
+                    }else{
+                        that.globalMusicSwitch = true;
+                        that.websocket.connection.send('getNowSong');
+                        localStorage.setItem('globalMusicSwitch',that.globalMusicSwitch);
+                    }
+                },
                 handleSettingCommand(cmd) {
                     let that = this;
                     switch (cmd) {
+                        case 'doGlobalMusicSwitch':
+                            that.doGlobalMusicSwitch();
+                            break;
                         case 'doEditMyProfile':
                             that.doEditMyProfile();
                             break;
