@@ -461,7 +461,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                     </div>
                     <div class="chat_room_input">
                         <textarea @click="hideAllDialog" v-model="chat_room.message" @keydown.13="doEnterDown"
-                            @keydown.8="doDelete" class="chat_room_message" :placeholder="ChatPlaceHolder"
+                            @keydown.8="doDelete" @keydown="doMessageKeyDown" class="chat_room_message" :placeholder="ChatPlaceHolder"
                             :disabled="room.roomInfo.room_sendmsg==1 && room.roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin?true:false"></textarea>
                         <el-dropdown class="chat_room_send" split-button size="small" @click="doSendMessage"
                             @command="handleSendButtonCommand">
@@ -689,7 +689,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                             @click="doAddSong(scope.row)">点
                                         </el-button>
                                     </span>
-                                    <font color="#333">{{scope.row.name}}</font><br>
+                                    <font color="#333"><div v-if="scope.$index<9" style="background-color: #999;color:white;display:inline-block;border-radius:100%;width:16px;height:16px;line-height:16px;text-align:center;font-size:12px;">{{scope.$index+1}}</div> {{scope.row.name}}</font><br>
                                     <font color="#999" style="font-size:12px;">歌手：{{scope.row.singer}}
                                     </font>
                                 </template>
@@ -1087,7 +1087,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
     </style>
     <script>
         Vue.use(vuePhotoPreview, {});
-        let placeholder = "来来来,说点什么吧...";
+        let placeholder = "来来来,说点什么吧...(支持快捷指令点歌,输入点歌周杰伦试试吧~)";
         var BBBUG = new Vue({
             el: '#app',
             data() {
@@ -1361,7 +1361,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                 }
                 that.chat_room.data.searchImageList = that.emojiList;
             
-                that.globalMusicSwitch = localStorage.getItem('globalMusicSwitch') ? false:true;
+                that.globalMusicSwitch = localStorage.getItem('globalMusicSwitch') == "off" ? false : true;
 
                 that.ctrlEnabled = localStorage.getItem('ctrlEnable') == 'ctrl_enter' ? true : false;
                 that.login.form.user_account = localStorage.getItem('user_account') || '';
@@ -1424,13 +1424,21 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         default:
                     }
                 };
-
             },
             updated() {
                 let that = this;
                 that.$previewRefresh();
             },
             methods: {
+                doMessageKeyDown(e){
+                    let that = this;
+                    if((e.metaKey || e.altKey || e.ctrlKey)){
+                        if(e.which >= 49 && e.which<=57 && that.chat_room.data.searchSongList.length>0 && that.chat_room.dialog.searchSongBox && e.which-48 <= that.chat_room.data.searchSongList.length){
+                            that.doAddSong(that.chat_room.data.searchSongList[e.which-49]);
+                            e.preventDefault();
+                        }
+                    }
+                },
                 getHuyaId(str){
                     return str.replace('https://www.huya.com/','');
                 },
@@ -2646,12 +2654,12 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                             that.globalMusicSwitch = false;
                             that.audioUrl = '';
                             that.chat_room.song=null;
-                            localStorage.setItem('globalMusicSwitch',that.globalMusicSwitch);
+                            localStorage.setItem('globalMusicSwitch',that.globalMusicSwitch ? "on" : "off");
                         }).catch(function () { });
                     }else{
                         that.globalMusicSwitch = true;
                         that.websocket.connection.send('getNowSong');
-                        localStorage.setItem('globalMusicSwitch',that.globalMusicSwitch);
+                        localStorage.setItem('globalMusicSwitch',that.globalMusicSwitch ? "on" : "off");
                     }
                 },
                 handleSettingCommand(cmd) {
@@ -3005,6 +3013,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         success(res) {
                             that.$refs.searchSongBox.scrollTop =0;
                             that.chat_room.data.searchSongList = res.data;
+                            that.$message.info('温馨提示,你可以使用Ctrl/Alt/Command+对应数字快速点歌');
                             that.chat_room.loading.searchSongBox = false;
                         },
                         error(res){
@@ -3163,7 +3172,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                     return;
                 },
                 doDelete() {
-
+                    this.hideAllDialog();
                 },
                 doEnterDown(e) {
                     let that = this;
@@ -3221,7 +3230,14 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         return;
                     }
                     let msg = that.chat_room.message;
-
+                    if(msg.indexOf("点歌")==0){
+                        let songName = msg.replace("点歌","");
+                        that.hideAllDialog();
+                        that.chat_room.dialog.searchSongBox=true;
+                        that.chat_room.form.searchSongBox.keyword = songName;
+                        that.doSearchSong()
+                        return;
+                    }
                     if (msg.indexOf("音量") == 0) {
                         let volume = parseInt(msg.replace(/音量/g, '').replace(/\/\//g, ''));
                         if (msg == '音量' + volume) {
