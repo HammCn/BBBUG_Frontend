@@ -2325,7 +2325,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                                     if (status === 'granted') {
                                                         // 弹出一个通知
                                                         var n = new Notification("摸一摸", {
-                                                            body: that.urldecode(obj.user.user_name) + " 摸了摸你" + obj.at.user_touchtip,
+                                                            body: that.urldecode(obj.user.user_name) + " 摸了摸你" + that.urldecode(obj.at.user_touchtip),
                                                             icon: ""
                                                         });
                                                         isNotificated = true;
@@ -2339,7 +2339,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                             if (!isNotificated) {
                                                 that.$notify({
                                                     title: "摸一摸",
-                                                    message: that.urldecode(obj.user.user_name) + " 摸了摸你" + obj.at.user_touchtip,
+                                                    message: that.urldecode(obj.user.user_name) + " 摸了摸你" + that.urldecode(obj.at.user_touchtip),
                                                     duration: 0,
                                                     dangerouslyUseHTMLString: true
                                                     // offset: 70,
@@ -3323,7 +3323,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                 doEditMyProfile() {
                     let that = this;
                     that.chat_room.form.editMyProfile.user_name = that.urldecode(that.userInfo.user_name);
-                    that.chat_room.form.editMyProfile.user_touchtip = that.userInfo.user_touchtip;
+                    that.chat_room.form.editMyProfile.user_touchtip = that.urldecode(that.userInfo.user_touchtip);
                     that.chat_room.form.editMyProfile.user_remark = that.userInfo.user_remark;
                     that.chat_room.form.editMyProfile.user_sex = that.userInfo.user_sex;
                     that.chat_room.form.editMyProfile.user_head = that.userInfo.user_head;
