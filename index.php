@@ -188,7 +188,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                     <!-- <img src="images/ajx.png" style="position: absolute;left:-4px;top:-4px;width:50px;height:50px;"/> -->
                                     <div class="head" :class="item.user.user_sex==1?'user_sex_male':'user_sex_female'" :title="item.user.user_sex==1?'男生':'女生'">
                                         <el-dropdown trigger="click" @command="commandUserHead" :index="index">
-                                            <img :src="http2https(item.user.user_head)" onerror="this.src='images/nohead.jpg'"
+                                            <img @dblclick="doTouch(item.user)" :src="http2https(item.user.user_head)" onerror="this.src='images/nohead.jpg'"
                                                 :class="[room.roomInfo.room_type==1&&chat_room.song&&item.user.user_id==chat_room.song.user.user_id?'love':'']"
                                                 :title="[room.roomInfo.room_type==1&&chat_room.song&&item.user.user_id==chat_room.song.user.user_id?'正在播放Ta点的歌曲':'']" />
                                             <!--  @mouseover="doGetUserInfoById(item.user.user_id)"
@@ -501,22 +501,26 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                     {{userInfo.user_id}}</font>
                             </div>
                         </div>
-                        <el-form-item label="昵称" label-width="40px">
+                        <el-form-item label="昵称" label-width="60px">
                             <el-input size="medium" autocomplete="off" placeholder="请输入你的昵称"
                                 v-model="chat_room.form.editMyProfile.user_name"></el-input>
                         </el-form-item>
-                        <el-form-item label="性别">
+                        <el-form-item label="签名" label-width="60px">
+                            <el-input size="medium" autocomplete="off" placeholder="请输入你的签名"
+                                v-model="chat_room.form.editMyProfile.user_remark"></el-input>
+                        </el-form-item>
+                        <el-form-item label="摸摸" label-width="60px">
+                            <el-input size="medium" autocomplete="off" placeholder=""
+                                v-model="chat_room.form.editMyProfile.user_touchtip"></el-input>
+                        </el-form-item>
+                        <el-form-item label="性别" label-width="60px">
                             <el-select size="medium" v-model="chat_room.form.editMyProfile.user_sex"
-                                placeholder="请选择你的性别" class="allLine" style="margin-left:40px;">
+                                placeholder="请选择你的性别" class="allLine" style="margin-left:0px;">
                                 <el-option v-for="(item,index) in sexList" :label="item.title" :value="item.value">
                                 </el-option>
                             </el-select>
                         </el-form-item>
-                        <el-form-item label="签名" label-width="40px">
-                            <el-input size="medium" autocomplete="off" placeholder="请输入你的签名"
-                                v-model="chat_room.form.editMyProfile.user_remark"></el-input>
-                        </el-form-item>
-                        <el-form-item label="密码" label-width="40px">
+                        <el-form-item label="密码" label-width="60px">
                             <el-input size="medium" autocomplete="off" placeholder="你的密码,不修改请留空"
                                 v-model="chat_room.form.editMyProfile.user_password"></el-input>
                         </el-form-item>
@@ -576,6 +580,20 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                             <el-select size="small" v-model="chat_room.form.editMyRoom.room_robot"
                                 placeholder="请选择机器人是否点歌" class="allLine" style="margin-left:70px;">
                                 <el-option v-for="(item,index) in chat_room.data.room_robot" :label="item.title"
+                                    :value="item.value"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="投票切歌" v-if="chat_room.form.editMyRoom.room_type==1">
+                            <el-select size="small" v-model="chat_room.form.editMyRoom.room_votepass"
+                                placeholder="请选择是否开启投票切歌" class="allLine" style="margin-left:70px;">
+                                <el-option v-for="(item,index) in chat_room.data.room_votepass" :label="item.title"
+                                    :value="item.value"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="投票比例" v-if="chat_room.form.editMyRoom.room_type==1 && chat_room.form.editMyRoom.room_votepass==1">
+                            <el-select size="small" v-model="chat_room.form.editMyRoom.room_votepercent"
+                                placeholder="请选择投票比例" class="allLine" style="margin-left:70px;">
+                                <el-option v-for="(item,index) in chat_room.data.room_votepercent" :label="item.title"
                                     :value="item.value"></el-option>
                             </el-select>
                         </el-form-item>
@@ -1248,12 +1266,36 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                 value: 1,
                                 title: "单曲循环"
                             }],
+                            room_votepass: [{
+                                value: 0,
+                                title: "关闭投票切歌"
+                            }, {
+                                value: 1,
+                                title: "打开投票切歌"
+                            }],
+                            room_votepercent:[{
+                                value: 20,
+                                title: "20%"
+                            },{
+                                value: 30,
+                                title: "30%"
+                            },{
+                                value: 40,
+                                title: "40%"
+                            },{
+                                value: 50,
+                                title: "50%"
+                            },{
+                                value: 60,
+                                title: "60%"
+                            },],
                         },
                         form: {
                             editMyProfile: {
                                 user_name: "",
                                 user_head: "",
                                 user_remark: "",
+                                user_touchtip:"",
                                 user_sex: 0,
                                 user_password: ""
                             },
@@ -1270,6 +1312,8 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                 room_domain:"",
                                 room_domain_edit:false,
                                 room_huya:"",
+                                room_votepass:1,
+                                room_votepercent:30,
                             },
                             searchImageBox: {
                                 keyword: ""
@@ -2171,25 +2215,25 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                 that.websocket.isConnected = true;
                                 that.websocket.hardStop = false;
                                 that.doWebsocketHeartBeat();
-                                that.chat_room.list.push({
-                                    desc: "嘤嘤嘤,快给我们的项目点个Star好不好呀,有兴趣的话也欢迎来一起贡献代码呀~",
-                                    img: "",
-                                    key: "edc937ec77f8a6e786c1e1c5c9288f21c0316db5883754",
-                                    link: "https://gitee.com/bbbug_com",
-                                    sha: "cbe2db8e9a6bad851cb4b94540a583c3bbf5ab78",
-                                    title: "BBBUG项目开发团队开源地址",
-                                    type: "link",
-                                    user: {
-                                        app_id: 1,
-                                        app_name: "BBBUG",
-                                        app_url: "https://bbbug.com",
-                                        user_admin: true,
-                                        user_head: "https://api.bbbug.com/uploads/thumb/image/20200828/7e9ac63489f863a2e690fdb74931565b.jpg",
-                                        user_id: 1,
-                                        user_sex: 0,
-                                        user_name: "BBBUG机器人",
-                                    }
-                                });
+                                // that.chat_room.list.push({
+                                //     desc: "嘤嘤嘤,快给我们的项目点个Star好不好呀,有兴趣的话也欢迎来一起贡献代码呀~",
+                                //     img: "",
+                                //     key: "edc937ec77f8a6e786c1e1c5c9288f21c0316db5883754",
+                                //     link: "https://gitee.com/bbbug_com",
+                                //     sha: "cbe2db8e9a6bad851cb4b94540a583c3bbf5ab78",
+                                //     title: "BBBUG项目开发团队开源地址",
+                                //     type: "link",
+                                //     user: {
+                                //         app_id: 1,
+                                //         app_name: "BBBUG",
+                                //         app_url: "https://bbbug.com",
+                                //         user_admin: true,
+                                //         user_head: "https://api.bbbug.com/uploads/thumb/image/20200828/7e9ac63489f863a2e690fdb74931565b.jpg",
+                                //         user_id: 1,
+                                //         user_sex: 0,
+                                //         user_name: "BBBUG机器人",
+                                //     }
+                                // });
                                 // that.chat_room.list.push({
                                 //     key: "edc937ec77f8a6e786c1e1c5c9288f21c0316db5883754",
                                 //     sha: "cbe2db8e9a6bad851cb4b94540a583c3bbf5ab78",
@@ -2270,6 +2314,51 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         }
                         obj.time = parseInt(new Date().valueOf()/1000);
                         switch (obj.type) {
+                            case 'touch':
+                                that.addSystemMessage(that.urldecode(obj.user.user_name) + " 摸了摸 " + that.urldecode(obj.at.user_name)+obj.at.user_touchtip, '#999', '#eee');
+                                if (obj.at) {
+                                    if (obj.at.user_id == that.userInfo.user_id) {
+                                        if (that.config.notification) {
+                                            let isNotificated = false;
+                                            if (window.Notification && Notification.permission !== "denied") {
+                                                Notification.requestPermission(function (status) { // 请求权限
+                                                    if (status === 'granted') {
+                                                        // 弹出一个通知
+                                                        var n = new Notification("摸一摸", {
+                                                            body: that.urldecode(obj.user.user_name) + " 摸了摸你" + obj.at.user_touchtip,
+                                                            icon: ""
+                                                        });
+                                                        isNotificated = true;
+                                                        // 两秒后关闭通知
+                                                        setTimeout(function () {
+                                                            n.close();
+                                                        }, 5000);
+                                                    }
+                                                });
+                                            }
+                                            if (!isNotificated) {
+                                                that.$notify({
+                                                    title: "摸一摸",
+                                                    message: that.urldecode(obj.user.user_name) + " 摸了摸你" + obj.at.user_touchtip,
+                                                    duration: 0,
+                                                    dangerouslyUseHTMLString: true
+                                                    // offset: 70,
+                                                });
+
+                                            }
+                                        }
+                                    }
+                                }else{
+                                    if(that.chat_room.isVideoFullScreen){
+                                        that.$notify({
+                                            title: that.urldecode(obj.user.user_name) + "说：",
+                                            message: that.urldecode(obj.content),
+                                            duration: 5000,
+                                            // offset: 70,
+                                        });
+                                    }
+                                }
+                                break;
                             case 'clear':
                                     that.chat_room.list = [];
                                     that.addSystemMessage("管理员" + that.urldecode(obj.user.user_name) + "清空了你的聊天记录", '#f00', '#eee');
@@ -2922,6 +3011,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                     that.chat_room.form.pickSong = row;
                     that.request({
                         url: "song/addSong",
+                        loading:true,
                         data: {
                             mid: row.mid,
                             at: that.chat_room.songSendUser.user_id,
@@ -2929,6 +3019,19 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         },
                         success(res) {
                             that.chat_room.songSendUser = false;
+                            that.$message.success(res.msg);
+                        }
+                    });
+                },
+                doTouch(user) {
+                    let that = this;
+                    that.request({
+                        url: "message/touch",
+                        data: {
+                            at: user.user_id,
+                            room_id: that.room.room_id
+                        },
+                        success(res) {
                             that.$message.success(res.msg);
                         }
                     });
@@ -3213,11 +3316,14 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                     that.chat_room.form.editMyRoom.room_domain_edit = that.room.roomInfo.room_domain ? false: true;
                     that.chat_room.form.editMyRoom.room_password = '';
                     that.chat_room.form.editMyRoom.room_huya = that.room.roomInfo.room_huya;
+                    that.chat_room.form.editMyRoom.room_votepercent = that.room.roomInfo.room_votepercent;
+                    that.chat_room.form.editMyRoom.room_votepass = that.room.roomInfo.room_votepass;
                     that.chat_room.dialog.editMyRoom = true;
                 },
                 doEditMyProfile() {
                     let that = this;
                     that.chat_room.form.editMyProfile.user_name = that.urldecode(that.userInfo.user_name);
+                    that.chat_room.form.editMyProfile.user_touchtip = that.userInfo.user_touchtip;
                     that.chat_room.form.editMyProfile.user_remark = that.userInfo.user_remark;
                     that.chat_room.form.editMyProfile.user_sex = that.userInfo.user_sex;
                     that.chat_room.form.editMyProfile.user_head = that.userInfo.user_head;
