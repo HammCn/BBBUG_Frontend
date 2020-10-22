@@ -692,8 +692,8 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         </el-button>
                     </el-input>
                     <div class="list" v-loading="chat_room.loading.searchSongBox"
-                            style="display:inline-block;max-height:300px;overflow-y:auto;" ref="searchSongBox">
-                        <el-table :data="chat_room.data.searchSongList" stripe>
+                           ref="searchSongBox">
+                        <el-table :data="chat_room.data.searchSongList" stripe  style="display:inline-block;max-height:300px;overflow-y:auto;" >
                             <el-table-column>
                                 <template slot-scope="scope">
                                     <span style="float:right;">
@@ -758,8 +758,8 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                             刷新</el-link>
                     </span>
                     <div class="list" v-loading="chat_room.loading.mySongBox"
-                            style="display:inline-block;max-height:300px;overflow-y:auto;" ref="mySongBox" @scroll="doMySongBoxScroll">
-                        <el-table :data="chat_room.data.mySongList" stripe>
+                            ref="mySongBox">
+                        <el-table :data="chat_room.data.mySongList" stripe style="display:inline-block;max-height:300px;overflow-y:auto;"  @scroll="doMySongBoxScroll">
                             <el-table-column>
                                 <template slot-scope="scope">
                                     <span style="float:right;">
@@ -831,7 +831,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         style="overflow:hidden;overflow-y:scroll;position: absolute;top:0;bottom:0;width:300px;padding:20px;">
                         <div v-for="(item,index) in chat_room.data.onlineList" v-key="item" class="online_user">
                             <el-dropdown trigger="click" @command="commandUserHead" :index="index">
-                                <el-image style="width: 40px; height: 40px" :src="http2https(item.user_head)"
+                                <el-image @dblclick="doTouch(item)"  style="width: 40px; height: 40px" :src="http2https(item.user_head)"
                                     onerror="this.src='images/nohead.jpg'"
                                     :title="[room.roomInfo.room_type==1&&chat_room.song&&item.user_id==chat_room.song.user.user_id?'正在播放Ta点的歌曲':'']"
                                     :class="[room.roomInfo.room_type==1&&chat_room.song&&item.user_id==chat_room.song.user.user_id?'headimg love':'headimg']">
@@ -2375,7 +2375,6 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                 if (obj.user.user_id == 10000) {
                                     if (obj.content == 'clear') {
                                         that.chat_room.list = [];
-
                                         that.addSystemMessage("管理员" + that.urldecode(obj.user.user_name) + "清空了你的聊天记录", '#f00', '#eee');
                                         return;
                                     }
@@ -3009,16 +3008,35 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                 doAddSong(row) {
                     let that = this;
                     that.chat_room.form.pickSong = row;
+                    that.chat_room.loading.searchSongBox = true;
                     that.request({
                         url: "song/addSong",
-                        loading:true,
                         data: {
                             mid: row.mid,
                             at: that.chat_room.songSendUser.user_id,
                             room_id: that.room.room_id
                         },
                         success(res) {
+                            that.chat_room.loading.searchSongBox = false;
                             that.chat_room.songSendUser = false;
+                            that.$message.success(res.msg);
+                        },
+                        login(){
+                            that.chat_room.loading.searchSongBox = false;
+                            that.$confirm(response.data.msg, '无权访问', {
+                                confirmButtonText: '登录',
+                                cancelButtonText: '取消',
+                                closeOnClickModal: false,
+                                closeOnPressEscape: false,
+                                type: 'warning'
+                            }).then(function () {
+                                that.doShowLoginBox();
+                            }).catch(function () {
+                                that.doLogout();
+                                that.doJoinRoomById(that.room.room_id);
+                            });
+                        },error(res){
+                            that.chat_room.loading.searchSongBox = false;
                             that.$message.success(res.msg);
                         }
                     });
