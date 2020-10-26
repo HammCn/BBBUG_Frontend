@@ -80,7 +80,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
     <meta name="MobileOptimized" content="480">
     <meta name="HandheldFriendly" content="True">
     <link rel="stylesheet" href="css/element.css">
-    <link rel="stylesheet" href="//at.alicdn.com/t/font_666204_dnb0dnily7q.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_666204_u26e5hqoj6n.css">
     <link rel="stylesheet" href="css/vue.preview.css">
     <link rel="stylesheet" href="css/main.css?<?php echo time(); ?>">
     <script>
@@ -454,6 +454,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                     color="rgba(255,255,255,0.6)">
                                 </el-progress>
                             </div>
+                            <i class="iconfont icon-heart addMySong" @click="addMySong" title="搜藏歌曲到我的歌单" v-if="room.roomInfo.room_type==4 || room.roomInfo.room_type==1 || room.roomInfo.room_type==2 && chat_room.song.song"></i>
                         </div>
                         <el-slider v-model="volume" @change="doVolumeChanged" vertical height="70px" step="5"
                             class="volume" v-if="player.voiceBar">
@@ -751,10 +752,10 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                 </el-popover>
 
                 <el-popover placement="top-start" popper-class="searchSongBox" trigger="manual"
-                    v-model="chat_room.dialog.mySongBox" :title="room.roomInfo.room_type==4?'你的私人歌单':'你最爱点的歌'">
+                    v-model="chat_room.dialog.mySongBox" title="你最近点过的歌">
                     <span style="position:absolute;right:20px;top:10px;">
                         <el-link
-                            @click="chat_room.data.mySongListPage=1;doGetMySongList(room.roomInfo.room_type==4?'recent':'count');">
+                            @click="chat_room.data.mySongListPage=1;doGetMySongList('recent');">
                             刷新</el-link>
                     </span>
                     <div class="list" v-loading="chat_room.loading.mySongBox"
@@ -865,6 +866,8 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                     v-if="item.user_device=='Windows'"></i>
                                 <i class="iconfont icon-android1 user_device" title="Android在线"
                                     v-if="item.user_device=='Android'"></i>
+                                <i class="iconfont icon-vscode user_device" title="Visual Studio Code插件在线"
+                                    v-if="item.user_device=='vscode'"></i>
                                 <i class="iconfont user_sex icon-xingbie-nv" title="女生" v-if="item.user_sex==0"></i><i
                                     class="iconfont user_sex icon-xingbie-nan" title="男生" v-if="item.user_sex==1"></i>
 
@@ -2857,6 +2860,19 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         success(res) {
                             that.$message.success(res.msg);
                             that.doSongListUpdate();
+                        }
+                    });
+                },
+                addMySong(){
+                    let that = this;
+                    that.request({
+                        url: "song/addMySong",
+                        data: {
+                            room_id: that.room.room_id,
+                            mid: that.chat_room.song.song.mid
+                        },
+                        success(res) {
+                            that.$message.success(res.msg);
                         }
                     });
                 },

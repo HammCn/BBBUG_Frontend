@@ -505,7 +505,7 @@ body {
 }
 
 .player_title marquee {
-    margin-right: 30px;
+    margin-right: 60px;
 }
 
 .player_title i {
@@ -1059,7 +1059,10 @@ audio {
 .allLine {
     display: block;
 }
-
+.addMySong{
+    cursor: pointer;
+    position:absolute;right:38px;top:8px;font-size:22px;
+}
 .rightMenu {
     position: fixed;
     right: 10px;
