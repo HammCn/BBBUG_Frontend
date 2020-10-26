@@ -759,8 +759,8 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                             刷新</el-link>
                     </span>
                     <div class="list" v-loading="chat_room.loading.mySongBox"
-                            ref="mySongBox">
-                        <el-table :data="chat_room.data.mySongList" stripe style="display:inline-block;max-height:300px;overflow-y:auto;"  @scroll="doMySongBoxScroll">
+                            ref="mySongBox" style="display:inline-block;max-height:300px;overflow-y:auto;"  @scroll="doMySongBoxScroll">
+                        <el-table :data="chat_room.data.mySongList" stripe >
                             <el-table-column>
                                 <template slot-scope="scope">
                                     <span style="float:right;">

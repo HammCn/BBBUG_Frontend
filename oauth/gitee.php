@@ -37,4 +37,4 @@ if (!empty($_GET['code'])) {
         }
     }
 }
-header('Location: ' . (urldecode($_COOKIE['localhost']) || '/'));
+header('Location: /');
