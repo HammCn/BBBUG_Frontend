@@ -2343,7 +2343,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                                 that.$notify({
                                                     title: "摸一摸",
                                                     message: that.urldecode(obj.user.user_name) + " 摸了摸你" + that.urldecode(obj.at.user_touchtip),
-                                                    duration: 0,
+                                                    duration: 10000,
                                                     dangerouslyUseHTMLString: true
                                                     // offset: 70,
                                                 });
@@ -2504,7 +2504,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                                 that.$notify({
                                                     title: that.urldecode(obj.user.user_name) + "送了歌给你：",
                                                     message: "《" + obj.song.name + "》(" + obj.song.singer + ")",
-                                                    duration: 0
+                                                    duration: 5000
                                                 });
                                             }
                                         }
@@ -2649,7 +2649,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                             that.$notify({
                                                 title: "正在播放你点的歌曲",
                                                 message: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
-                                                duration: 5
+                                                duration: 5000
                                             });
                                         }
                                     }
@@ -2677,7 +2677,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                             that.$notify({
                                                 title: "正在播放 " + that.urldecode(obj.user.user_name) + " 送你的歌",
                                                 message: "《" + obj.song.name + "》(" + obj.song.singer + ") ",
-                                                duration: 5
+                                                duration: 5000
                                             });
                                         }
                                     }
@@ -3053,7 +3053,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                             });
                         },error(res){
                             that.chat_room.loading.searchSongBox = false;
-                            that.$message.success(res.msg);
+                            that.$message.error(res.msg);
                         }
                     });
                 },
