@@ -1059,15 +1059,15 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         <span style="float:left;">
                             第三方：
                             <el-link
-                                @click="location.replace()">
+                                @click="location.replace(thirdLogin.qq)">
                                 QQ
                             </el-link>
                             <el-link v-if="room.roomInfo.room_single==0 && room.roomInfo.room_url==''"  class='hideWhenScreenSmall'
-                                @click="location.replace()">
+                                @click="location.replace(thirdLogin.gitee)">
                                 码云
                             </el-link>
                             <el-link v-if="room.roomInfo.room_single==0 && room.roomInfo.room_url==''" class='hideWhenScreenSmall'
-                                @click="location.replace()">
+                                @click="location.replace(thirdLogin.oschina)">
                                 开源中国
                             </el-link>
                         </span>
