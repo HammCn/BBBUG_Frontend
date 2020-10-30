@@ -100,6 +100,20 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
             top: 0;
             bottom: 0;
         }
+        .icon-guanbi1{
+            animation: buttonNextAnimation 5s infinite;
+        }
+        @keyframes buttonNextAnimation {
+          0% {
+            opacity: 0
+          }
+          50% {
+            opacity: 0.5
+          }
+          100% {
+            opacity: 0
+          }
+        }
     </style>
 
 </head>
@@ -389,13 +403,13 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                             <img class="player_bg" :src="chat_room.voice.pic" v-if="room.roomInfo.room_type==3" />
                             <div class="player_img" v-if="room.roomInfo.room_type==1"><img
                                     :title="(room.roomInfo.room_user==userInfo.user_id || userInfo.user_admin || chat_room.song.user.user_id == userInfo.user_id)?'切歌':'不喜欢'"
-                                    @mouseover.stop="player.nextButton=true" @mouseout.stop="player.nextButton=false"
+                                    
                                     :src="urldecode(chat_room.song.song.pic)"
                                     onerror="this.src='//cdn.bbbug.com/images/nohead.jpg';this.onerror=null;" width="100%" height="100%"
                                     :class="player_body.isMoving?'':'love'"
                                     @click="(room.roomInfo.room_user==userInfo.user_id || userInfo.user_admin || chat_room.song.user.user_id == userInfo.user_id)?doPassTheSong():doDontLikeTheSong()" />
                                 <i style="pointer-events: none;text-shadow:0px 0px 3px rgba(0,0,0,0.9)"
-                                    class="iconfont icon-guanbi1" v-if="player.nextButton"></i>
+                                    class="iconfont icon-guanbi1" ></i>
                             </div>
                             <div class="player_img" v-if="room.roomInfo.room_type==2"><img
                                     :src="chat_room.song.song.pic" width="100%" height="100%"
@@ -406,16 +420,15 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                             </div>
                             <div class="player_img"
                                 v-if="room.roomInfo.room_type==4 && (room.roomInfo.room_user==userInfo.user_id || userInfo.user_admin)">
-                                <img title="切歌" @mouseover.stop="player.nextButton=true"
-                                    @mouseout.stop="player.nextButton=false" :src="urldecode(chat_room.song.song.pic)"
+                                <img title="切歌" :src="urldecode(chat_room.song.song.pic)"
                                     onerror="this.src='//cdn.bbbug.com/images/nohead.jpg';this.onerror=null;" width="100%" height="100%"
                                     :class="player_body.isMoving?'':'love'" @click="doPassTheSong()" />
                                 <i style="pointer-events: none;text-shadow:0px 0px 3px rgba(0,0,0,0.9)"
-                                    class="iconfont icon-guanbi1" v-if="player.nextButton"></i>
+                                    class="iconfont icon-guanbi1" ></i>
                             </div>
                             <div class="player_img"
                                 v-if="room.roomInfo.room_type==4 && !(room.roomInfo.room_user==userInfo.user_id || userInfo.user_admin)">
-                                <img @mouseover.stop="player.nextButton=true" @mouseout.stop="player.nextButton=false"
+                                <img 
                                     :src="urldecode(chat_room.song.song.pic)"
                                     onerror="this.src='//cdn.bbbug.com/images/nohead.jpg';this.onerror=null;" width="100%" height="100%"
                                     :class="player_body.isMoving?'':'love'" />
