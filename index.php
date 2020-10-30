@@ -108,7 +108,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
             opacity: 0
           }
           50% {
-            opacity: 0.5
+            opacity: 1
           }
           100% {
             opacity: 0
@@ -240,36 +240,14 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                         </el-dropdown>
                                     </div>
                                     <div class="body">
-                                        <div class="user" >
-                                            <!-- <i class="iconfont icon-apple1 user_device" title="iOS客户端在线"
-                                                v-if="item.user.user_device=='iPhone' || item.user.user_device=='iPad' || item.user.user_device=='iPod'"></i>
-                                            <i class="iconfont icon-apple1 user_device" title="Mac在线"
-                                                v-if="item.user.user_device=='MacOS'"></i>
-                                            <i class="iconfont icon-windows-fill user_device" title="Windows在线"
-                                                v-if="item.user.user_device=='Windows'"></i>
-                                            <i class="iconfont icon-android1 user_device" title="Android在线"
-                                                v-if="item.user.user_device=='Android'"></i> -->
-                                            <!-- <i class="iconfont user_sex icon-xingbie-nv" title="女生"
-                                                v-if="item.user.user_sex==0"></i><i
-                                                class="iconfont user_sex icon-xingbie-nan" title="男生"
-                                                v-if="item.user.user_sex==1"></i> -->
-                                            {{urldecode(item.user.user_name)}}
-                                            <el-tag size="mini" type="warning" class="isAdmin" title="管理员"
-                                                v-if="item.user.user_admin">管</el-tag>
-                                            <el-tag size="mini" type="success" class="isAdmin" title="房主"
-                                                v-if="!item.user.user_admin&&item.user.user_id == room.roomInfo.room_user">房</el-tag>
-                                            <!-- <a :href="replaceProfileLink(item.user.app_url,item.user.user_extra)"
-                                                target="_blank" v-if="item.user.app_id>1">
-                                                <el-tag size="mini" type="info" class="isAdmin" title="来自第三方应用登录">
-                                                    {{item.user.app_name}}</el-tag>
-                                            </a> -->
-                                            <span title="程序员节彩蛋徽章&#10;10-20至10-24期间&#10;点歌超过64首即可获得" v-if="item.user.user_icon" style="
-                                            cursor:pointer;height:17px;background-color:#333;color:#fff;text-align:center;padding:1px 3px;border-radius:3px;display:inline-block;vertical-align: middle;
-                                            "><i class="iconfont icon-bug" style="font-size:16px;"></i></font>
+                                        <div class="user" style="vertical-align:middle;">
+                                            <font :color="item.user.user_admin||item.user.user_id==room.roomInfo.room_user?'orangered':''" style="font-weight:bold;">{{urldecode(item.user.user_name)}}</font>
+                                            <i class="iconfont icon-icon_certification_f user_device" style="font-size:18px;color:#097AD8;" v-if="item.user.user_vip" :title="item.user.user_vip" ></i>
+                                            <i class="iconfont icon-github user_device" style="font-size:16px;color:#666;" v-if="item.user.user_icon" title="程序员节彩蛋徽章&#10;10-20至10-24期间&#10;点歌超过64首即可获得"></i>
                                         </div>
                                         <div v-if="item.sha=='loading'" class="love-fast"
                                             style="position:absolute;right:30px;bottom:14px;color:#666;font-size:16px;font-weight:bolder">
-                                            <i class="iconfont icon-loading "></i></div>
+                                            <i class="iconfont icon-loading"></i></div>
                                         <!-- 非@的普通消息 -->
                                         <pre class="content" style="white-space: pre-wrap;"
                                             v-if="item.type=='text' && item.user.user_id!=userInfo.user_id && (!item.at || item.at.user_id != userInfo.user_id)">{{urldecode(item.content)}}</pre>
@@ -636,33 +614,29 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                 </el-dialog>
                 <el-dialog :visible.sync="chat_room.dialog.showUserProfile" :modal="false"
                     custom-class="showUserProfile">
-                    <div
-                        style="position: relative;box-shadow:0px 0px 20px rgba(0,0,0,0.5);border-radius:10px;background-color: white;height:150px;">
+                    <div style="position: relative;box-shadow:0px 0px 20px rgba(0,0,0,0.5);border-radius:10px;background-color: white;height:150px;">
                         <img :src="getImageUrl(chat_room.data.hisUserInfo.user_head)"
                             onerror="this.src='//cdn.bbbug.com/images/nohead.jpg'"
-                            style="border-radius: 100%;width:80px;height:80px;position: absolute;left:10px;top:10px;" />
-                        <div style="position: absolute;left:100px;top:20px;">
-                            <div style="font-size:18px;font-weight: bold;color:#333;">
-                                <font color=orangered style="font-weight: bolder;">
-                                    {{chat_room.data.hisUserInfo.user_id}}</font>
+                            style="border-radius: 100%;width:60px;height:60px;position: absolute;left:10px;top:10px;" />
+                        <div style="position: absolute;left:80px;top:15px;">
+                            <div style="font-size:18px;font-weight: bold;color:#333;vertical-align:middle;">
+                                <el-tag size="mini" type="warning" class="isAdmin" title="管理员"
+                                    v-if="chat_room.data.hisUserInfo.user_admin">管</el-tag>
+                                <el-tag size="mini" type="success" class="isAdmin" title="房主"
+                                    v-if="!chat_room.data.hisUserInfo.user_admin&&chat_room.data.hisUserInfo.user_id == room.roomInfo.room_user">房</el-tag>
                                 <i class="iconfont user_sex icon-xingbie-nv" title="女生"
                                     v-if="chat_room.data.hisUserInfo.user_sex==0"
                                     style="font-size: 16px; font-weight: normal;"></i><i
                                     class="iconfont user_sex icon-xingbie-nan" title="男生"
                                     v-if="chat_room.data.hisUserInfo.user_sex==1"
                                     style="font-size: 16px; font-weight: normal;"></i>
-                                {{urldecode(chat_room.data.hisUserInfo.user_name)}}
-                                <el-tag size="mini" type="warning" class="isAdmin" title="管理员"
-                                    v-if="chat_room.data.hisUserInfo.user_admin">管</el-tag>
-                                <el-tag size="mini" type="success" class="isAdmin" title="房主"
-                                    v-if="!chat_room.data.hisUserInfo.user_admin&&chat_room.data.hisUserInfo.user_id == room.roomInfo.room_user">房</el-tag>
-                                <a :href="replaceProfileLink(chat_room.data.hisUserInfo.app_url,chat_room.data.hisUserInfo.user_extra)"
-                                    target="_blank" v-if="chat_room.data.hisUserInfo.app_id>1">
-                                    <el-tag size="mini" type="info" class="isAdmin" title="来自第三方应用登录">
-                                        {{chat_room.data.hisUserInfo.app_name}}</el-tag>
-                                </a>
+                                <i class="iconfont icon-icon_certification_f user_device" style="font-size:18px;color:#097AD8;" v-if="chat_room.data.hisUserInfo.user_vip" :title="chat_room.data.hisUserInfo.user_vip" ></i>
+                                 {{urldecode(chat_room.data.hisUserInfo.user_name)}}
+                                
                             </div>
-                            <div style="font-size:14px;color:#999;margin-top:5px;">
+                            <div style="font-size:14px;color:#999;margin-top:10px;">
+                                <font color=orangered style="font-weight: bolder;">
+                                    {{chat_room.data.hisUserInfo.user_id}}</font>
                                 {{chat_room.data.hisUserInfo.user_remark}}</div>
                         </div>
                         <div
@@ -842,14 +816,13 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                 <el-drawer title="在线面板" direction="rtl" ref="online_box" :visible.sync="chat_room.dialog.showOnlineBox"
                     :modal-append-to-body='false' :with-header="false" size="300px">
                     <div
-                        style="overflow:hidden;overflow-y:scroll;position: absolute;top:0;bottom:0;width:300px;padding:20px;">
-                        <div v-for="(item,index) in chat_room.data.onlineList" v-key="item" class="online_user">
+                        style="overflow:hidden;overflow-y:scroll;position: absolute;top:0;bottom:0;width:300px;background-color:#f5f5f5;">
+                        <div v-for="(item,index) in chat_room.data.onlineList" v-key="item" class="online_user" style="background-color:#fff;padding:10px;margin:5px;border-radius:10px;">
                             <el-dropdown trigger="click" @command="commandUserHead" :index="index">
-                                <el-image @dblclick="doTouch(item)"  style="width: 40px; height: 40px" :src="http2https(item.user_head)"
+                                <img @dblclick="doTouch(item)"  style="width: 50px; height: 50px;" :src="http2https(item.user_head)"
                                     onerror="this.src='//cdn.bbbug.com/images/nohead.jpg'"
                                     :title="[room.roomInfo.room_type==1&&chat_room.song&&item.user_id==chat_room.song.user.user_id?'正在播放Ta点的歌曲':'']"
-                                    :class="[room.roomInfo.room_type==1&&chat_room.song&&item.user_id==chat_room.song.user.user_id?'headimg love':'headimg']">
-                                </el-image>
+                                    :class="[room.roomInfo.room_type==1&&chat_room.song&&item.user_id==chat_room.song.user.user_id?'headimg love':'headimg']"/>
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item :command="beforeHandleUserCommand(item,'at')">@Ta
                                     </el-dropdown-item>
@@ -870,35 +843,19 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
-                            <span style="display:inline-block;width:200px;">
-                                <i class="iconfont icon-apple1 user_device" title="iOS客户端在线"
-                                    v-if="item.user_device=='iPhone' || item.user_device=='iPad' || item.user_device=='iPod'"></i>
-                                <i class="iconfont icon-apple1 user_device" title="Mac在线"
-                                    v-if="item.user_device=='MacOS'"></i>
-                                <i class="iconfont icon-windows-fill user_device" title="Windows在线"
-                                    v-if="item.user_device=='Windows'"></i>
-                                <i class="iconfont icon-android1 user_device" title="Android在线"
-                                    v-if="item.user_device=='Android'"></i>
-                                <i class="iconfont icon-vscode user_device" title="Visual Studio Code插件在线"
-                                    v-if="item.user_device=='VSCODE'"></i>
-                                <i class="iconfont user_sex icon-xingbie-nv" title="女生" v-if="item.user_sex==0"></i><i
-                                    class="iconfont user_sex icon-xingbie-nan" title="男生" v-if="item.user_sex==1"></i>
-
-                                <el-tag size="mini" type="info" class="from" v-if="item.user_shutdown">禁言</el-tag>
-                                <el-tag size="mini" type="info" class="from" v-if="item.user_songdown">禁歌</el-tag>
-                                {{urldecode(item.user_name)}}
-                                <el-tag size="mini" type="warning" class="from" v-if="item.user_admin" title="管理员">管
-                                </el-tag>
-                                <el-tag size="mini" type="success" class="from"
-                                    v-if="!item.user_admin&&item.user_id==room.roomInfo.room_user" title="房主">房</el-tag>
-                                <a :href="replaceProfileLink(item.app_url,item.user_extra)" target="_blank"
-                                    v-if="item.app_id>1">
-                                    <el-tag size="mini" type="info" class="isAdmin" title="来自第三方应用登录">
-                                        {{item.app_name}}</el-tag>
-                                </a>
-                                <br>
-                                <span
-                                    style="font-size:12px;color:#999;text-overflow: ellipsis;width:210px;overflow:hidden;display:inline-block;">{{item.user_remark}}</span>
+                            <span style="display:inline-block;font-size:14px;width:200px;">
+                                    <i class="iconfont icon-icon_certification_f user_device" style="font-size:18px;color:#097AD8;" v-if="item.user_vip" :title="item.user_vip" ></i>
+                                    <font :color="item.user_admin||item.user_id==room.roomInfo.room_user?'orangered':''">{{urldecode(item.user_name)}}</font>
+                                    <el-tag size="mini" type="warning" class="user_icon" v-if="item.user_admin" title="管理员">管
+                                    </el-tag>
+                                    <el-tag size="mini" type="success" class="user_icon"
+                                        v-if="!item.user_admin&&item.user_id==room.roomInfo.room_user" title="房主">房</el-tag>
+                                        
+                                <div style="margin-top:10px;font-size:12px;color:#999;vertical-align:middle;">
+                                <i class="iconfont user_icon icon-xingbie-nv" title="女生" v-if="item.user_sex==0"></i>
+                                <i class="iconfont user_icon icon-xingbie-nan" title="男生" v-if="item.user_sex==1"></i>
+                                <span style="vertical-align:middle;">{{urldecode(item.user_remark)}}</span>
+                                </div>
                             </span>
                         </div>
                     </div>
