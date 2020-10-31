@@ -663,7 +663,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         </div>
                         <div style="position:absolute;right:10px;bottom:10px;cursor:pointer;color:#333;font-size:16px;">
                             <i class="iconfont user_device icon-vscode" v-if="chat_room.data.hisUserInfo.user_device=='VSCODE'" title="Visual Studio Code插件在线"></i>
-                            <i class="iconfont user_device icon-apple-fill" v-if="chat_room.data.hisUserInfo.user_device=='MacOS'" title="Nac 在线"></i>
+                            <i class="iconfont user_device icon-apple-fill" v-if="chat_room.data.hisUserInfo.user_device=='MacOS'" title="Mac 在线"></i>
                             <i class="iconfont user_device icon-windows-fill" v-if="chat_room.data.hisUserInfo.user_device=='Windows'" title="Windows 在线"></i>
                             <i class="iconfont user_device icon-apple-fill" v-if="chat_room.data.hisUserInfo.user_device=='iOS'" title="iOS 在线"></i>
                             <i class="iconfont user_device icon-android-fill" v-if="chat_room.data.hisUserInfo.user_device=='Android'" title="Android 在线"></i>
