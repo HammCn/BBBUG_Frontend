@@ -5,7 +5,7 @@ $room_id = 888;
 $room_title = 'BBBUG音乐聊天室';
 $room_desc = 'BBBUG.COM，一个划水音乐聊天室，超多小哥哥小姐姐都在这里一起听歌、划水聊天、技术分享、表情包斗图，欢迎你的加入！';
 $room_keyword = '划水聊天室,音乐聊天室,一起听歌,程序员,摸鱼聊天室,佛系聊天,交友水群,程序猿,斗图,表情包';
-$room_notice = '欢迎来到BBBUG音乐聊天室！';
+$room_notice = '你即将进入BBBUG音乐聊天室，即将为你开始播放音乐，请确认带好耳机或已确认音响音量！';
 $room_url = '';
 if (true) { //开发调试可直接改为false 跳过域名处理业务
     if (strpos($domain, 'bbbug.com') !== false || strpos($domain, 'hamm.cn') !== false) {
@@ -113,6 +113,10 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
           100% {
             opacity: 0
           }
+        }
+        .user_device{
+            font-size: 20px;
+            color:#666;
         }
     </style>
 
@@ -241,7 +245,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                     </div>
                                     <div class="body">
                                         <div class="user" style="vertical-align:middle;">
-                                            <font :color="item.user.user_admin||item.user.user_id==room.roomInfo.room_user?'orangered':''" style="font-weight:bold;">{{urldecode(item.user.user_name)}}</font>
+                                            <font :color="item.user.user_admin||item.user.user_id==room.roomInfo.room_user?'orangered':''">{{urldecode(item.user.user_name)}}</font>
                                             <i class="iconfont icon-icon_certification_f user_device" style="font-size:18px;color:#097AD8;" v-if="item.user.user_vip" :title="item.user.user_vip" ></i>
                                             <i class="iconfont icon-github user_device" style="font-size:16px;color:#666;" v-if="item.user.user_icon" title="程序员节彩蛋徽章&#10;10-20至10-24期间&#10;点歌超过64首即可获得"></i>
                                         </div>
@@ -618,7 +622,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         <img :src="getImageUrl(chat_room.data.hisUserInfo.user_head)"
                             onerror="this.src='//cdn.bbbug.com/images/nohead.jpg'"
                             style="border-radius: 100%;width:60px;height:60px;position: absolute;left:10px;top:10px;" />
-                        <div style="position: absolute;left:80px;top:15px;">
+                        <div style="position: absolute;left:80px;top:15px;vertical-align:middle;">
                             <div style="font-size:18px;font-weight: bold;color:#333;vertical-align:middle;">
                                 <el-tag size="mini" type="warning" class="isAdmin" title="管理员"
                                     v-if="chat_room.data.hisUserInfo.user_admin">管</el-tag>
@@ -656,6 +660,13 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                 {{chat_room.data.hisUserInfo.push_count}}</font>次 霸王切歌
                             <font color=orangered style="font-weight: bolder;font-size:14px;">
                                 {{chat_room.data.hisUserInfo.pass_count}}</font>次
+                        </div>
+                        <div style="position:absolute;right:10px;bottom:10px;cursor:pointer;color:#333;font-size:16px;">
+                            <i class="iconfont user_device icon-vscode" v-if="chat_room.data.hisUserInfo.user_device=='VSCODE'" title="Visual Studio Code插件在线"></i>
+                            <i class="iconfont user_device icon-apple-fill" v-if="chat_room.data.hisUserInfo.user_device=='MacOS'" title="Nac 在线"></i>
+                            <i class="iconfont user_device icon-windows-fill" v-if="chat_room.data.hisUserInfo.user_device=='Windows'" title="Windows 在线"></i>
+                            <i class="iconfont user_device icon-apple-fill" v-if="chat_room.data.hisUserInfo.user_device=='iOS'" title="iOS 在线"></i>
+                            <i class="iconfont user_device icon-android-fill" v-if="chat_room.data.hisUserInfo.user_device=='Android'" title="Android 在线"></i>
                         </div>
                     </div>
                 </el-dialog>
