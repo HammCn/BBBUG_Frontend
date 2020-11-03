@@ -134,7 +134,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                 <div slot="header" class="clearfix">
                     <span>
                         <el-tag size="mini" type="info"
-                            style="margin: 0px 5px;color:#333;font-weight:bolder;font-size:14px;cursor:pointer;" :title="'房间积分: '+room.roomInfo.room_score+'分'" v-if="room.roomInfo.room_single==0">
+                            style="margin: 0px 5px;color:#333;font-weight:bolder;font-size:14px;cursor:pointer;" :title="'房间积分: '+room.roomInfo.room_score+'分'" v-if="room.roomInfo.room_single==0" class="hideWhenScreenSmall">
                             ID:{{room.room_id}}
                         </el-tag>
                         <i class="iconfont room_icon icon-xiaoxi2" v-if="room.roomInfo.room_type==0"
@@ -155,13 +155,28 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         </el-link>
                     </span>
                     <span style="float: right; padding: 3px 0" class="rightMenu">
+                        <el-dropdown @command="handleSettingCommand">
+                            <el-button size="mini">下载</el-button>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item command="downloadWindows">
+                                    Windows客户端
+                                </el-dropdown-item>
+                                <el-dropdown-item command="downloadApp">
+                                    手机APP
+                                </el-dropdown-item>
+                                <el-dropdown-item command="downloadVSC">
+                                    VSCODE插件
+                                </el-dropdown-item>
+                                <el-dropdown-item command="contactUs" divided>
+                                    合作接入
+                                </el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
                         <el-button-group style="text-align: right;">
                             <el-button size="mini" @click="doShowRankDialog" style="color:orangered"
                                 v-html="title.rank_list" class="hideWhenScreenSmall" v-if="room.roomInfo.room_single==0"></el-button>
                             <el-button size="mini" @click="chat_room.dialog.showOnlineBox = true;doShowOnlineList()"
                                 v-html="'在线 (<font color=red style=\'font-weight:bolder;\'>'+chat_room.data.onlineList.length+'</font>)'">
-                            </el-button>
-                            <el-button size="mini" v-clipboard:copy="copyString" v-clipboard:success="onCopySuccess" v-html="title.invate_person">
                             </el-button>
                             <el-button size="mini" @click="doGetRoomList"
                                 v-html="title.exit_room" v-if="userInfo.user_id>0 && room.roomInfo.room_single==0"></el-button>
@@ -171,27 +186,24 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                         <el-dropdown @command="handleSettingCommand">
                             <el-button size="mini" v-html="title.my_setting"></el-button>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item command="doGlobalMusicSwitch">
-                                    {{globalMusicSwitch?'关闭音乐':'打开音乐'}}
-                                </el-dropdown-item>
                                 <el-dropdown-item command="doEditMyProfile" v-if="userInfo.user_id>0">
                                     修改资料
                                 </el-dropdown-item>
-                                <!-- <el-dropdown-item v-clipboard:copy="copyString" v-clipboard:success="onCopySuccess">
-                                    邀请朋友
-                                </el-dropdown-item> -->
                                 <el-dropdown-item command="doShowQrcode" class="hideWhenScreenSmall" v-if="room.roomInfo.room_single==0">
                                     穿梭手机
                                 </el-dropdown-item>
-                                <el-dropdown-item command="switchNotification" divided>{{config.notification?'关闭通知':'打开通知'}}
+                                <el-dropdown-item v-clipboard:copy="copyString" v-clipboard:success="onCopySuccess">
+                                    邀请朋友
+                                </el-dropdown-item>
+                                <el-dropdown-item command="doGlobalMusicSwitch" divided>
+                                    {{globalMusicSwitch?'关闭音乐':'打开音乐'}}
+                                </el-dropdown-item>
+                                <el-dropdown-item command="switchNotification">{{config.notification?'关闭通知':'打开通知'}}
                                 </el-dropdown-item>
                                 <el-dropdown-item command="clearHistory" v-if="room.roomInfo.room_user==userInfo.user_id||userInfo.user_admin">
                                     清理记录
                                 </el-dropdown-item>
                                 <el-dropdown-item command="doLogout" v-if="userInfo.user_id>0">退出登录
-                                </el-dropdown-item>
-                                <el-dropdown-item command="contactUs" divided>
-                                    合作接入
                                 </el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
@@ -246,7 +258,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                     <div class="body">
                                         <div class="user" style="vertical-align:middle;">
                                             <font :color="item.user.user_admin||item.user.user_id==room.roomInfo.room_user?'orangered':''">{{urldecode(item.user.user_name)}}</font>
-                                            <i class="iconfont icon-icon_certification_f user_device" style="font-size:18px;color:#097AD8;" v-if="item.user.user_vip" :title="item.user.user_vip" ></i>
+                                            <i class="iconfont icon-icon_certification_f user_device" style="font-size:18px;color:#097AD8;" v-if="item.user.user_vip" :title="item.user.user_vip" @click="showVipTips"></i>
                                             <i class="iconfont icon-github user_device" style="font-size:16px;color:#666;" v-if="item.user.user_icon" title="程序员节彩蛋徽章&#10;10-20至10-24期间&#10;点歌超过64首即可获得"></i>
                                         </div>
                                         <div v-if="item.sha=='loading'" class="love-fast"
@@ -634,7 +646,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                     class="iconfont user_sex icon-xingbie-nan" title="男生"
                                     v-if="chat_room.data.hisUserInfo.user_sex==1"
                                     style="font-size: 16px; font-weight: normal;"></i>
-                                <i class="iconfont icon-icon_certification_f user_device" style="font-size:18px;color:#097AD8;" v-if="chat_room.data.hisUserInfo.user_vip" :title="chat_room.data.hisUserInfo.user_vip" ></i>
+                                <i class="iconfont icon-icon_certification_f user_device" style="font-size:18px;color:#097AD8;" v-if="chat_room.data.hisUserInfo.user_vip" :title="chat_room.data.hisUserInfo.user_vip"  @click="showVipTips"></i>
                                  {{urldecode(chat_room.data.hisUserInfo.user_name)}}
                                 
                             </div>
@@ -855,7 +867,7 @@ if (strpos($_SERVER['HTTP_USER_AGENT'], "Triden")) {
                                 </el-dropdown-menu>
                             </el-dropdown>
                             <span style="display:inline-block;font-size:14px;width:200px;">
-                                    <i class="iconfont icon-icon_certification_f user_device" style="font-size:18px;color:#097AD8;" v-if="item.user_vip" :title="item.user_vip" ></i>
+                                    <i class="iconfont icon-icon_certification_f user_device" style="font-size:18px;color:#097AD8;" v-if="item.user_vip" :title="item.user_vip"></i>
                                     <font :color="item.user_admin||item.user_id==room.roomInfo.room_user?'orangered':''">{{urldecode(item.user_name)}}</font>
                                     <el-tag size="mini" type="warning" class="user_icon" v-if="item.user_admin" title="管理员">管
                                     </el-tag>
