@@ -596,7 +596,7 @@
                 },
                 showEmojiBox() {
                     this.hideAll();
-                    this.isEmojiBoxShow = true;
+                    this.isEmojiBoxShow = !this.isEmojiBoxShow;
                 },
                 getImageWidth(url) {
                     if (url.indexOf('/images/emoji/') > 0) {
