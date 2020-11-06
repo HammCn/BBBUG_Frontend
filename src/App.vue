@@ -254,6 +254,7 @@
                                 v-if="atUserInfo && atUserInfo.message" @close="atUserInfo={user:{}};">
                                 {{atUserInfo.message.type=='img'?'[图片]':urldecode(atUserInfo.message.content)}}
                             </el-tag>
+                            <div class="bbbug_main_chat_input_lrc">{{lrcString}}</div>
                         </div>
                     </div>
                 </div>
@@ -302,7 +303,9 @@
                     selectedMessage: {
                         user: {},
                     },
-                    _clipboard: false
+                    _clipboard: false,
+                    musicLrcObj: {},
+                    lrcString: "",
                 }
             },
             created() {
@@ -520,11 +523,30 @@
                     let that = this;
                     if (that.songInfo && that.$refs.audio.duration > 0 && that.$refs.audio.duration != NaN) {
                         that.audioPercent = parseInt(that.$refs.audio.currentTime / that.$refs.audio.duration * 100);
+                        if (that.$refs.audio.duration > 0 && that.$refs.audio.duration != NaN) {
+                            if (that.musicLrcObj) {
+                                for (let i = 0; i < that.musicLrcObj.length; i++) {
+                                    if (i == that.musicLrcObj.length - 1) {
+                                        that.lrcString = (that.musicLrcObj[i].lineLyric);
+                                        return;
+                                    } else {
+                                        if (that.$refs.audio.currentTime > that.musicLrcObj[i].time && that.$refs.audio.currentTime < that.musicLrcObj[i + 1].time) {
+                                            that.lrcString = (that.musicLrcObj[i].lineLyric);
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
+                    that.lrcString = '歌词读取中...';
                 },
                 audioEnded() {
                     console.log("audioEnded");
                     this.audioImage = '//cdn.bbbug.com/new/images/loading.png';
+                    if (that.roomInfo && that.roomInfo.room_type == 4) {
+                        that.websocket.connection.send('getNowSong');
+                    }
                 },
                 audioError() {
                     let that = this;
@@ -565,8 +587,24 @@
                     }
                     // that.$refs.audio.play();
                 },
+                getMusicLrc() {
+                    let that = this;
+                    that.musicLrcObj = {};
+                    that.lrcString = '歌词读取中...';
+                    that.request({
+                        url: 'song/getLrc',
+                        data: {
+                            mid: that.songInfo.song.mid
+                        },
+                        success(res) {
+                            that.musicLrcObj = (res.data);
+                            // that.musicLrcObj = that.createLrcObj(res.data);
+                        },
+                    });
+                },
                 playMusic() {
                     let that = this;
+                    that.getMusicLrc();
                     that.$nextTick(function () {
                         // that.$refs.audio.load();
                         that.$refs.audio.play();
@@ -950,13 +988,17 @@
                     that.copyData = '快来 ' + that.roomInfo.room_name + " 一起听歌玩耍呀!\n";
                     if (that.songInfo && that.songInfo.song) {
                         if (that.songInfo.user.user_id == 1) {
-                            that.copyData = that.roomInfo.room_name + '正在播放 ' + that.songInfo.song.name + "(" + that.songInfo.song.singer + ")快来一起听听吧~\n";
+                            that.copyData = that.roomInfo.room_name + ' 正在播放 ' + that.songInfo.song.name + "(" + that.songInfo.song.singer + ")快来一起听听吧~\n";
                         } else {
-                            that.copyData = decodeURIComponent(that.songInfo.user.user_name) + "在" + that.roomInfo.room_name + '点了一首' + that.songInfo.song.name + "(" + that.songInfo.song.singer + ")快来一起听听吧~\n";
+                            that.copyData = decodeURIComponent(that.songInfo.user.user_name) + " 在 " + that.roomInfo.room_name + ' 点了一首 ' + that.songInfo.song.name + "(" + that.songInfo.song.singer + ")快来一起听听吧~\n";
                         }
                     }
                     if (that.roomInfo.room_domain && that.roomInfo.room_domainstatus) {
-                        that.copyData += "https://" + that.roomInfo.room_domain + ".bbbug.com";
+                        if (that.roomInfo.room_single) {
+                            that.copyData += that.roomInfo.room_url;
+                        } else {
+                            that.copyData += "https://" + that.roomInfo.room_domain + ".bbbug.com";
+                        }
                     } else {
                         that.copyData += "https://bbbug.com/" + that.roomInfo.room_id + ".html";
                     }
@@ -1466,7 +1508,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        height: 80px;
+        height: 100px;
         border-top: 1px solid #eee;
     }
 
@@ -1516,7 +1558,7 @@
         left: 0;
         top: 45px;
         right: 0;
-        bottom: 120px;
+        bottom: 150px;
         overflow: hidden;
         overflow-y: scroll;
         padding-bottom: 30px;
@@ -1539,7 +1581,7 @@
         position: absolute;
         left: 0;
         right: 0;
-        bottom: 80px;
+        bottom: 100px;
         height: 40px;
     }
 
@@ -1595,7 +1637,7 @@
         z-index: 10;
         position: absolute;
         left: 20px;
-        bottom: 130px;
+        bottom: 150px;
         padding: 10px;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
         text-align: center;
@@ -1639,7 +1681,7 @@
     .bbbug_main_chat_input_quot {
         position: absolute;
         left: 90px;
-        bottom: 90px;
+        bottom: 105px;
     }
 
     .bbbug_main_chat_content_quot {
@@ -1751,6 +1793,14 @@
     .bbbug_main_chat_jump_tips font {
         position: absolute;
         right: 10px;
+    }
+
+    .bbbug_main_chat_input_lrc {
+        font-size: 12px;
+        position: absolute;
+        left: 10px;
+        bottom: 10px;
+        color: #aaa;
     }
 </style>
 <style>
