@@ -10,7 +10,7 @@
                             <div class="bbbug_main_right_online_info">
                                 <div class="bbbug_main_right_online_user_head">
                                     <el-dropdown trigger="click" @command="commandUserHead" :index="index">
-                                        <img class="bbbug_main_right_online_user_head_image" :src="item.user_head"
+                                        <img class="bbbug_main_right_online_user_head_image" :src="http2https(item.user_head)"
                                             onerror="this.src='//cdn.bbbug.com/new/images/nohead.jpg'"
                                             @dblclick="doTouch(item.user_id)" />
                                         <el-dropdown-menu slot="dropdown">

@@ -48,6 +48,10 @@ Vue.prototype.urldecode = function (str) {
     return decodeURIComponent(str);
 };
 
+Vue.prototype.http2https = function (str) {
+    return str.toString().replace("http://","https://");
+};
+
 Vue.prototype.request = function (_data) {
     let that = this;
     axios.post(that.global.api.url + (_data.url || ""), Object.assign({}, that.global.baseData, _data.data || {}))

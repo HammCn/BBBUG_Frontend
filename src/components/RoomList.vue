@@ -26,7 +26,7 @@
                                     class="room_lock iconfont icon-lock_fill"></i>ID:{{item.room_id}}</div>
                             <div class="bbbug_main_right_room_info">
                                 <img class="bbbug_main_right_room_user_head"
-                                    :src="item ? item.user_head : '//cdn.bbbug.com/new/images/nohead.jpg'"
+                                    :src="item ? http2https(item.user_head) : '//cdn.bbbug.com/new/images/nohead.jpg'"
                                     onerror="this.src='//cdn.bbbug.com/new/images/nohead.jpg'" />
                                 <div class="bbbug_main_right_room_user">
                                     <div class="bbbug_main_right_room_user_nick"><span class="bbbug_main_room_online"

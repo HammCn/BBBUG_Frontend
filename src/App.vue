@@ -56,8 +56,10 @@
                         vertical show-stops @change="audioVolumeChanged" height="80px">
                     </el-slider>
                     <div class="bbbug_main_menu_song love" title="查看歌曲信息" v-if="songInfo" @click.stop="showSongPanel">
-                        <img :src="songInfo ? http2https(songInfo.user.user_head) : '//cdn.bbbug.com/new/images/nohead.jpg'"
-                            onerror="this.src='//cdn.bbbug.com/new/images/nohead.jpg'" />
+                        <img :src="audioImage" onerror="this.src='//cdn.bbbug.com/new/images/nohead.jpg'" />
+                    </div>
+                    <div class="bbbug_main_menu_song love" title="歌曲加载中" v-if="!songInfo">
+                        <img src="//cdn.bbbug.com/new/images/loading.png" />
                     </div>
                     <div class="bbbug_main_menu_song_box" v-if="songInfo && isSongPannelShow">
                         <img class="bbbug_main_menu_song_bg"
@@ -85,13 +87,15 @@
                                     v-if="roomInfo.room_type==1"></i></span>
                             <i title="房主播放器" class="iconfont bbbug_main_room_icon icon-icon_voice"
                                 v-if="roomInfo.room_type==4"></i></span>
-                            <i title="修改房间信息" class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-32 bbbug_main_room_icon_setting"
+                            <i title="修改房间信息"
+                                class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-32 bbbug_main_room_icon_setting"
                                 @click="openRoomSetting"
                                 v-if="roomInfo.room_user==userInfo.user_id || userInfo.user_admin">管理</i>
 
                         </div>
                         <div class="bbbug_main_chat_online">
-                            <span title="复制邀请链接" class="bbbug_main_chat_invate" :data-clipboard-text="copyData">邀请</span>
+                            <span title="复制邀请链接" class="bbbug_main_chat_invate"
+                                :data-clipboard-text="copyData">邀请</span>
                             <span @click.stop="showOnlineList" title="打开在线用户列表">
                                 <i class="iconfont icon-icon_people_fill">
                                 </i>
@@ -265,6 +269,7 @@
             data() {
                 return {
                     audioUrl: "",
+                    audioImage: "//cdn.bbbug.com/new/images/loading.png",
                     uploadImageUrl: "",
                     atUserInfo: false,
                     copyData: "",
@@ -506,6 +511,7 @@
                 },
                 audioPlaying() {
                     //开始播放了
+                    this.audioImage = decodeURIComponent(this.songInfo.user.user_head);
                 },
                 audioCanPlay() {
                     //准备好要播放了
@@ -518,10 +524,11 @@
                 },
                 audioEnded() {
                     console.log("audioEnded");
-                    this.websocket.connection.send('getNowSong');
+                    this.audioImage = '//cdn.bbbug.com/new/images/loading.png';
                 },
                 audioError() {
                     let that = this;
+                    that.audioImage = '//cdn.bbbug.com/new/images/loading.png';
                     if (that.audioUrl) {
                         setTimeout(function () {
                             that.$refs.audio.src = "https://cdn.bbbug.com/music/" + that.songInfo.song.mid + ".mp3";
@@ -543,21 +550,27 @@
                         case 4:
                             now = parseFloat((nowTimeStamps - that.songInfo.since)).toFixed(2);
                             if (now >= that.$refs.audio.duration && that.$refs.audio.duration > 0) {
-                                now = 0;
+                                that.audioUrl = '';
+                                that.songInfo = false;
+                                return;
                             }
-                            // console.error('当前应播放' + now + 's');
-                            that.$refs.audio.currentTime = now < 0 ? 0 : now;
-                            break;
-                        case 3:
-                            now = parseFloat((nowTimeStamps - that.chat_room.voice.since)).toFixed(2);
-                            if (now >= that.$refs.audio.duration && that.$refs.audio.duration > 0) {
+                            if (now < 5) {
                                 now = 0;
                             }
                             console.error('当前应播放' + now + 's');
                             that.$refs.audio.currentTime = now < 0 ? 0 : now;
+                            that.audioImage = decodeURIComponent(that.songInfo.user.user_head);
                             break;
+                        default:
                     }
-                    that.$refs.audio.play();
+                    // that.$refs.audio.play();
+                },
+                playMusic() {
+                    let that = this;
+                    that.$nextTick(function () {
+                        // that.$refs.audio.load();
+                        that.$refs.audio.play();
+                    });
                 },
                 messageChanged(e) {
                     let that = this;
@@ -960,6 +973,11 @@
                             room_id: that.global.room_id,
                             mid: that.songInfo.song.mid
                         },
+                        success(res) {
+                            that.audioUrl = '';
+                            that.songInfo = false;
+                            that.audioImage = '//cdn.bbbug.com/new/images/loading.png';
+                        }
                     });
                     // that.$confirm('是否确认切掉当前正在播放的歌曲?', '切歌提醒', {
                     //     confirmButtonText: '切歌',
@@ -1268,10 +1286,7 @@
                                     that.songInfo = obj;
                                     that.audioUrl = "https://api.bbbug.com/api/song/playurl?mid=" + obj.song.mid;
                                     that.updateCopyData();
-                                    that.$nextTick(function () {
-                                        // that.$refs.audio.load();
-                                        that.$refs.audio.play();
-                                    });
+                                    that.playMusic();
                                 }
                                 break;
                             case 'online':
@@ -1286,9 +1301,6 @@
                         console.log(error)
                     }
                     that.autoScroll();
-                },
-                http2https(url) {
-                    return url.replace("http://", "https://");
                 },
                 connectWebsocket() {
                     let that = this;
