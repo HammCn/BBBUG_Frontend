@@ -63,7 +63,7 @@
             },
             created() {
                 this.callParentFunction('needLogin', 'please login first!');
-                console.log(123);
+                this.$emit("App", 'hideAllDialog');
             },
             methods: {
                 loginGuest() {
@@ -132,6 +132,7 @@
         padding-bottom: 30px;
         border-radius: 10px;
         position: relative;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
     }
 
     .bbbug_login_form_title_guest {

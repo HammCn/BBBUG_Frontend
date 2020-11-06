@@ -2,20 +2,19 @@
     <div id="app">
         <div class="bbbug_bg" @click="hideAll"></div>
         <div class="bbbug_link">
-            <a href="https://doc.bbbug.com" target="_blank">开放文档</a>
+            <a href="https://doc.bbbug.com" target="_blank">开发文档</a>
             <a href="https://gitee.com/bbbug_com/ChatWEB" target="_blank">开源仓库</a>
             <a href="https://gitee.com/bbbug_com" target="_blank">关于我们</a>
             <a href="https://gitee.com/organizations/bbbug_com/members/list" target="_blank">贡献名单</a>
         </div>
         <audio :src="audioUrl" ref="audio" autoplay="autoplay" control1 @playing="audioPlaying" @canplay="audioCanPlay"
             @timeupdate="audioTimeUpdate" @ended="audioEnded" @error="audioError" @loadeddata="audioLoaded"></audio>
-        <div class="bbbug_main" v-loading="appLoading">
-            <div class="bbbug_main_box" v-if="roomInfo && userInfo">
+        <div class="bbbug_main">
+            <div class="bbbug_main_box" v-if="roomInfo && userInfo" v-loading="appLoading">
                 <div class="bbbug_main_menu">
-                    <div class="bbbug_main_menu_head">
-                        <router-link to="/my_setting"><img
-                                :src="userInfo ? userInfo.user_head : '//cdn.bbbug.com/new/images/nohead.jpg'"
-                                onerror="this.src='//cdn.bbbug.com/new/images/nohead.jpg'" /></router-link>
+                    <div class="bbbug_main_menu_head" @click="openMySetting" title="我的个人中心"><img
+                            :src="userInfo ? http2https(userInfo.user_head) : '//cdn.bbbug.com/new/images/nohead.jpg'"
+                            onerror="this.src='//cdn.bbbug.com/new/images/nohead.jpg'" />
                     </div>
                     <div v-if="roomInfo.room_type==1 || roomInfo.room_type==4">
                         <div class="bbbug_main_menu_icon"
@@ -47,17 +46,22 @@
                         </router-link>
 
                     </div>
-                    <div class="bbbug_main_menu_song love" title="查看歌曲信息" v-if="songInfo"
-                        @click.stop="isSongPannelShow=true;">
-                        <img :src="songInfo ? urldecode(songInfo.user.user_head) : '//cdn.bbbug.com/new/images/nohead.jpg'"
+                    <div class="bbbug_main_menu_song_ctrl">
+                        <i @click.stop="passTheSong" title="切歌/不喜欢" class="iconfont icon-xiayige"></i>
+                        <i title="音量" @click="showAudioVolumeBar" class="iconfont icon-icon_horn"></i>
+                        <i @click.stop="loveTheSong" title="收藏"
+                            class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-15"></i>
+                    </div>
+                    <el-slider class="bbbug_main_menu_song_volume_bar" v-if="isVolumeBarShow" v-model="audioVolume"
+                        vertical show-stops @change="audioVolumeChanged" height="80px">
+                    </el-slider>
+                    <div class="bbbug_main_menu_song love" title="查看歌曲信息" v-if="songInfo" @click.stop="showSongPanel">
+                        <img :src="songInfo ? http2https(songInfo.user.user_head) : '//cdn.bbbug.com/new/images/nohead.jpg'"
                             onerror="this.src='//cdn.bbbug.com/new/images/nohead.jpg'" />
                     </div>
                     <div class="bbbug_main_menu_song_box" v-if="songInfo && isSongPannelShow">
                         <img class="bbbug_main_menu_song_bg"
                             :src="songInfo ? songInfo.song.pic : '//cdn.bbbug.com/new/images/nohead.jpg'" />
-                        <el-slider class="bbbug_main_menu_song_volume_bar" v-if="isVolumeBarShow" v-model="audioVolume"
-                            vertical show-stops @change="audioVolumeChanged" height="175px">
-                        </el-slider>
                         <el-progress :stroke-width="2" :percentage="audioPercent" :show-text="false"></el-progress>
                         <div class="bbbug_main_menu_song_title">
                             <marquee scrollamount="3">{{songInfo.song.name}} - {{songInfo.song.singer}}</marquee>
@@ -65,36 +69,30 @@
                         <div class="bbbug_main_menu_song_user">点歌人: <font color="orangered">
                                 {{urldecode(songInfo.user.user_name)}}</font>
                         </div>
-                        <div class="bbbug_main_menu_song_ctrl">
-                            <i @click.stop="passTheSong" title="切歌/不喜欢" class="iconfont icon-xiayige"></i>
-                            <i @click.stop="loveTheSong" title="收藏"
-                                class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-15"></i>
-                            <i title="音量" @click="showAudioVolumeBar" class="iconfont icon-icon_horn"></i>
-                        </div>
                     </div>
-                    <div class="bbbug_main_menu_setting">
+                    <!-- <div class="bbbug_main_menu_setting">
                         <router-link to="/my_setting"><img src="//cdn.bbbug.com/new/images/menubar_setting.png"
                                 title="系统设置" />
                         </router-link>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="bbbug_main_chat">
                     <div class="bbbug_main_chat_header">
                         <div class="bbbug_main_chat_room_info">
                             <span class="bbbug_main_chat_room_id">ID:{{roomInfo.room_id}}</span>
-                            <span class="bbbug_main_chat_room_name">{{roomInfo.room_name}}
+                            <span class="bbbug_main_chat_room_name hideWhenPhone">{{roomInfo.room_name}}
                                 <i title="点歌音乐房" class="iconfont bbbug_main_room_icon icon-changyongtubiao-mianxing-61"
                                     v-if="roomInfo.room_type==1"></i></span>
                             <i title="房主播放器" class="iconfont bbbug_main_room_icon icon-icon_voice"
                                 v-if="roomInfo.room_type==4"></i></span>
-                            <i class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-32 bbbug_main_room_icon_setting"
+                            <i title="修改房间信息" class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-32 bbbug_main_room_icon_setting"
                                 @click="openRoomSetting"
                                 v-if="roomInfo.room_user==userInfo.user_id || userInfo.user_admin">管理</i>
 
                         </div>
                         <div class="bbbug_main_chat_online">
-                            <span class="bbbug_main_chat_invate" :data-clipboard-text="copyData">邀请</span>
-                            <span @click.stop="showOnlineList">
+                            <span title="复制邀请链接" class="bbbug_main_chat_invate" :data-clipboard-text="copyData">邀请</span>
+                            <span @click.stop="showOnlineList" title="打开在线用户列表">
                                 <i class="iconfont icon-icon_people_fill">
                                 </i>
                                 <font color=#999>{{onlineList.length}}在线</font>
@@ -109,7 +107,7 @@
                                 :class="item.user.user_id==userInfo.user_id?'bbbug_main_chat_mine':''">
                                 <div class="bbbug_main_chat_head">
                                     <el-dropdown trigger="hover" @command="commandUserHead" :index="index">
-                                        <img class="bbbug_main_chat_head_image" :src="item.user.user_head"
+                                        <img class="bbbug_main_chat_head_image" :src="http2https(item.user.user_head)"
                                             onerror="this.src='//cdn.bbbug.com/new/images/nohead.jpg'"
                                             @dblclick="doTouch(item.user.user_id)" />
                                         <el-dropdown-menu slot="dropdown">
@@ -117,6 +115,9 @@
                                                 v-if="item.user.user_id!=userInfo.user_id">
                                                 @Ta
                                             </el-dropdown-item>
+                                            <!-- <el-dropdown-item class="bbbug_phone_message_back" :command="beforeHandleUserCommand(item.user, 'pullback')" v-if="userInfo && (item.user.user_id==userInfo.user_id || userInfo.user_admin || user.user_id == roomInfo.room_user)">
+                                                撤回
+                                            </el-dropdown-item> -->
                                             <el-dropdown-item :command="beforeHandleUserCommand(item.user, 'touch')"
                                                 v-if="item.user.user_id!=userInfo.user_id">
                                                 摸摸
@@ -220,13 +221,13 @@
                     </div>
                     <div class="bbbug_main_chat_toolbar">
                         <div class="bbbug_main_chat_toolbar_item">
-                            <img class="bbbug_main_chat_toolbar_emoji" @click.stop="showEmojiBox"
+                            <img title="发送表情" class="bbbug_main_chat_toolbar_emoji" @click.stop="showEmojiBox"
                                 src="//cdn.bbbug.com/new/images/button_emoji.png" />
 
                             <el-upload :action="uploadImageUrl" :show-file-list="false"
                                 :on-success="handleImageUploadSuccess" class="bbbug_main_chat_toolbar_img"
                                 :before-upload="doUploadBefore" :data="baseData">
-                                <img class="" src="//cdn.bbbug.com/new/images/button_image.png" />
+                                <img title="上传图片" class="" src="//cdn.bbbug.com/new/images/button_image.png" />
                             </el-upload>
                         </div>
                         <div title="跳到最新消息" class="bbbug_main_chat_toolbar_tobottom"
@@ -240,8 +241,9 @@
                     <div class="bbbug_main_chat_input">
                         <div class="bbbug_main_chat_input_toolbar"></div>
                         <div class="bbbug_main_chat_input_form">
-                            <textarea class="bbug_main_chat_input_message" placeholder="Wish you fuck your bugs..."
-                                @keydown.13="sendMessage" @input="messageChanged" v-model="message"></textarea>
+                            <textarea @click="hideAll" class="bbug_main_chat_input_message"
+                                placeholder="Wish you fuck your bugs..." @keydown.13="sendMessage"
+                                @input="messageChanged" v-model="message"></textarea>
                             <button class="bbbug_main_chat_input_send" id="qqLoginBtn" @click.stop="sendMessage"
                                 :class="isEnableSendMessage?'bbbug_main_chat_enable':''">发送(Enter)</button>
                             <el-tag class="bbbug_main_chat_input_quot" closable type="info"
@@ -252,7 +254,7 @@
                     </div>
                 </div>
             </div>
-            <router-view @App="AppController">
+            <router-view @App="AppController" class="bbbug_frame">
             </router-view>
         </div>
     </div>
@@ -580,6 +582,13 @@
                         that.isEnableScroll = false;
                     }
                 },
+                openMySetting() {
+                    if (location.pathname != '/') {
+                        this.hideAll();
+                    } else {
+                        this.$router.push('/my_setting');
+                    }
+                },
                 openRoomSetting() {
                     if (location.pathname != '/room_setting') {
                         this.$router.push('/room_setting');
@@ -591,11 +600,21 @@
                     }
                     this.isEmojiBoxShow = false;
                     this.isSongPannelShow = false;
+                    this.closeMenu();
+                },
+                hideAllDialog() {
+                    this.isEmojiBoxShow = false;
                     this.isSongPannelShow = false;
                     this.closeMenu();
                 },
+                showSongPanel() {
+                    this.closeMenu();
+                    this.isEmojiBoxShow = false;
+                    this.isSongPannelShow = !this.isSongPannelShow;
+                },
                 showEmojiBox() {
-                    this.hideAll();
+                    this.closeMenu();
+                    this.isSongPannelShow = false;
                     this.isEmojiBoxShow = !this.isEmojiBoxShow;
                 },
                 getImageWidth(url) {
@@ -632,6 +651,9 @@
                 sendMessage(e) {
                     let that = this;
                     e.preventDefault();
+                    if (that.message == '') {
+                        return;
+                    }
                     let message = that.message;
                     that.message = '';
                     that.isEnableSendMessage = false;
@@ -1230,7 +1252,6 @@
                                 break;
                             case 'all':
                                 that.addSystemMessage(obj.content, '#fff', '#666');
-
                                 break;
                             case 'back':
                                 for (let i = 0; i < that.messageList.length; i++) {
@@ -1259,25 +1280,15 @@
                             case 'roomUpdate':
                                 that.getRoomInfo();
                                 break;
-                            case 'game_music_success':
-                                that.addSystemMessage("恭喜 " + that.urldecode(obj.user.user_name) + " 猜中了《" + obj.song.name + "》(" + obj.song.singer + "),30s后开始新一轮游戏", '#ff4500', '#eee');
-                                that.messageList.song.song.pic = that.http2https(obj.song.pic);
-                                that.messageList.song.song.name = obj.song.name;
-                                that.messageList.song.song.singer = obj.song.singer;
-                                break;
-                            case 'story':
-                                that.addSystemMessage('正在播放声音《' + obj.story.name + '》(' + obj.story.part + ')', '#409EFF', '#eee');
-                                that.audioUrl = obj.story.play;
-                                that.messageList.voice = obj.story;
-                                that.isAudioCurrentTimeChanged = false;
-
-                                break;
                             default:
                         }
                     } catch (error) {
                         console.log(error)
                     }
                     that.autoScroll();
+                },
+                http2https(url) {
+                    return url.replace("http://", "https://");
                 },
                 connectWebsocket() {
                     let that = this;
