@@ -178,7 +178,6 @@
         margin-top: 50px;
     }
 
-
     .bbbug_main_profile_user_name {
         font-size: 16px;
         overflow: hidden;

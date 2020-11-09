@@ -122,7 +122,7 @@
         that.list[index].loading = true;
         that.$forceUpdate();
         that.request({
-          url: "song/playSongindex",
+          url: "song/playSong",
           data: {
             room_id: that.global.room_id,
             mid: that.list[index].mid

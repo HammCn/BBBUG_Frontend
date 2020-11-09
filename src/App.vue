@@ -543,9 +543,10 @@
                 },
                 audioEnded() {
                     console.log("audioEnded");
-                    this.audioImage = '//cdn.bbbug.com/new/images/loading.png';
-                    if (that.roomInfo && that.roomInfo.room_type == 4) {
-                        that.websocket.connection.send('getNowSong');
+                    let that = this;
+                    that.audioImage = '//cdn.bbbug.com/new/images/loading.png';
+                    if (that.roomInfo && that.roomInfo.room_type == 4 && that.roomInfo.room_playone) {
+                        that.playMusic();
                     }
                 },
                 audioError() {
@@ -1730,7 +1731,6 @@
     }
 
     .contextmenu div:hover {
-        border-bottom: 1px solid #eee;
         background-color: #f5f5f5;
         cursor: pointer;
     }
