@@ -49,6 +49,22 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
+                    <el-form-item label="点歌间隔" v-if="roomInfo.room_type==1 || roomInfo.room_type==4">
+                        <el-input size="small" autocomplete="off" placeholder="" v-model="roomInfo.room_addsongcd">
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="顶歌间隔" v-if="roomInfo.room_type==1 || roomInfo.room_type==4">
+                        <el-input size="small" autocomplete="off" placeholder="" v-model="roomInfo.room_pushsongcd">
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="日顶次数" v-if="roomInfo.room_type==1 || roomInfo.room_type==4">
+                        <el-input size="small" autocomplete="off" placeholder="" v-model="roomInfo.room_pushdaycount">
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="点歌数量" v-if="roomInfo.room_type==1 || roomInfo.room_type==4">
+                        <el-input size="small" autocomplete="off" placeholder="" v-model="roomInfo.room_addcount">
+                        </el-input>
+                    </el-form-item>
                     <el-form-item label="投票切歌" v-if="roomInfo.room_type==1">
                         <el-select size="small" v-model="roomInfo.room_votepass" placeholder="请选择是否开启投票切歌">
                             <el-option v-for="(item,index) in room_votepass" :label="item.title" :value="item.value">

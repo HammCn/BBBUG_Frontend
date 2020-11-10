@@ -134,7 +134,7 @@
  /* 主窗体开始 */
  
  .bbbug_bg {
-     background: #fff url("//cdn.bbbug.com/new/images/bg.jpg") top center no-repeat;
+     background: #000 url("//cdn.bbbug.com/new/images/bg_dark.jpg") top center no-repeat;
      background-size: cover;
      position: fixed;
      left: 0;
@@ -154,7 +154,7 @@
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
     border-radius: 10px;
-    background-color: white;
+    background-color: rgba(255,255,255,0.95);
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
     overflow: hidden;
     position: absolute;

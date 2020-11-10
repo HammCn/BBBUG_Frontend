@@ -21,12 +21,13 @@
                 return {
                     userInfo: null,
                     roomInfo: {},
-                    room_password:""
+                    room_password: ""
                 }
             },
             created() {
                 if (!this.global.userInfo) {
                     this.$router.push('/');
+                    localStorage.setItem('room_change_id', 888);
                     return;
                 }
                 this.userInfo = this.global.userInfo;
@@ -54,5 +55,4 @@
         overflow: hidden;
         overflow-y: auto;
     }
-
 </style>

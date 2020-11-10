@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <div class="bbbug_bg" @click="hideAll"></div>
+        <div class="bbbug_bg" :style="{backgroundImage:'url('+background+')'}"></div>
         <div class="bbbug_link">
             <a href="https://doc.bbbug.com" target="_blank">开发文档</a>
             <a href="https://gitee.com/bbbug_com/ChatWEB" target="_blank">开源仓库</a>
@@ -306,6 +306,7 @@
                     _clipboard: false,
                     musicLrcObj: {},
                     lrcString: "",
+                    background: "//cdn.bbbug.com/new/images/bg_dark.jpg",
                 }
             },
             created() {
