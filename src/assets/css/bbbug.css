@@ -222,7 +222,7 @@
  .bbbug_main_menu_song {
      position: absolute;
      left: 0;
-     bottom: 10px;
+     bottom: 70px;
      right: 0;
  }
  
@@ -238,7 +238,7 @@
     box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
     position: absolute;
     left: 90px;
-    bottom: 90px;
+    bottom:110px;
     z-index: 99;
     padding: 10px;
     font-size: 14px;
@@ -268,7 +268,7 @@
  .bbbug_main_menu_setting {
      position: absolute;
      left: 0;
-     bottom: 20px;
+     bottom: 10px;
      right: 0;
  }
  .bbbug_main_menu_song_ctrl{
@@ -277,7 +277,7 @@
      position: absolute;
      left:0;
      right:0;
-     bottom:80px;
+     bottom:130px;
  }
  .bbbug_main_menu_song_ctrl .iconfont{
     cursor: pointer;
@@ -291,7 +291,7 @@
  .bbbug_main_menu_song_volume_bar{
     position: absolute!important;
     right: 22px;
-    bottom: 120px;
+    bottom: 160px;
  }
  
  .bbbug_main_menu_setting img {

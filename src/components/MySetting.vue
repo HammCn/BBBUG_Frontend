@@ -2,7 +2,7 @@
     <div id="RoomSetting">
         <div class="bbbug_main_right">
             <div class="bbbug_main_right_room">
-                <div class="bbbug_main_right_room_title">我的设置
+                <div class="bbbug_main_right_room_title">我的个人中心
                     <div class="bbbug_main_right_song_right" @click="updateMyInfo">保存</div>
                 </div>
                 <el-form label-width="60px" class="bbbug_my_setting__form">

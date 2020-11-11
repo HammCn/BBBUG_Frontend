@@ -7,6 +7,7 @@
             <a href="https://gitee.com/bbbug_com" target="_blank">关于我们</a>
             <a href="https://gitee.com/organizations/bbbug_com/members/list" target="_blank">贡献名单</a>
         </div>
+        <audio src="//cdn.bbbug.com/new/mp3/dingdong.mp3" ref="noticePlayer"></audio>
         <audio :src="audioUrl" ref="audio" autoplay="autoplay" control1 @playing="audioPlaying" @canplay="audioCanPlay"
             @timeupdate="audioTimeUpdate" @ended="audioEnded" @error="audioError" @loadeddata="audioLoaded"></audio>
         <div class="bbbug_main">
@@ -72,11 +73,11 @@
                                 {{urldecode(songInfo.user.user_name)}}</font>
                         </div>
                     </div>
-                    <!-- <div class="bbbug_main_menu_setting">
-                        <router-link to="/my_setting"><img src="//cdn.bbbug.com/new/images/menubar_setting.png"
+                    <div class="bbbug_main_menu_setting">
+                        <router-link to="/system_setting"><img src="//cdn.bbbug.com/new/images/menubar_setting.png"
                                 title="系统设置" />
                         </router-link>
-                    </div> -->
+                    </div>
                 </div>
                 <div class="bbbug_main_chat">
                     <div class="bbbug_main_chat_header">
@@ -279,6 +280,7 @@
                     appLoading: false,
                     isEnableScroll: true,
                     isEnableNotification: true,
+                    isEnableNoticePlayer: true,
                     isEnableSendMessage: false,
                     isEmojiBoxShow: false,
                     messageList: [],
@@ -365,8 +367,13 @@
                 }
                 that.audioVolume = parseInt(volume);
                 document.addEventListener('paste', that.getClipboardFiles);
+                that.loadConfig();
             },
             methods: {
+                loadConfig() {
+                    this.isEnableNoticePlayer = localStorage.getItem('isEnableNoticePlayer') != 1 ? true : false;
+                    this.isEnableNotification = localStorage.getItem('isEnableNotification') != 1 ? true : false;
+                },
                 openMenu(e, item) {
                     this.rightClickItem = item;
                     this.selectedMessage = item;
@@ -1101,8 +1108,13 @@
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 摸了摸 " + that.urldecode(obj.at.user_name) + obj.at.user_touchtip, '#999', '#eee');
                                 if (obj.at) {
                                     if (obj.at.user_id == that.userInfo.user_id) {
+                                        that.$notify({
+                                            title: "摸一摸",
+                                            message: that.urldecode(obj.user.user_name) + " 摸了摸你" + that.urldecode(obj.at.user_touchtip),
+                                            duration: 10000,
+                                            dangerouslyUseHTMLString: true
+                                        });
                                         if (that.isEnableNotification) {
-                                            let isNotificated = false;
                                             if (window.Notification && Notification.permission !== "denied") {
                                                 Notification.requestPermission(function (status) { // 请求权限
                                                     if (status === 'granted') {
@@ -1119,26 +1131,10 @@
                                                     }
                                                 });
                                             }
-                                            if (!isNotificated) {
-                                                that.$notify({
-                                                    title: "摸一摸",
-                                                    message: that.urldecode(obj.user.user_name) + " 摸了摸你" + that.urldecode(obj.at.user_touchtip),
-                                                    duration: 10000,
-                                                    dangerouslyUseHTMLString: true
-                                                    // offset: 70,
-                                                });
-
-                                            }
                                         }
-                                    }
-                                } else {
-                                    if (that.messageList.isVideoFullScreen) {
-                                        that.$notify({
-                                            title: that.urldecode(obj.user.user_name) + "说：",
-                                            message: that.urldecode(obj.content),
-                                            duration: 5000,
-                                            // offset: 70,
-                                        });
+                                        if (that.isEnableNoticePlayer) {
+                                            that.$refs.noticePlayer.play();
+                                        }
                                     }
                                 }
                                 break;
@@ -1170,8 +1166,13 @@
                                 }
                                 if (obj.at) {
                                     if (obj.at.user_id == that.userInfo.user_id) {
+                                        that.$notify({
+                                            title: that.urldecode(obj.user.user_name) + "@了你：",
+                                            message: that.urldecode(obj.content),
+                                            duration: 10000,
+                                            dangerouslyUseHTMLString: true
+                                        });
                                         if (that.isEnableNotification) {
-                                            let isNotificated = false;
                                             if (window.Notification && Notification.permission !== "denied") {
                                                 Notification.requestPermission(function (status) { // 请求权限
                                                     if (status === 'granted') {
@@ -1188,28 +1189,12 @@
                                                     }
                                                 });
                                             }
-                                            if (!isNotificated) {
-                                                that.$notify({
-                                                    title: that.urldecode(obj.user.user_name) + "@了你：",
-                                                    message: that.urldecode(obj.content) + `<span class="notify-at-goto" onclick="scrollFuncs.scrollToChat(${obj.message_id})">[查看]</span>`,
-                                                    duration: 0,
-                                                    dangerouslyUseHTMLString: true
-                                                    // offset: 70,
-                                                });
-
-                                            }
+                                        }
+                                        if (that.isEnableNoticePlayer) {
+                                            that.$refs.noticePlayer.play();
                                         }
                                     }
                                     obj.content = '@' + obj.at.user_name + " " + obj.content;
-                                } else {
-                                    if (that.messageList.isVideoFullScreen) {
-                                        that.$notify({
-                                            title: that.urldecode(obj.user.user_name) + "说：",
-                                            message: that.urldecode(obj.content),
-                                            duration: 5000,
-                                            // offset: 70,
-                                        });
-                                    }
                                 }
                                 that.messageList.push(obj);
                                 document.title = that.urldecode(obj.user.user_name) + "说：" + that.urldecode(obj.content);
@@ -1248,8 +1233,12 @@
                                 if (obj.at) {
                                     that.addSystemMessage(that.urldecode(obj.user.user_name) + " 送了一首 《" + obj.song.name + "》(" + obj.song.singer + ") 给 " + that.urldecode(obj.at.user_name), '#409EFF', '#eee');
                                     if (obj.at.user_id == that.userInfo.user_id) {
+                                        that.$notify({
+                                            title: that.urldecode(obj.user.user_name) + "送了歌给你：",
+                                            message: "《" + obj.song.name + "》(" + obj.song.singer + ")",
+                                            duration: 5000
+                                        });
                                         if (that.isEnableNotification) {
-                                            let isNotificated = false;
                                             if (window.Notification && Notification.permission !== "denied") {
                                                 Notification.requestPermission(function (status) { // 请求权限
                                                     if (status === 'granted') {
@@ -1266,13 +1255,9 @@
                                                     }
                                                 });
                                             }
-                                            if (!isNotificated) {
-                                                that.$notify({
-                                                    title: that.urldecode(obj.user.user_name) + "送了歌给你：",
-                                                    message: "《" + obj.song.name + "》(" + obj.song.singer + ")",
-                                                    duration: 5000
-                                                });
-                                            }
+                                        }
+                                        if (that.isEnableNoticePlayer) {
+                                            that.$refs.noticePlayer.play();
                                         }
                                     }
                                 } else {

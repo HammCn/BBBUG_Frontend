@@ -140,6 +140,7 @@ import RoomPassword from './components/RoomPassword.vue';
 import MySetting from './components/MySetting.vue';
 import AutoLogin from './components/AutoLogin.vue';
 import Profile from './components/Profile.vue';
+import SystemSetting from './components/SystemSetting.vue';
 
 Vue.use(vuePhotoPreview, {});
 //安装插件
@@ -200,6 +201,9 @@ let router = new VueRouter({
         }, {
             path: '/profile',
             component: Profile
+        }, {
+            path: '/system_setting',
+            component: SystemSetting
         },
         // {
         //     path: '/github',
