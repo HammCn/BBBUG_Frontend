@@ -3,8 +3,8 @@
         <div class="bbbug_bg" :style="{backgroundImage:'url('+background+')'}"></div>
         <div class="bbbug_link">
             <a href="https://doc.bbbug.com" target="_blank">开发文档</a>
-            <a href="https://gitee.com/bbbug_com/ChatWEB" target="_blank">开源仓库</a>
-            <a href="https://gitee.com/bbbug_com" target="_blank">关于我们</a>
+            <a href="https://gitee.com/bbbug_com" target="_blank">Gitee</a>
+            <a href="https://github.com/HammCn" target="_blank">Github</a>
             <a href="https://gitee.com/organizations/bbbug_com/members/list" target="_blank">贡献名单</a>
         </div>
         <audio src="//cdn.bbbug.com/new/mp3/dingdong.mp3" ref="noticePlayer"></audio>
@@ -1755,7 +1755,7 @@
     .bbbug_link a {
         font-size: 12px;
         text-decoration: none;
-        color: rgba(255, 255, 255, 0.3);
+        color: rgba(255, 255, 255, 0.5);
         text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
     }
 
