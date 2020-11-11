@@ -13,8 +13,9 @@
                     <div class="bbbug_main_profile_user">
                         <div class="bbbug_main_profile_user_icon">
                             <span class="bbbug_main_profile_user_id">ID:{{userInfo.user_id}}</span>
-                            <span class="bbbug_main_profile_user_id" v-if="userInfo.app_id>1"
-                                title="第三方平台登录" style="cursor: pointer;">{{userInfo.app_name}}</span>
+                            <a :href="getThirdUrl(userInfo.app_url,userInfo.user_extra)" target="_blank"
+                                class="bbbug_main_profile_user_id" v-if="userInfo.app_id>1" title="第三方平台登录"
+                                style="cursor: pointer;text-decoration: none;">{{userInfo.app_name}}</a>
                             <i class="iconfont user_icon user_female icon-xingbie-nv" title="女生"
                                 v-if="userInfo.user_sex==0"></i>
                             <i class="iconfont user_icon user_male icon-xingbie-nan" title="男生"
@@ -74,6 +75,9 @@
                 this.getSongList();
             },
             methods: {
+                getThirdUrl(url, ext) {
+                    return url.replace('#extra#', ext);
+                },
                 getUserProfile() {
                     let that = this;
                     that.request({
