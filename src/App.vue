@@ -248,8 +248,8 @@
                         <div class="bbbug_main_chat_input_toolbar"></div>
                         <div class="bbbug_main_chat_input_form">
                             <textarea @click="hideAll" class="bbug_main_chat_input_message"
-                                placeholder="Wish you fuck your bugs..." @keydown.13="sendMessage"
-                                @input="messageChanged" v-model="message"></textarea>
+                                :placeholder="(roomInfo && roomInfo.room_sendmsg && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?'全员禁言中,你暂时无法发言...':'Wish you fuck your bugs...'" @keydown.13="sendMessage"
+                                @input="messageChanged" v-model="message" :disabled="(roomInfo && roomInfo.room_sendmsg && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?true:false"></textarea>
                             <button class="bbbug_main_chat_input_send" id="qqLoginBtn" @click.stop="sendMessage"
                                 :class="isEnableSendMessage?'bbbug_main_chat_enable':''">发送(Enter)</button>
                             <el-tag class="bbbug_main_chat_input_quot" closable type="info"
@@ -1341,6 +1341,64 @@
                                     that.audioUrl = "https://api.bbbug.com/api/song/playurl?mid=" + obj.song.mid;
                                     that.updateCopyData();
                                     that.playMusic();
+
+                                    if (obj.user.user_id == that.userInfo.user_id) {
+                                        that.$notify({
+                                            title: "正在播放你点的歌",
+                                            message: "《" + obj.song.name + "》(" + obj.song.singer + ")",
+                                            duration: 5000
+                                        });
+                                        if (that.isEnableNotification) {
+                                            if (window.Notification && Notification.permission !== "denied") {
+                                                Notification.requestPermission(function (status) { // 请求权限
+                                                    if (status === 'granted') {
+                                                        // 弹出一个通知
+                                                        var n = new Notification("正在播放你点的歌", {
+                                                            body: "《" + obj.song.name + "》(" + obj.song.singer + ")",
+                                                            icon: ""
+                                                        });
+                                                        isNotificated = true;
+                                                        // 两秒后关闭通知
+                                                        setTimeout(function () {
+                                                            n.close();
+                                                        }, 5000);
+                                                    }
+                                                });
+                                            }
+                                        }
+                                        if (that.isEnableNoticePlayer) {
+                                            that.$refs.noticePlayer.play();
+                                        }
+                                    } else if (obj.at.user_id == that.userInfo.user_id) {
+                                        that.$notify({
+                                            title: "正在播放 " + that.urldecode(obj.user.user_name) + " 送你的歌",
+                                            message: "《" + obj.song.name + "》(" + obj.song.singer + ")",
+                                            duration: 5000
+                                        });
+                                        if (that.isEnableNotification) {
+                                            if (window.Notification && Notification.permission !== "denied") {
+                                                Notification.requestPermission(function (status) { // 请求权限
+                                                    if (status === 'granted') {
+                                                        // 弹出一个通知
+                                                        var n = new Notification("正在播放 " + that.urldecode(obj.user.user_name) + " 送你的歌", {
+                                                            body: "《" + obj.song.name + "》(" + obj.song.singer + ")",
+                                                            icon: ""
+                                                        });
+                                                        isNotificated = true;
+                                                        // 两秒后关闭通知
+                                                        setTimeout(function () {
+                                                            n.close();
+                                                        }, 5000);
+                                                    }
+                                                });
+                                            }
+                                        }
+                                        if (that.isEnableNoticePlayer) {
+                                            that.$refs.noticePlayer.play();
+                                        }
+
+                                    }
+
                                 }
                                 break;
                             case 'online':
