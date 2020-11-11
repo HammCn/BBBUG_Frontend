@@ -263,6 +263,20 @@
             <router-view @App="AppController" class="bbbug_frame">
             </router-view>
         </div>
+        <div v-if="isLocked">
+            <div class="bbbug_bg" :style="{backgroundImage:'url('+background+')'}"></div>
+            <div class="bbbug_locked">
+                <div class="bbbug_locked_player">
+                    <!-- <div class="bbbug_locked_player_bg"></div>
+                    <div class="bbbug_locked_player_bar"></div> -->
+                    <!-- <div class="bbbug_locked_player_img"><img :src="songInfo && songInfo.song ? http2https(songInfo.song.pic) : ''"/></div> -->
+                    <div class="bbbug_locked_player_lrc">{{lrcString}}</div>
+                    <div class="bbbug_locked_player_song">
+                        {{songInfo && songInfo.song ? (songInfo.song.name+" ("+songInfo.song.singer+")"):''}} 点歌人:
+                        {{urldecode(songInfo.user.user_name)}}</div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -278,6 +292,7 @@
                     userInfo: false,
                     roomInfo: false,
                     appLoading: false,
+                    isLocked: false,
                     isEnableScroll: true,
                     isEnableNotification: true,
                     isEnableNoticePlayer: true,
@@ -318,6 +333,15 @@
                 let that = this;
                 let access_token = localStorage.getItem("access_token") || false;
                 that.updateServerTime();
+                window.onkeydown = function (e) {
+                    switch (e.keyCode) {
+                        case 27:
+                            that.isLocked = !that.isLocked;
+                            break;
+                        default:
+                    }
+                };
+
                 if (access_token) {
                     that.global.baseData.access_token = access_token;
                 } else {
@@ -830,7 +854,7 @@
                 atUser() {
                     if (this.global.atUserInfo) {
                         this.atUserInfo = this.global.atUserInfo;
-                        this.message = '@' + decodeURIComponent(this.atUserInfo.user_name) + " ";
+                        this.message = '@' + decodeURIComponent(this.atUserInfo.user_name) + " "+this.message;
                         this.focusInput();
                     }
                 },
@@ -868,7 +892,7 @@
                         user_name: message.user.user_name,
                         message: message
                     };
-                    this.message = '@' + decodeURIComponent(this.atUserInfo.user_name) + " ";
+                    this.message = '@' + decodeURIComponent(this.atUserInfo.user_name) + " " + that.message;
                     this.focusInput();
                 },
                 commandUserHead(cmd) {
@@ -879,7 +903,7 @@
                                 user_id: cmd.row.user_id,
                                 user_name: cmd.row.user_name
                             };
-                            that.message = '@' + decodeURIComponent(cmd.row.user_name) + " ";
+                            that.message = '@' + decodeURIComponent(cmd.row.user_name) + " " + that.message;
                             this.focusInput();
                             break;
                         case 'touch':
@@ -1114,27 +1138,27 @@
                                             duration: 10000,
                                             dangerouslyUseHTMLString: true
                                         });
-                                        if (that.isEnableNotification) {
-                                            if (window.Notification && Notification.permission !== "denied") {
-                                                Notification.requestPermission(function (status) { // 请求权限
-                                                    if (status === 'granted') {
-                                                        // 弹出一个通知
-                                                        var n = new Notification("摸一摸", {
-                                                            body: that.urldecode(obj.user.user_name) + " 摸了摸你" + that.urldecode(obj.at.user_touchtip),
-                                                            icon: ""
-                                                        });
-                                                        isNotificated = true;
-                                                        // 两秒后关闭通知
-                                                        setTimeout(function () {
-                                                            n.close();
-                                                        }, 5000);
-                                                    }
-                                                });
-                                            }
-                                        }
-                                        if (that.isEnableNoticePlayer) {
-                                            that.$refs.noticePlayer.play();
-                                        }
+                                        // if (that.isEnableNotification) {
+                                        //     if (window.Notification && Notification.permission !== "denied") {
+                                        //         Notification.requestPermission(function (status) { // 请求权限
+                                        //             if (status === 'granted') {
+                                        //                 // 弹出一个通知
+                                        //                 var n = new Notification("摸一摸", {
+                                        //                     body: that.urldecode(obj.user.user_name) + " 摸了摸你" + that.urldecode(obj.at.user_touchtip),
+                                        //                     icon: ""
+                                        //                 });
+                                        //                 isNotificated = true;
+                                        //                 // 两秒后关闭通知
+                                        //                 setTimeout(function () {
+                                        //                     n.close();
+                                        //                 }, 5000);
+                                        //             }
+                                        //         });
+                                        //     }
+                                        // }
+                                        // if (that.isEnableNoticePlayer) {
+                                        //     that.$refs.noticePlayer.play();
+                                        // }
                                     }
                                 }
                                 break;
@@ -1787,6 +1811,37 @@
         left: 10px;
         bottom: 10px;
         color: #aaa;
+    }
+
+    .bbbug_locked {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+    }
+
+    .bbbug_locked_player {
+        min-width: 200px;
+        text-align: center;
+    }
+
+    .bbbug_locked_player_lrc {
+        font-size: 32px;
+        color: rgba(255, 255, 255, 0.8);
+        text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .bbbug_locked_player_song {
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.5);
+        text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
     }
 </style>
 <style>
