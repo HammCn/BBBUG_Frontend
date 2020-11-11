@@ -64,8 +64,8 @@ IM后端采用```node-websocket```实现```Websocket```服务，使用```pm2```�
 ### 晒个截图
 
 <p align="center">
-<img src="https://images.gitee.com/uploads/images/2020/1111/224304_865849d4_145025.png" width="25%"/>
-<img src="https://images.gitee.com/uploads/images/2020/1111/224508_98a510ad_145025.png" width="25%"/>
-<img src="https://images.gitee.com/uploads/images/2020/1111/224725_e498aecc_145025.png" width="25%"/>
-<img src="https://images.gitee.com/uploads/images/2020/1111/224817_294b2808_145025.png" width="25%"/>
+<img src="https://images.gitee.com/uploads/images/2020/1111/224304_865849d4_145025.png" width="20%"/>
+<img src="https://images.gitee.com/uploads/images/2020/1111/224508_98a510ad_145025.png" width="20%"/>
+<img src="https://images.gitee.com/uploads/images/2020/1111/224725_e498aecc_145025.png" width="20%"/>
+<img src="https://images.gitee.com/uploads/images/2020/1111/224817_294b2808_145025.png" width="20%"/>
 </p>
