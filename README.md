@@ -20,7 +20,7 @@
 
 ### 技术架构
 
-IM后端采用 Node 实现 ```Websocket``` 服务，```Nginx``` 做Wss代理，前端采用 ```ElementUI&vue``` 实现，后端使用 ```StartAdmin``` 做管理平台。 Websocket.js 为后端Websocket实现代码，可自行安装相关包后使用pm2等进程管理工具将后端websocket持久化运行。
+IM后端采用```node-websocket```实现```Websocket```服务，使用```pm2```持久化运行，```Nginx```做Wss代理，前端采用```ElementUI&vue```实现，后端使用```PHP```做数据接口API，```PHP-CLI```做后端数据同步，```Redis```做数据队列与缓存。 
 
 
 ### 使用说明
@@ -35,10 +35,15 @@ IM后端采用 Node 实现 ```Websocket``` 服务，```Nginx``` 做Wss代理，�
 
 
 
-### 特色功能
+### 已实现功能
 ```
-1、创建房间、切换房间，房间权限与房间类型管理
-2、点歌/切歌/听歌与歌曲播放进度同步
+1、普通文字与图片表情消息聊天功能
+2、歌曲搜索、点歌、切歌、顶歌、收藏歌曲等功能
+3、歌曲实时同步播放给房间所有人、支持房主电台模式
+4、可创建房间、房主可禁言或禁止房间用户点歌
+5、修改个人资料与设置等
+6、ESC快捷沉浸式听歌体验
+7、支持设置房间二级域名与绑定独立域名等
 
 更多功能等你来扩展开发...
 ```
@@ -57,4 +62,10 @@ IM后端采用 Node 实现 ```Websocket``` 服务，```Nginx``` 做Wss代理，�
 [查看更多](https://gitee.com/bbbug_com/ChatWEB/contributors?ref=master)
 
 ### 晒个截图
-![BBBUG](https://images.gitee.com/uploads/images/2020/1105/220353_28e6e322_145025.png "截屏2020-11-05 22.03.36.png")
+
+<p align="center">
+<img src="https://images.gitee.com/uploads/images/2020/1111/224304_865849d4_145025.png" width="20%"/>
+<img src="https://images.gitee.com/uploads/images/2020/1111/224508_98a510ad_145025.png" width="20%"/>
+<img src="https://images.gitee.com/uploads/images/2020/1111/224725_e498aecc_145025.png" width="20%"/>
+<img src="https://images.gitee.com/uploads/images/2020/1111/224817_294b2808_145025.png" width="20%"/>
+</p>
