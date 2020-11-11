@@ -115,6 +115,7 @@
                                         <img class="bbbug_main_chat_head_image" :src="http2https(item.user.user_head)"
                                             onerror="this.src='//cdn.bbbug.com/new/images/nohead.jpg'"
                                             @dblclick="doTouch(item.user.user_id)" />
+
                                         <el-dropdown-menu slot="dropdown">
                                             <el-dropdown-item :command="beforeHandleUserCommand(item.user, 'at')"
                                                 v-if="item.user.user_id!=userInfo.user_id">
@@ -854,7 +855,7 @@
                 atUser() {
                     if (this.global.atUserInfo) {
                         this.atUserInfo = this.global.atUserInfo;
-                        this.message = '@' + decodeURIComponent(this.atUserInfo.user_name) + " "+this.message;
+                        this.message = '@' + decodeURIComponent(this.atUserInfo.user_name) + " " + this.message;
                         this.focusInput();
                     }
                 },

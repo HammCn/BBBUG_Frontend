@@ -3,8 +3,8 @@
         <div class="bbbug_main_right">
             <div class="bbbug_main_right_room">
                 <div class="bbbut_main_profile_box" v-loading="loading">
-                    <div class="bbbugbbbug_main_profile_user_badge_admin" v-if="userInfo.user_admin">管</div>
-                    <div class="bbbugbbbug_main_profile_user_badge"
+                    <div class="bbbug_main_profile_user_badge_admin" v-if="userInfo.user_admin">管</div>
+                    <div class="bbbug_main_profile_user_badge"
                         v-if="!userInfo.user_admin && userInfo.user_id == roomInfo.room_user">房</div>
                     <div class="bbbug_main_profile_head">
                         <img :src="userInfo.user_head" onerror="this.src='//cdn.bbbug.com/images/nohead.jpg'"
@@ -13,10 +13,23 @@
                     <div class="bbbug_main_profile_user">
                         <div class="bbbug_main_profile_user_icon">
                             <span class="bbbug_main_profile_user_id">ID:{{userInfo.user_id}}</span>
+                            <span class="bbbug_main_profile_user_id" v-if="userInfo.app_id>1"
+                                title="第三方平台登录" style="cursor: pointer;">{{userInfo.app_name}}</span>
                             <i class="iconfont user_icon user_female icon-xingbie-nv" title="女生"
                                 v-if="userInfo.user_sex==0"></i>
                             <i class="iconfont user_icon user_male icon-xingbie-nan" title="男生"
                                 v-if="userInfo.user_sex==1"></i>
+
+                            <i class="iconfont user_device icon-vscode" v-if="userInfo.user_device=='VSCODE'"
+                                title="Visual Studio Code插件在线"></i>
+                            <i class="iconfont user_device icon-apple-fill" v-if="userInfo.user_device=='MacOS'"
+                                title="Mac 在线"></i>
+                            <i class="iconfont user_device icon-windows-fill" v-if="userInfo.user_device=='Windows'"
+                                title="Windows 在线"></i>
+                            <i class="iconfont user_device icon-apple-fill"
+                                v-if="userInfo.user_device=='iOS' || userInfo.user_device=='iPhone'" title="iOS 在线"></i>
+                            <i class="iconfont user_device icon-android-fill" v-if="userInfo.user_device=='Android'"
+                                title="Android 在线"></i>
                         </div>
                         <div class="bbbug_main_profile_user_name"><i :title="userInfo.user_vip" v-if="userInfo.user_vip"
                                 class="iconfont icon-icon_certification_f user_icon"
@@ -100,7 +113,17 @@
         }
 </script>
 <style>
-    .bbbugbbbug_main_profile_user_badge {
+    .user_device {
+        color: #666;
+        margin-left: 5px;
+        cursor: pointer;
+    }
+
+    .user_device::before {
+        font-size: 18px;
+    }
+
+    .bbbug_main_profile_user_badge {
         background-color: #ddd;
         color: #666;
         transform: rotate(45deg);
@@ -114,7 +137,7 @@
         font-size: 12px;
     }
 
-    .bbbugbbbug_main_profile_user_badge_admin {
+    .bbbug_main_profile_user_badge_admin {
         background-color: #666;
         color: #fff;
         transform: rotate(45deg);
