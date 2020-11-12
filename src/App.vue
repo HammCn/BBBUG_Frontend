@@ -835,7 +835,9 @@
                                 let _obj = false;
                                 try {
                                     _obj = JSON.parse(decodeURIComponent(res.data[i].message_content));
-                                } catch (error) { }
+                                } catch (error) {
+                                    _obj = JSON.parse(res.data[i].message_content);
+                                }
                                 if (_obj) {
                                     if (_obj.at) {
                                         _obj.content = '@' + _obj.at.user_name + " " + _obj.content;
@@ -1131,7 +1133,6 @@
                             obj = JSON.parse(decodeURIComponent(data));
                         } catch (e) {
                             obj = JSON.parse(data);
-                            console.log(e);
                         }
                         if (that.messageList.length > that.historyMax) {
                             that.messageList.shift();
