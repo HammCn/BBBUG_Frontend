@@ -1158,7 +1158,6 @@
                                         //                     body: that.urldecode(obj.user.user_name) + " 摸了摸你" + that.urldecode(obj.at.user_touchtip),
                                         //                     icon: ""
                                         //                 });
-                                        //                 isNotificated = true;
                                         //                 // 两秒后关闭通知
                                         //                 setTimeout(function () {
                                         //                     n.close();
@@ -1216,7 +1215,6 @@
                                                             body: that.urldecode(obj.content),
                                                             icon: ""
                                                         });
-                                                        isNotificated = true;
                                                         // 两秒后关闭通知
                                                         setTimeout(function () {
                                                             n.close();
@@ -1282,7 +1280,6 @@
                                                             body: "《" + obj.song.name + "》(" + obj.song.singer + ")",
                                                             icon: ""
                                                         });
-                                                        isNotificated = true;
                                                         // 两秒后关闭通知
                                                         setTimeout(function () {
                                                             n.close();
@@ -1367,7 +1364,6 @@
                                                             body: "《" + obj.song.name + "》(" + obj.song.singer + ")",
                                                             icon: ""
                                                         });
-                                                        isNotificated = true;
                                                         // 两秒后关闭通知
                                                         setTimeout(function () {
                                                             n.close();
@@ -1394,7 +1390,6 @@
                                                             body: "《" + obj.song.name + "》(" + obj.song.singer + ")",
                                                             icon: ""
                                                         });
-                                                        isNotificated = true;
                                                         // 两秒后关闭通知
                                                         setTimeout(function () {
                                                             n.close();
