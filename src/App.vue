@@ -243,8 +243,20 @@
                                 class="iconfont icon-xiangxia"></i></div>
                     </div>
                     <div class="bbbug_main_chat_emojis" v-if="isEmojiBoxShow">
-                        <img v-for="index in 30" :src="'//cdn.bbbug.com/images/emoji/'+index+'.png'" title="发送这个表情"
-                            @click.stop="sendEmoji(index)" />
+                        <div class="bbbug_main_chat_emojis_search">
+                            <el-input placeholder="输入关键词搜索表情包" v-model="imageKeyword" clearable
+                                class="bbbug_main_chat_emojis_input" @keydown.13.native="searchImage">
+                                <el-button slot="append" icon="el-icon-search" @click="searchImage"></el-button>
+                            </el-input>
+                        </div>
+                        <div v-loading="loadingSearchImage" style="text-align: left;">
+                            <el-popover placement="top-start" title="预览表情" trigger="hover" :open-delay="2000"
+                                v-for="(item,index) in imageList">
+                                <img :src="item"
+                                    style="width:200px;height:200px;border-radius:10px;border:1px solid #f5f5f5;" />
+                                <img slot="reference" :src="item" @click.stop="sendEmoji(item)" />
+                            </el-popover>
+                        </div>
                     </div>
                     <div class="bbbug_main_chat_input">
                         <div class="bbbug_main_chat_input_toolbar"></div>
@@ -309,6 +321,7 @@
                     onlineList: [],
                     timerForWebTitle: null,
                     isSendMessageByCtrl: false,
+                    loadingSearchImage: false,
                     songInfo: false,
                     message: "",
                     timeDiff: 0,
@@ -328,10 +341,16 @@
                     musicLrcObj: {},
                     lrcString: "",
                     background: "//cdn.bbbug.com/new/images/bg_dark.jpg",
+                    emojiList: [],
+                    imageList: [],
+                    imageKeyword: "",
                 }
             },
             created() {
                 let that = this;
+                for (let i = 1; i <= 30; i++) {
+                    that.emojiList.push('https://cdn.bbbug.com/images/emoji/' + i + '.png');
+                }
             },
             mounted() {
                 let that = this;
@@ -446,6 +465,24 @@
                         this.$message.error('发送图片大小不能超过 2MB!');
                     }
                     return isJPG && isLt2M;
+                },
+                searchImage() {
+                    let that = this;
+                    that.loadingSearchImage = true;
+                    that.request({
+                        url: "attach/search",
+                        data: {
+                            keyword: that.imageKeyword
+                        },
+                        success(res) {
+                            that.loadingSearchImage = false;
+                            that.imageList = res.data;
+                        },
+                        error() {
+                            that.loadingSearchImage = false;
+                            that.imageList = that.emojiList;
+                        }
+                    });
                 },
                 getClipboardFiles(event) {
                     var that = this;
@@ -709,6 +746,10 @@
                     this.closeMenu();
                     this.isSongPannelShow = false;
                     this.isEmojiBoxShow = !this.isEmojiBoxShow;
+                    if (this.isEmojiBoxShow) {
+                        this.imageList = this.emojiList;
+                        this.loadingSearchImage = false;
+                    }
                 },
                 getImageWidth(url) {
                     if (url.indexOf('/images/emoji/') > 0) {
@@ -724,9 +765,8 @@
                         return "https://cdn.bbbug.com/uploads/" + url;
                     }
                 },
-                sendEmoji(index) {
+                sendEmoji(url) {
                     let that = this;
-                    let url = "https://cdn.bbbug.com/images/emoji/" + index + ".png";
                     that.request({
                         url: "message/send",
                         data: {
@@ -1908,42 +1948,8 @@
         color: rgba(255, 255, 255, 0.5);
         text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
     }
-</style>
-<style>
-    /* .slide-fade {
-        position: fixed;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        width: 100%;
-        opacity: 0;
-        z-index: 0;
-        opacity: 0;
-    }
 
-    .slide-fade-enter,
-    .slide-fade-leave-to {
-        left: 0;
-        right: 0;
-        bottom: 0;
-        position: absolute;
-        width: 100%;
-        transform: translateX(-1000px);
-        z-index: -1;
-        opacity: 0;
+    .bbbug_main_chat_emojis_input {
+        margin-bottom: 10px;
     }
-
-    .slide-fade-enter-active {
-        transition: all 0.5s ease;
-        transform: translateX(0px);
-        right: 0;
-        z-index: 10;
-    }
-
-    .slide-fade-leave-active {
-        transition: all 0.5s ease;
-        transform: translateX(1000px);
-        opacity: 0;
-        right: 2000px;
-    } */
 </style>
