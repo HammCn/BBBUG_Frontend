@@ -155,6 +155,14 @@
         font-size: 12px;
     }
 
+    .bbbug_main_profile_user {
+        vertical-align: middle;
+    }
+
+    .bbbug_main_profile_user * {
+        vertical-align: middle;
+    }
+
     .bbbug_my_setting__form {
         background-color: white;
         padding: 20px;
@@ -286,7 +294,7 @@
         font-size: 14px;
         color: #999;
         background-color: #f5f5f5;
-        margin-top: 15px;
+        margin-top: 10px;
         padding: 10px;
     }
 </style>

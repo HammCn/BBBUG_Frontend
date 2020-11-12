@@ -1,6 +1,6 @@
 <template>
     <div id="OnlineList">
-        <div class="bbbug_main_right" style="width:300px!important;min-width:auto;">
+        <div class="bbbug_main_right bbbug_main_right_online_box">
             <div class="bbbug_main_right_online">
                 <div class="bbbug_main_right_online_title">房间在线用户
                 </div>
