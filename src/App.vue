@@ -95,8 +95,10 @@
 
                         </div>
                         <div class="bbbug_main_chat_online">
-                            <span title="复制邀请链接" class="bbbug_main_chat_invate"
+                            <span title="复制邀请链接" class="bbbug_main_chat_invate hideWhenPhone"
                                 :data-clipboard-text="copyData">邀请</span>
+                            <span title="无缝穿梭到手机" class="bbbug_main_chat_invate hideWhenPhone" @click="showQrCode"
+                                v-if="userInfo && userInfo.user_id>0">穿梭到手机</span>
                             <span @click.stop="showOnlineList" title="打开在线用户列表">
                                 <i class="iconfont icon-icon_people_fill">
                                 </i>
@@ -163,8 +165,8 @@
                                     <!-- 图片消息 -->
                                     <div class="bbbug_main_chat_content" v-if="item.type=='img'" style="padding:5px;">
                                         <img class="bbbug_main_chat_img"
-                                            :style="{width:getImageWidth(item.content)+'px'}"
-                                            :src="getStaticImageUrl(item.content)"
+                                            :style="{width:getImageWidth(urldecode(item.content))+'px'}"
+                                            :src="getStaticImageUrl(urldecode(item.content))"
                                             onerror="this.src='//cdn.bbbug.com/new/images/error.jpg'"
                                             :large="getStaticImageUrl(urldecode(item.resource))"
                                             :preview="item.message_id" />
@@ -248,8 +250,9 @@
                         <div class="bbbug_main_chat_input_toolbar"></div>
                         <div class="bbbug_main_chat_input_form">
                             <textarea @click="hideAll" class="bbug_main_chat_input_message"
-                                :placeholder="(roomInfo && roomInfo.room_sendmsg && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?'全员禁言中,你暂时无法发言...':'Wish you fuck your bugs...'" @keydown.13="sendMessage"
-                                @input="messageChanged" v-model="message" :disabled="(roomInfo && roomInfo.room_sendmsg && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?true:false"></textarea>
+                                :placeholder="(roomInfo && roomInfo.room_sendmsg && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?'全员禁言中,你暂时无法发言...':'Wish you fuck your bugs...'"
+                                @keydown.13="sendMessage" @input="messageChanged" v-model="message"
+                                :disabled="(roomInfo && roomInfo.room_sendmsg && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?true:false"></textarea>
                             <button class="bbbug_main_chat_input_send" id="qqLoginBtn" @click.stop="sendMessage"
                                 :class="isEnableSendMessage?'bbbug_main_chat_enable':''">发送(Enter)</button>
                             <el-tag class="bbbug_main_chat_input_quot" closable type="info"
@@ -493,6 +496,11 @@
                         }
                     }
                     return;
+                },
+                showQrCode() {
+                    this.$alert('<center><span class="item" style="color:red;font-size:14px;"><font color=black style="font-size:20px;">手机扫码立即穿梭</font><br><br><img width="200px" src="https://qr.hamm.cn?data=' + encodeURIComponent('https://bbbug.com/auto_login?access_token=' + this.baseData.access_token) + '"/><br>请不要截图发给其他人,避免账号被盗</span></center>', {
+                        dangerouslyUseHTMLString: true
+                    });
                 },
                 handleImageUploadSuccess(res, file) {
                     var that = this;
@@ -1123,6 +1131,7 @@
                             obj = JSON.parse(decodeURIComponent(data));
                         } catch (e) {
                             obj = JSON.parse(data);
+                            console.log(e);
                         }
                         if (that.messageList.length > that.historyMax) {
                             that.messageList.shift();
