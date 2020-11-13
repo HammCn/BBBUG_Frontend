@@ -635,7 +635,7 @@
                     } else {
                         setTimeout(function () {
                             that.websocket.connection.send('getNowSong');
-                        }, 1000);
+                        }, 3000);
                     }
                 },
                 audioError() {
