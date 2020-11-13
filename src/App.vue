@@ -196,20 +196,27 @@
                                         </div>
                                     </div>
                                     <!--文字消息-->
-                                    <div class="bbbug_main_chat_content content_at"
-                                        v-if="item.type=='text' && item.user.user_id!=userInfo.user_id && (item.at && item.at.user_id==userInfo.user_id)">
-                                        {{urldecode(item.content)}}</div>
-                                    <div class="bbbug_main_chat_content"
-                                        v-if="item.type=='text' && item.user.user_id!=userInfo.user_id && (!item.at || item.at.user_id!=userInfo.user_id)">
-                                        {{urldecode(item.content)}}</div>
-                                    <div class="bbbug_main_chat_content content_boy"
-                                        v-if="item.type=='text' && item.user.user_id==userInfo.user_id && userInfo.user_sex==1">
-                                        {{urldecode(item.content)}}</div>
-                                    <div class="bbbug_main_chat_content content_girl"
-                                        v-if="item.type=='text' && item.user.user_id==userInfo.user_id && userInfo.user_sex==0">
-                                        {{urldecode(item.content)}}</div>
-                                    <div class="bbbug_main_chat_content_loading love_fast" v-if="item.loading"><i
-                                            class="iconfont icon-loading"></i></div>
+                                    <div v-if="item.isAtAll">
+                                        <div class="bbbug_main_chat_content content_at"
+                                            v-if="item.type=='text'">
+                                            {{urldecode(item.content)}}</div>
+                                    </div>
+                                    <div v-if="!item.isAtAll">
+                                        <div class="bbbug_main_chat_content content_at"
+                                            v-if="item.type=='text' && item.user.user_id!=userInfo.user_id && (item.at && item.at.user_id==userInfo.user_id)">
+                                            {{urldecode(item.content)}}</div>
+                                        <div class="bbbug_main_chat_content"
+                                            v-if="item.type=='text' && item.user.user_id!=userInfo.user_id && (!item.at || item.at.user_id!=userInfo.user_id)">
+                                            {{urldecode(item.content)}}</div>
+                                        <div class="bbbug_main_chat_content content_boy"
+                                            v-if="item.type=='text' && item.user.user_id==userInfo.user_id && userInfo.user_sex==1">
+                                            {{urldecode(item.content)}}</div>
+                                        <div class="bbbug_main_chat_content content_girl"
+                                            v-if="item.type=='text' && item.user.user_id==userInfo.user_id && userInfo.user_sex==0">
+                                            {{urldecode(item.content)}}</div>
+                                        <div class="bbbug_main_chat_content_loading love_fast" v-if="item.loading"><i
+                                                class="iconfont icon-loading"></i></div>
+                                    </div>
                                 </div>
                                 <div class="bbbug_main_chat_name_time">{{friendlyTime(item.time)}}</div>
                                 <div class="bbbug_main_chat_content_quot" v-if="item.at && item.at.message">
@@ -625,6 +632,10 @@
                     that.audioImage = '//cdn.bbbug.com/new/images/loading.png';
                     if (that.roomInfo && that.roomInfo.room_type == 4 && that.roomInfo.room_playone) {
                         that.playMusic();
+                    } else {
+                        setTimeout(function () {
+                            that.websocket.connection.send('getNowSong');
+                        }, 1000);
                     }
                 },
                 audioError() {
@@ -883,6 +894,10 @@
                                         _obj.content = '@' + _obj.at.user_name + " " + _obj.content;
                                     }
                                     _obj.time = res.data[i].message_createtime;
+                                    _obj.isAtAll = false;
+                                    if (_obj.type == 'text') {
+                                        _obj.isAtAll = decodeURIComponent(_obj.content).indexOf('@全体') == 0 && (obj.user.user_id == that.roomInfo.room_user || obj.user.user_admin) ? true : false;
+                                    }
                                     that.messageList.unshift(_obj);
                                 }
                             }
@@ -1217,6 +1232,7 @@
                                 that.addSystemMessage("管理员" + that.urldecode(obj.user.user_name) + "清空了你的聊天记录", '#f00', '#eee');
                                 break;
                             case 'text':
+                                obj.isAtAll = decodeURIComponent(obj.content).indexOf('@全体') == 0 && (obj.user.user_id == that.roomInfo.room_user || obj.user.user_admin) ? true : false;
                                 if (obj.user.user_id == that.userInfo.user_id) {
                                     for (let i = that.messageList.length - 1; i >= 0; i--) {
                                         if (that.messageList[i].loading == 1) {
@@ -1238,8 +1254,36 @@
                                         return;
                                     }
                                 }
+                                if ((obj.user.user_id == that.roomInfo.room_user || obj.user.user_admin) && obj.isAtAll) {
+                                    that.$notify({
+                                        title: that.urldecode(obj.user.user_name) + "@了全体：",
+                                        message: that.urldecode(obj.content),
+                                        duration: 10000,
+                                        dangerouslyUseHTMLString: true
+                                    });
+                                    if (that.isEnableNotification) {
+                                        if (window.Notification && Notification.permission !== "denied") {
+                                            Notification.requestPermission(function (status) { // 请求权限
+                                                if (status === 'granted') {
+                                                    // 弹出一个通知
+                                                    var n = new Notification(that.urldecode(obj.user.user_name) + "@全体：", {
+                                                        body: that.urldecode(obj.content),
+                                                        icon: ""
+                                                    });
+                                                    // 两秒后关闭通知
+                                                    setTimeout(function () {
+                                                        n.close();
+                                                    }, 5000);
+                                                }
+                                            });
+                                        }
+                                    }
+                                    if (that.isEnableNoticePlayer) {
+                                        that.$refs.noticePlayer.play();
+                                    }
+                                }
                                 if (obj.at) {
-                                    if (obj.at.user_id == that.userInfo.user_id) {
+                                    if (obj.at.user_id == that.userInfo.user_id || obj.isAtAll) {
                                         that.$notify({
                                             title: that.urldecode(obj.user.user_name) + "@了你：",
                                             message: that.urldecode(obj.content),
