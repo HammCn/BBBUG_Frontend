@@ -403,7 +403,9 @@
                         that.callParentFunction('noticeClicked', 'success');
                         that.$nextTick(function () {
                             that.$refs.audio.volume = parseFloat(that.audioVolume / 100);
-                            that.$refs.audio.play();
+                            if(that.audioUrl){
+                                that.$refs.audio.play();
+                            }
                         });
                     }
                 });
@@ -664,7 +666,7 @@
                             if (now < 5) {
                                 now = 0;
                             }
-                            console.error('当前应播放' + now + 's');
+                            // console.error('当前应播放' + now + 's');
                             that.$refs.audio.currentTime = now < 0 ? 0 : now;
                             that.audioImage = decodeURIComponent(that.songInfo.user.user_head);
                             break;
