@@ -896,7 +896,7 @@
                                     _obj.time = res.data[i].message_createtime;
                                     _obj.isAtAll = false;
                                     if (_obj.type == 'text') {
-                                        _obj.isAtAll = decodeURIComponent(_obj.content).indexOf('@全体') == 0 && (obj.user.user_id == that.roomInfo.room_user || obj.user.user_admin) ? true : false;
+                                        _obj.isAtAll = decodeURIComponent(_obj.content).indexOf('@全体') == 0 && (_obj.user.user_id == that.roomInfo.room_user || _obj.user.user_admin) ? true : false;
                                     }
                                     that.messageList.unshift(_obj);
                                 }
