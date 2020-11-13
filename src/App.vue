@@ -197,8 +197,7 @@
                                     </div>
                                     <!--文字消息-->
                                     <div v-if="item.isAtAll">
-                                        <div class="bbbug_main_chat_content content_at"
-                                            v-if="item.type=='text'">
+                                        <div class="bbbug_main_chat_content content_at" v-if="item.type=='text'">
                                             {{urldecode(item.content)}}</div>
                                     </div>
                                     <div v-if="!item.isAtAll">
@@ -380,7 +379,7 @@
                 that.baseData = that.global.baseData;
                 that.uploadImageUrl = that.global.api.url + "attach/uploadimage";
 
-                let room_change_id = localStorage.getItem('room_change_id') || false;
+                let room_change_id = localStorage.getItem('room_change_id') || that.global.room_id;
                 that.request({
                     url: "room/getRoomByDomain",
                     data: {
@@ -393,7 +392,7 @@
                     }
                     , error(res) {
                         if (!room_change_id) {
-                            localStorage.setItem('room_change_id', 888);
+                            localStorage.setItem('room_change_id', that.global.room_id);
                         }
                     }
                 });
@@ -766,10 +765,10 @@
                     }
                 },
                 getStaticImageUrl(url) {
-                    if (url.indexOf('http://') > 0 || url.indexOf("https://") > -1) {
+                    if (url.indexOf('http://') == 0 || url.indexOf("https://") == 0) {
                         return url;
                     } else {
-                        return "https://cdn.bbbug.com/uploads/" + url;
+                        return this.global.api.static + "/uploads/" + url;
                     }
                 },
                 sendEmoji(url) {
@@ -1049,7 +1048,7 @@
                     that.request({
                         url: "room/getRoomInfo",
                         data: {
-                            room_id: localStorage.getItem('room_change_id') || 888,
+                            room_id: localStorage.getItem('room_change_id') || that.global.room_id,
                             room_password: that.global.room_password
                         },
                         success(res) {
@@ -1072,7 +1071,7 @@
                                     }
                                     break;
                                 default:
-                                    localStorage.setItem('room_change_id', 888);
+                                    localStorage.setItem('room_change_id', that.global.room_id);
                                     that.getRoomInfo();
                             }
                         }
@@ -1425,7 +1424,7 @@
                                 if (obj.song) {
                                     obj.song.pic = obj.song.pic.replace('http://', 'https://');
                                     that.songInfo = obj;
-                                    that.audioUrl = "https://api.bbbug.com/api/song/playurl?mid=" + obj.song.mid;
+                                    that.audioUrl = that.global.api.url + "song/playurl?mid=" + obj.song.mid;
                                     that.updateCopyData();
                                     that.playMusic();
 

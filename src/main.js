@@ -36,6 +36,7 @@ Vue.prototype.global = {
     },
     api: {
         url: "https://api.bbbug.com/api/",
+        static: "https://cdn.bbbug.com/",//这里修改为 https://api.bbbug.com/ 对应你的api 根路径
     },
 };
 Vue.prototype.doLogout = function () {
@@ -49,7 +50,7 @@ Vue.prototype.urldecode = function (str) {
 };
 
 Vue.prototype.http2https = function (str) {
-    return str.toString().replace("http://","https://");
+    return str.toString().replace("http://", "https://");
 };
 
 Vue.prototype.request = function (_data) {
