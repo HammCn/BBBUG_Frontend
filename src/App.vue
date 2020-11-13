@@ -632,10 +632,6 @@
                     that.audioImage = '//cdn.bbbug.com/new/images/loading.png';
                     if (that.roomInfo && that.roomInfo.room_type == 4 && that.roomInfo.room_playone) {
                         that.playMusic();
-                    } else {
-                        setTimeout(function () {
-                            that.websocket.connection.send('getNowSong');
-                        }, 3000);
                     }
                 },
                 audioError() {
