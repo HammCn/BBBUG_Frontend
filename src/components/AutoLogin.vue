@@ -22,7 +22,9 @@
                 if (room_id) {
                     that.global.room_id = room_id;
                 } else {
-                    room_id = location.pathname.replace("/", '').replace(".html", "");
+                    if (location.pathname != '/auto_login') {
+                        room_id = location.pathname.replace("/", '').replace(".html", "");
+                    }
                     that.global.room_id = room_id || 888;
                 }
                 that.$emit('App', 'getUserInfo');
