@@ -643,10 +643,6 @@
                     if (that.audioUrl) {
                         setTimeout(function () {
                             that.$refs.audio.src = "https://cdn.bbbug.com/music/" + that.songInfo.song.mid + ".mp3";
-                            // that.$refs.audio.load();
-                            that.$nextTick(function () {
-                                that.$refs.audio.play();
-                            });
                         }, 500);
                     }
                 },
@@ -698,6 +694,9 @@
                         // that.$refs.audio.load();
                         that.$refs.audio.play();
                     });
+                },
+                playSystemAudio(){
+                    this.$refs.noticePlayer.play();
                 },
                 messageChanged(e) {
                     let that = this;
@@ -1124,7 +1123,6 @@
                         },
                         success(res) {
                             that.audioUrl = '';
-                            that.songInfo = false;
                             that.audioImage = '//cdn.bbbug.com/new/images/loading.png';
                         }
                     });
@@ -1230,7 +1228,7 @@
                                         //     }
                                         // }
                                         // if (that.isEnableNoticePlayer) {
-                                        //     that.$refs.noticePlayer.play();
+                                        //     that.playSystemAudio()
                                         // }
                                     }
                                 }
@@ -1287,7 +1285,7 @@
                                         }
                                     }
                                     if (that.isEnableNoticePlayer) {
-                                        that.$refs.noticePlayer.play();
+                                        that.playSystemAudio()
                                     }
                                 }
                                 if (obj.at) {
@@ -1316,7 +1314,7 @@
                                             }
                                         }
                                         if (that.isEnableNoticePlayer) {
-                                            that.$refs.noticePlayer.play();
+                                            that.playSystemAudio()
                                         }
                                     }
                                     obj.content = '@' + obj.at.user_name + " " + obj.content;
@@ -1381,7 +1379,7 @@
                                             }
                                         }
                                         if (that.isEnableNoticePlayer) {
-                                            that.$refs.noticePlayer.play();
+                                            that.playSystemAudio()
                                         }
                                     }
                                 } else {
@@ -1465,7 +1463,7 @@
                                             }
                                         }
                                         if (that.isEnableNoticePlayer) {
-                                            that.$refs.noticePlayer.play();
+                                            that.playSystemAudio()
                                         }
                                     } else if (obj.at.user_id == that.userInfo.user_id) {
                                         that.$notify({
@@ -1491,7 +1489,7 @@
                                             }
                                         }
                                         if (that.isEnableNoticePlayer) {
-                                            that.$refs.noticePlayer.play();
+                                            that.playSystemAudio()
                                         }
 
                                     }
