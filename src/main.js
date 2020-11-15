@@ -38,6 +38,7 @@ Vue.prototype.global = {
         url: "https://api.bbbug.com/api/",
         static: "https://cdn.bbbug.com/",//这里修改为 https://api.bbbug.com/ 对应你的api 根路径
     },
+    songKeyword:"",
 };
 Vue.prototype.doLogout = function () {
     this.global.userInfo = this.global.guestUserInfo;

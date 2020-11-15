@@ -63,6 +63,10 @@
       this.userInfo = this.global.userInfo;
       this.roomInfo = Object.assign({}, this.global.roomInfo);
       this.atSongUserInfo = this.global.atSongUserInfo;
+      if(this.global.songKeyword){
+        this.keyword = this.global.songKeyword;
+        this.getList();
+      }
     },
     methods: {
       clearUser() {

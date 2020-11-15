@@ -163,7 +163,8 @@
                                 <div class="bbbug_main_chat_context_menu"
                                     @contextmenu.prevent.stop="openMenu($event,item)">
                                     <!-- 图片消息 -->
-                                    <div class="bbbug_main_chat_content" v-if="item.type=='img'" style="padding:5px;">
+                                    <div class="bbbug_main_chat_content" v-if="item.type=='img'"
+                                        style="padding:5px;border-radius:10px">
                                         <img class="bbbug_main_chat_img"
                                             :style="{width:getImageWidth(urldecode(item.content))+'px'}"
                                             :src="getStaticImageUrl(urldecode(item.content))"
@@ -173,7 +174,8 @@
                                     </div>
                                     <!--jump消息-->
                                     <div class="bbbug_main_chat_content bbbug_main_chat_jump" v-if="item.type=='jump'"
-                                        title="快捷机票 点击进入" @click="enterRoom(item.jump.room_id)">
+                                        title="快捷机票 点击进入" @click="enterRoom(item.jump.room_id)"
+                                        style="border-radius:10px">
                                         <div class="bbbug_main_chat_jump_name">
                                             <div class="bbbug_main_chat_jump_id">ID:{{item.jump.room_id}}</div>
                                             {{item.jump.room_name}}
@@ -187,7 +189,7 @@
                                     </div>
                                     <!--link消息-->
                                     <div class="bbbug_main_chat_content bbbug_main_chat_jump" v-if="item.type=='link'"
-                                        title="打开外部链接" @click="openNewWebPage(item.link)">
+                                        title="打开外部链接" @click="openNewWebPage(item.link)" style="border-radius:10px">
                                         <div class="bbbug_main_chat_jump_name">
                                             {{item.title}}
                                         </div>
@@ -403,7 +405,7 @@
                         that.callParentFunction('noticeClicked', 'success');
                         that.$nextTick(function () {
                             that.$refs.audio.volume = parseFloat(that.audioVolume / 100);
-                            if(that.audioUrl){
+                            if (that.audioUrl) {
                                 that.$refs.audio.play();
                             }
                         });
@@ -739,6 +741,7 @@
                     this.isEmojiBoxShow = false;
                     this.isSongPannelShow = false;
                     this.closeMenu();
+                    this.global.songKeyword = '';
                 },
                 hideAllDialog() {
                     this.isEmojiBoxShow = false;
@@ -795,6 +798,14 @@
                     if (that.message == '') {
                         return;
                     }
+
+                    if (e.keyCode && e.keyCode == 13 && e.ctrlKey) {
+                        that.global.songKeyword = that.message;
+                        that.$router.push('/search_songs');
+                        return;
+                    }
+
+
                     let message = that.message;
                     that.message = '';
                     that.isEnableSendMessage = false;
@@ -1615,9 +1626,10 @@
     }
 
     .bbbug_main_chat_content {
-        background-color: #eee;
-        padding: 10px 15px;
-        border-radius: 10px;
+        background-color: #e5e5e5;
+        padding: 8px 16px;
+        border-radius: 20px;
+        border-top-left-radius: 0px;
         font-size: 14px;
         color: #666;
         max-width: 300px;
@@ -1625,6 +1637,11 @@
         display: inline-block;
         word-break: break-all;
         word-wrap: break-word;
+    }
+
+    .bbbug_main_chat_mine .bbbug_main_chat_content {
+        border-top-left-radius: 20px;
+        border-top-right-radius: 0px;
     }
 
     .bbbug_main_chat_content:active {
