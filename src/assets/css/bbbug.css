@@ -105,9 +105,9 @@
  .bbbug_dark .bbbug_bg,
  .bbbug_dark .el-loading-mask,
  .bbbug_dark .bbbug_main_menu,
- .bbbug_dark .bbbug_bg,
  .bbbug_dark .iconfont,
  .bbbug_dark .bbbug_link,
+ .bbbug_dark .bbbug_main_menu_song_bg,
  .v-modal
  {
     filter: invert(0.85) contrast(2);
@@ -118,8 +118,8 @@
     filter: invert(0.85) contrast(2);
  }
  .bbbug_dark .bbbug_main_chat_head_image,
- .bbbug_dark .bbbug_main_right_online_user_head_image
- .bbbug_dark .bbbug_main_menu_song_bg,
+ .bbbug_dark .bbbug_main_right_online_user_head_image,
+ .bbbug_dark .bbbug_main_menu_song_bg
  {
      border:1px solid #333;
  }
