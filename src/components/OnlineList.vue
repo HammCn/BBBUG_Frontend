@@ -6,11 +6,13 @@
                 </div>
                 <div class="bbbug_main_right_online_list" v-loading="bbbug_loading" v-if="list.length>0">
                     <div class="bbbug_scroll">
-                        <div class="bbbug_main_right_online_item" v-for="(item,index) in list">
+                        <div class="bbbug_main_right_online_item" v-for="(item,index) in list"
+                            :style="{filter:item.user_shutdown?'grayscale(1)':'none'}" :title="getStatus(item)">
                             <div class="bbbug_main_right_online_info">
                                 <div class="bbbug_main_right_online_user_head">
                                     <el-dropdown trigger="click" @command="commandUserHead" :index="index">
-                                        <img class="bbbug_main_right_online_user_head_image" :src="http2https(item.user_head)"
+                                        <img class="bbbug_main_right_online_user_head_image"
+                                            :src="http2https(item.user_head)"
                                             onerror="this.src='//cdn.bbbug.com/new/images/nohead.jpg'"
                                             @dblclick="doTouch(item.user_id)" />
                                         <el-dropdown-menu slot="dropdown">
@@ -45,7 +47,7 @@
                                     </el-dropdown>
                                 </div>
                                 <div class="bbbug_main_right_online_user">
-                                    <div class="bbbug_main_right_online_user_nick">
+                                    <div class="bbbug_main_right_online_user_nick" :style="{color:item.user_shutdown?'#aaa':'#333'}">
                                         <i class="iconfont icon-icon_certification_f user_icon"
                                             style="font-size:18px;color:#097AD8;" v-if="item.user_vip"
                                             :title="item.user_vip"></i>
@@ -94,6 +96,17 @@
                 }
             },
             methods: {
+                getStatus(item) {
+                    if (item.user_shutdown && item.user_songdown) {
+                        return '禁言&禁歌';
+                    } else if (item.user_shutdown) {
+                        return '禁言';
+                    } else if (item.user_songdown) {
+                        return '禁歌';
+                    } else {
+                        return '';
+                    }
+                },
                 beforeHandleUserCommand(row, command) {
                     return {
                         "row": row,
