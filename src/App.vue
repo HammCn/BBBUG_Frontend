@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <div class="bbbug_bg" :style="{backgroundImage:'url('+background+')'}"></div>
+        <div class="bbbug_bg" @click.stop="isLocked=!isLocked;" :style="{backgroundImage:'url('+background+')'}"></div>
         <div class="bbbug_link">
             <a href="https://doc.bbbug.com" target="_blank">开发文档</a>
             <a href="https://gitee.com/bbbug_com" target="_blank">Gitee</a>
@@ -157,14 +157,14 @@
                                     <i class="iconfont icon-icon_certification_f user_icon"
                                         style="font-size:18px;color:#097AD8;" v-if="item.user.user_vip"
                                         :title="item.user.user_vip"></i>
-                                    <i class="iconfont icon-github user_icon" style="font-size:16px;color:#666;"
-                                        v-if="item.user.user_icon" title="1024程序员节彩蛋"></i>
+                                    <i class="iconfont icon-weixin user_icon" style="font-size:16px;color:#666;"
+                                        v-if="item.user.user_icon" title="使用过微信小程序即可点亮"></i>
                                 </div>
                                 <div class="bbbug_main_chat_context_menu"
                                     @contextmenu.prevent.stop="openMenu($event,item)">
                                     <!-- 图片消息 -->
                                     <div class="bbbug_main_chat_content" v-if="item.type=='img'"
-                                        style="padding:5px;border-radius:10px">
+                                        style="padding:5px;border-radius:10px;line-height:0;">
                                         <img class="bbbug_main_chat_img"
                                             :style="{width:getImageWidth(urldecode(item.content))+'px'}"
                                             :src="getStaticImageUrl(urldecode(item.content))"
@@ -288,8 +288,8 @@
             </router-view>
         </div>
         <div v-if="isLocked">
-            <div class="bbbug_bg" :style="{backgroundImage:'url('+background+')'}"></div>
-            <div class="bbbug_locked">
+            <div class="bbbug_locked bbbug_bg" @click.stop="isLocked=!isLocked;"
+                :style="{backgroundImage:'url('+background+')'}">
                 <div class="bbbug_locked_player">
                     <!-- <div class="bbbug_locked_player_bg"></div>
                     <div class="bbbug_locked_player_bar"></div> -->
@@ -299,6 +299,9 @@
                         {{songInfo && songInfo.song ? (songInfo.song.name+" ("+songInfo.song.singer+")"):''}} 点歌人:
                         {{urldecode(songInfo.user.user_name)}}</div>
                 </div>
+            </div>
+            <div class="bbbug_link">
+                <a>按ESC快速切换房间聊天与沉浸式播放器</a>
             </div>
         </div>
     </div>
@@ -695,7 +698,7 @@
                         that.$refs.audio.play();
                     });
                 },
-                playSystemAudio(){
+                playSystemAudio() {
                     this.$refs.noticePlayer.play();
                 },
                 messageChanged(e) {
@@ -909,6 +912,8 @@
                                 }
                             }
                             that.addSystemMessage(that.global.roomInfo.room_notice ? that.global.roomInfo.room_notice : ('欢迎来到' + that.global.roomInfo.room_name + '!'));
+                            that.messageList.push(JSON.parse('{"type":"text","content":"兄弟萌,BBBUG微信小程序开源并上线啦,欢迎体验一下呀,也欢迎牛逼的你来贡献代码~","where":"channel","at":false,"message_id":"14385","time":1705447369,"resource":"","user":{"user_id":10000,"user_icon":1,"user_sex":1,"user_vip":"BBBUG项目发起者与开发者","user_device":"MacOS","user_name":"Hamm","user_head":"https://cdn.bbbug.com/uploads/thumb/image/20201110/02cf1719d8b759c3c4927e544ec1b28e.gif","user_remark":"开发者交流群1140258698","app_id":1,"app_name":"BBBUG","app_url":"https://bbbug.com","user_admin":true}}'));
+                            that.messageList.push(JSON.parse('{"type":"img","content":"https://cdn.bbbug.com/new/images/qrcode.jpg","where":"channel","at":null,"message_id":"-1","time":1705447367,"resource":"https://cdn.bbbug.com/new/images/qrcode.jpg","user":{"user_id":10000,"user_icon":1,"user_sex":1,"user_vip":"BBBUG项目发起者与开发者","user_extra":"","user_device":"MacOS","user_name":"Hamm","user_head":"https://cdn.bbbug.com/uploads/thumb/image/20201110/02cf1719d8b759c3c4927e544ec1b28e.gif","app_id":1,"app_name":"BBBUG","app_url":"https://bbbug.com","user_admin":true}}'));
                             that.autoScroll();
                         }
                     });
