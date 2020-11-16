@@ -1,6 +1,7 @@
 <template>
-    <div id="app">
-        <div class="bbbug_bg" @click.stop="isLocked=!isLocked;" :style="{backgroundImage:'url('+background+')'}"></div>
+    <div id="app" :class="isDarkModel?'bbbug_dark':''">
+        <div class="bbbug_bg" @click.stop="isLocked=!isLocked;" :style="{backgroundImage:'url('+background+')'}">
+        </div>
         <div class="bbbug_link">
             <a href="https://doc.bbbug.com" target="_blank">开发文档</a>
             <a href="https://gitee.com/bbbug_com" target="_blank">Gitee</a>
@@ -61,17 +62,6 @@
                     </div>
                     <div class="bbbug_main_menu_song love" title="歌曲加载中" v-if="!songInfo">
                         <img src="//cdn.bbbug.com/new/images/loading.png" />
-                    </div>
-                    <div class="bbbug_main_menu_song_box" v-if="songInfo && isSongPannelShow">
-                        <img class="bbbug_main_menu_song_bg"
-                            :src="songInfo ? songInfo.song.pic : '//cdn.bbbug.com/new/images/nohead.jpg'" />
-                        <el-progress :stroke-width="2" :percentage="audioPercent" :show-text="false"></el-progress>
-                        <div class="bbbug_main_menu_song_title">
-                            <marquee scrollamount="3">{{songInfo.song.name}} - {{songInfo.song.singer}}</marquee>
-                        </div>
-                        <div class="bbbug_main_menu_song_user">点歌人: <font color="orangered">
-                                {{urldecode(songInfo.user.user_name)}}</font>
-                        </div>
                     </div>
                     <div class="bbbug_main_menu_setting">
                         <router-link to="/system_setting"><img src="//cdn.bbbug.com/new/images/menubar_setting.png"
@@ -215,8 +205,8 @@
                                         <div class="bbbug_main_chat_content content_girl"
                                             v-if="item.type=='text' && item.user.user_id==userInfo.user_id && userInfo.user_sex==0">
                                             {{urldecode(item.content)}}</div>
-                                        <div class="bbbug_main_chat_content_loading love_fast" v-if="item.loading"><i
-                                                class="iconfont icon-loading"></i></div>
+                                        <div class="bbbug_main_chat_content_loading love_fast" v-if="item.loading">
+                                            <i class="iconfont icon-loading"></i></div>
                                     </div>
                                 </div>
                                 <div class="bbbug_main_chat_name_time">{{friendlyTime(item.time)}}</div>
@@ -283,6 +273,17 @@
                         </div>
                     </div>
                 </div>
+                <div class="bbbug_main_menu_song_box" v-if="songInfo && isSongPannelShow">
+                    <img class="bbbug_main_menu_song_bg"
+                        :src="songInfo ? songInfo.song.pic : '//cdn.bbbug.com/new/images/nohead.jpg'" />
+                    <el-progress :stroke-width="2" :percentage="audioPercent" :show-text="false"></el-progress>
+                    <div class="bbbug_main_menu_song_title">
+                        <marquee scrollamount="3">{{songInfo.song.name}} - {{songInfo.song.singer}}</marquee>
+                    </div>
+                    <div class="bbbug_main_menu_song_user">点歌人: <font color="orangered">
+                            {{urldecode(songInfo.user.user_name)}}</font>
+                    </div>
+                </div>
             </div>
             <router-view @App="AppController" class="bbbug_frame">
             </router-view>
@@ -304,6 +305,7 @@
                 <a>按ESC快速切换房间聊天与沉浸式播放器</a>
             </div>
         </div>
+        <div class="bbbug_dark_cover" v-if="isDarkModel"></div>
     </div>
 </template>
 <script>
@@ -359,6 +361,7 @@
             },
             created() {
                 let that = this;
+                that.updateDarkModel();
                 for (let i = 1; i <= 30; i++) {
                     that.emojiList.push('https://cdn.bbbug.com/images/emoji/' + i + '.png');
                 }
@@ -401,9 +404,16 @@
                         }
                     }
                 });
-                that.$alert('嗨，全新版本的BBBUG音乐聊天室更新啦，快来体验吧~', '新版上线', {
-                    confirmButtonText: '确定',
-                    callback() {
+                if (!localStorage.getItem('isDarkModel') && localStorage.getItem('isDarkModel') != 0) {
+                    that.$confirm('全新的BBBUG暗黑模式上线啦,是否体验一下?', '暗黑模式上线啦', {
+                        confirmButtonText: '体验',
+                        cancelButtonText: '暂不',
+                        closeOnClickModal: false,
+                        closeOnPressEscape: false,
+                        type: 'warning'
+                    }).then(function () {
+                        that.isDarkModel = true;
+                        localStorage.setItem('isDarkModel', 1);
                         that.getUserInfo();
                         that.callParentFunction('noticeClicked', 'success');
                         that.$nextTick(function () {
@@ -412,11 +422,36 @@
                                 that.$refs.audio.play();
                             }
                         });
-                    }
-                });
+                    }).catch(function () {
+                        that.isDarkModel = false;
+                        localStorage.setItem('isDarkModel', 0);
+                        that.getUserInfo();
+                        that.callParentFunction('noticeClicked', 'success');
+                        that.$nextTick(function () {
+                            that.$refs.audio.volume = parseFloat(that.audioVolume / 100);
+                            if (that.audioUrl) {
+                                that.$refs.audio.play();
+                            }
+                        });
+                    });
+                } else {
+                    that.$alert('嗨，欢迎来到BBBUG音乐聊天室一起听歌聊天呀~', 'BBBUG.COM', {
+                        confirmButtonText: '确定',
+                        callback() {
+                            that.getUserInfo();
+                            that.callParentFunction('noticeClicked', 'success');
+                            that.$nextTick(function () {
+                                that.$refs.audio.volume = parseFloat(that.audioVolume / 100);
+                                if (that.audioUrl) {
+                                    that.$refs.audio.play();
+                                }
+                            });
+                        }
+                    });
+                }
                 that._clipboard = new that.clipboard(".bbbug_main_chat_invate");
                 that._clipboard.on('success', function () {
-                    that.$message.success("复制成功，快去发给好友吧~")
+                    that.$message.success("复制成功，快去发给好友吧~");
                 });
                 that._clipboard.on('error', function () {
                     that.$message.error("复制失败")
@@ -430,6 +465,9 @@
                 that.loadConfig();
             },
             methods: {
+                updateDarkModel() {
+                    this.isDarkModel = localStorage.getItem('isDarkModel') == 1 ? true : false;
+                },
                 loadConfig() {
                     this.isEnableNoticePlayer = localStorage.getItem('isEnableNoticePlayer') != 1 ? true : false;
                     this.isEnableNotification = localStorage.getItem('isEnableNotification') != 1 ? true : false;
@@ -1129,6 +1167,7 @@
                         success(res) {
                             that.audioUrl = '';
                             that.audioImage = '//cdn.bbbug.com/new/images/loading.png';
+                            that.$message.success(res.msg);
                         }
                     });
                     // that.$confirm('是否确认切掉当前正在播放的歌曲?', '切歌提醒', {
@@ -1766,6 +1805,7 @@
         position: absolute;
         right: 20px;
         bottom: 20px;
+        z-index: 10;
     }
 
     .bbbug_main_chat_toolbar_tobottom i {

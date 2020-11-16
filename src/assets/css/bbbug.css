@@ -84,6 +84,45 @@
  ::-webkit-scrollbar-corner {
      background: transparent;
  }
+ .bbbug_dark .bbbug_dark_cover{    
+    mix-blend-mode: difference;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 99999999999999;
+    pointer-events: none;
+    background-color: rgba(255,255,255,0.85);
+ }
+ .bbbug_dark .bbbug_main_box{
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0px 0px 20px rgba(255,255,255, 0.9);
+ }
+ .bbbug_dark .el-loading-mask{
+     background-color: rgba(0,0,0,0.3);
+ }
+ .bbbug_dark .bbbug_bg,
+ .bbbug_dark .el-loading-mask,
+ .bbbug_dark .bbbug_main_menu,
+ .bbbug_dark .bbbug_bg,
+ .bbbug_dark .iconfont,
+ .bbbug_dark .bbbug_link,
+ .v-modal
+ {
+    filter: invert(0.85) contrast(2);
+ }
+ .bbbug_dark .bbbug_main_chat img,
+ .bbbug_dark .bbbug_main_right img
+ {
+    filter: invert(0.85) contrast(2);
+ }
+ .bbbug_dark .bbbug_main_chat_head_image,
+ .bbbug_dark .bbbug_main_right_online_user_head_image
+ .bbbug_dark .bbbug_main_menu_song_bg,
+ {
+     border:1px solid #333;
+ }
  .love {
     -webkit-animation: rotate 20s linear infinite;
     -moz-animation: rotate 20s linear infinite;
@@ -181,6 +220,8 @@
      width: 80px;
      background-color: #333;
      text-align: center;
+     border-top-left-radius: 10px;
+     border-bottom-left-radius:10px;
  }
  
  .bbbug_main_menu_head {

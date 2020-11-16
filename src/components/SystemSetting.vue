@@ -11,6 +11,9 @@
                     <el-form-item label="显示通知">
                         <el-switch v-model="isEnableNotification" @change="isEnableNotificationChanged"></el-switch>
                     </el-form-item>
+                    <el-form-item label="暗黑模式">
+                        <el-switch v-model="isDarkModelTemp" @change="isDarkModelChanged"></el-switch>
+                    </el-form-item>
                 </el-form>
             </div>
         </div>
@@ -25,6 +28,7 @@
                     roomInfo: {},
                     isEnableNoticePlayer: true,
                     isEnableNotification: true,
+                    isDarkModelTemp: true
                 }
             },
             created() {
@@ -36,6 +40,7 @@
                 this.roomInfo = Object.assign({}, this.global.roomInfo);
                 this.isEnableNoticePlayer = localStorage.getItem('isEnableNoticePlayer') != 1 ? true : false;
                 this.isEnableNotification = localStorage.getItem('isEnableNotification') != 1 ? true : false;
+                this.isDarkModelTemp = localStorage.getItem('isDarkModel') == 1 ? true : false;
             },
             methods: {
                 isEnableNoticePlayerChanged() {
@@ -45,6 +50,16 @@
                 isEnableNotificationChanged() {
                     localStorage.setItem('isEnableNotification', this.isEnableNotification ? 0 : 1);
                     this.$emit('App', 'loadConfig');
+                },
+                isDarkModelChanged() {
+                    let that = this;
+                    console.log(this.isDarkModelTemp)
+                    this.isDarkModel = this.isDarkModelTemp;
+                    localStorage.setItem('isDarkModel', this.isDarkModel ? 1 : 0);
+                    this.$emit('App', 'updateDarkModel');
+                    this.$nextTick(function(){
+                        that.$router.push('/');
+                    });
                 }
             },
         }

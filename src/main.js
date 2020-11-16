@@ -14,6 +14,7 @@ Vue.prototype.clipboard = clipboard;
 
 Vue.prototype.Event = new Vue();
 Vue.prototype.global = {
+    isDarkModel:true,
     room_id: 888,
     room_password: "",
     guestUserInfo: {
@@ -39,6 +40,11 @@ Vue.prototype.global = {
         static: "https://cdn.bbbug.com/",//这里修改为 https://api.bbbug.com/ 对应你的api 根路径
     },
     songKeyword:"",
+};
+
+Vue.prototype.isDarkModel = false;
+Vue.prototype.changeDarkModel=function(enabled){
+    this.isDarkModel = enabled;
 };
 Vue.prototype.doLogout = function () {
     this.global.userInfo = this.global.guestUserInfo;
