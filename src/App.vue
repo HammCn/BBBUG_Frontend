@@ -1173,7 +1173,7 @@
                             mid: that.songInfo.song.mid
                         },
                         success(res) {
-                            that.audioUrl = '';
+                            // that.audioUrl = '';
                             that.audioImage = '//cdn.bbbug.com/new/images/loading.png';
                             that.$message.success(res.msg);
                         }
