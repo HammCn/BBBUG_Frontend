@@ -25,6 +25,9 @@
                     if (location.pathname != '/auto_login') {
                         room_id = location.pathname.replace("/", '').replace(".html", "");
                     }
+                    if (room_id != parseInt(room_id)) {
+                        room_id = 888;
+                    }
                     that.global.room_id = room_id || 888;
                 }
                 that.$emit('App', 'getUserInfo');

@@ -1,5 +1,5 @@
 <template>
-    <div id="app" :class="isDarkModel?'bbbug_dark':''">
+    <div id="app">
         <div class="bbbug_bg" @click.stop="isLocked=!isLocked;" :style="{backgroundImage:'url('+background+')'}">
         </div>
         <div class="bbbug_link">
@@ -414,6 +414,7 @@
                     }).then(function () {
                         that.isDarkModel = true;
                         localStorage.setItem('isDarkModel', 1);
+                        that.updateDarkModel();
                         that.getUserInfo();
                         that.callParentFunction('noticeClicked', 'success');
                         that.$nextTick(function () {
@@ -425,6 +426,7 @@
                     }).catch(function () {
                         that.isDarkModel = false;
                         localStorage.setItem('isDarkModel', 0);
+                        that.updateDarkModel();
                         that.getUserInfo();
                         that.callParentFunction('noticeClicked', 'success');
                         that.$nextTick(function () {
@@ -467,6 +469,11 @@
             methods: {
                 updateDarkModel() {
                     this.isDarkModel = localStorage.getItem('isDarkModel') == 1 ? true : false;
+                    if (this.isDarkModel) {
+                        document.body.className = 'bbbug_dark';
+                    } else {
+                        document.body.className = '';
+                    }
                 },
                 loadConfig() {
                     this.isEnableNoticePlayer = localStorage.getItem('isEnableNoticePlayer') != 1 ? true : false;
@@ -1126,6 +1133,7 @@
                                     }
                                     break;
                                 default:
+                                    console.log(that.global.room_id);
                                     localStorage.setItem('room_change_id', that.global.room_id);
                                     that.getRoomInfo();
                             }
