@@ -45,6 +45,8 @@ IM后端采用```node-websocket```实现```Websocket```服务，使用```pm2```�
 5、修改个人资料与设置等
 6、ESC快捷沉浸式听歌体验，聊天框支持Ctrl+Enter快速歌曲搜索
 7、支持设置房间二级域名与绑定独立域名等
+8、支持白天模式与暗黑模式两种主题，可自由设置
+9、“摸一摸”等互动玩法
 
 更多功能等你来扩展开发...
 ```
@@ -64,9 +66,20 @@ IM后端采用```node-websocket```实现```Websocket```服务，使用```pm2```�
 
 ### 晒个截图
 
+普通模式：
+
 <p align="center">
 <img src="https://images.gitee.com/uploads/images/2020/1111/224304_865849d4_145025.png" width="20%"/>
 <img src="https://images.gitee.com/uploads/images/2020/1111/224508_98a510ad_145025.png" width="20%"/>
 <img src="https://images.gitee.com/uploads/images/2020/1111/224725_e498aecc_145025.png" width="20%"/>
 <img src="https://images.gitee.com/uploads/images/2020/1111/224817_294b2808_145025.png" width="20%"/>
+</p>
+
+暗黑模式：
+
+<p align="center">
+<img src="https://images.gitee.com/uploads/images/2020/1117/210841_ebaba0d3_145025.png" width="20%"/>
+<img src="https://images.gitee.com/uploads/images/2020/1117/210853_1a151a42_145025.png" width="20%"/>
+<img src="https://images.gitee.com/uploads/images/2020/1117/210911_bff2efec_145025.png" width="20%"/>
+<img src="https://images.gitee.com/uploads/images/2020/1117/210945_564a2503_145025.png" width="20%"/>
 </p>
