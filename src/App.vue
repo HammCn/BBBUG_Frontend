@@ -1133,8 +1133,7 @@
                                     }
                                     break;
                                 default:
-                                    console.log(that.global.room_id);
-                                    localStorage.setItem('room_change_id', that.global.room_id);
+                                    localStorage.setItem('room_change_id', 888);
                                     that.getRoomInfo();
                             }
                         }
