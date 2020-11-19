@@ -90,6 +90,7 @@ Vue.prototype.request = function (_data) {
                             that.$parent.$emit('App', 'showLoginForm');
                         }).catch(function () {
                             if (that.global.baseData.access_token != that.global.guestUserInfo.access_token) {
+                                that.$emit('App', 'loginGuest');
                                 that.$parent.$emit('App', 'loginGuest');
                                 that.request(_data);
                             }
