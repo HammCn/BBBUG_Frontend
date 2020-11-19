@@ -3,8 +3,7 @@
         <div class="bbbug_main_right">
             <div class="bbbug_main_right_room">
                 <div class="bbbug_main_right_room_title">热门房间列表
-                    <router-link to="/create_room" class="bbbug_main_right_song_right" v-if="!userInfo.myRoom">创建房间
-                    </router-link>
+                    <div class="bbbug_main_right_room_right" @click="createNewRoom" v-if="!userInfo.myRoom">创建房间</div>
                     <div class="bbbug_main_right_room_right" @click="joinMyRoom" v-if="userInfo.myRoom">我的房间</div>
                     <el-input style="margin-top:20px;" placeholder="输入房间ID" size="small" class="input-with-select"
                         prefix-icon="el-icon-search" v-model="room_id" @keydown.13.native="joinRoom(room_id)">
@@ -63,18 +62,22 @@
                 urldecode(str) {
                     return decodeURIComponent(str);
                 },
+                createNewRoom() {
+                    this.$parent.hideAll();
+                    this.$parent.dialog.RoomCreate = true;
+                },
                 joinRoom(room_id) {
-                    let that = this;
                     if (room_id) {
                         localStorage.setItem('room_change_id', room_id);
-                        that.$emit('App', 'changeRoom');
+                        this.$parent.hideAll();
+                        this.$parent.changeRoom();
                     }
                 },
                 joinMyRoom() {
-                    let that = this;
-                    let room_id = that.userInfo.myRoom.room_id;
+                    let room_id = this.userInfo.myRoom.room_id;
                     localStorage.setItem('room_change_id', room_id);
-                    that.$emit('App', 'changeRoom');
+                    this.$parent.hideAll();
+                    this.$parent.changeRoom();
                 },
                 getList() {
                     let that = this;

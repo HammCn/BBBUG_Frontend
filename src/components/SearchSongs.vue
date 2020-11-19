@@ -56,10 +56,6 @@
       };
     },
     created() {
-      if (!this.global.userInfo || !this.global.roomInfo) {
-        this.$router.push('/');
-        return;
-      }
       this.userInfo = this.global.userInfo;
       this.roomInfo = Object.assign({}, this.global.roomInfo);
       this.atSongUserInfo = this.global.atSongUserInfo;

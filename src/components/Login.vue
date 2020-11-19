@@ -1,6 +1,6 @@
 <template>
     <div id="login">
-        <div class="bbbug_bg"></div>
+        <!-- <div class="bbbug_bg"></div> -->
         <div class="bbbug_login">
             <el-form :model="form" ref="bbbug_login_form" label-width="60px" class="bbbug_login_form"
                 v-loading="bbbug_loading">
@@ -67,11 +67,7 @@
             },
             methods: {
                 loginGuest() {
-                    let that = this;
-                    that.global.baseData.access_token = that.global.guestUserInfo.access_token;
-                    that.global.userInfo = that.global.guestUserInfo;
-                    that.$emit('App', 'getUserInfo');
-                    that.$router.push('/');
+                    this.$parent.loginGuest();
                 },
                 doLogin(formName) {
                     let that = this;
@@ -85,8 +81,8 @@
                                     that.bbbug_loading = false;
                                     that.global.baseData.access_token = res.data.access_token;
                                     localStorage.setItem('access_token', res.data.access_token);
-                                    that.$emit('App', 'getUserInfo');
-                                    that.$router.push('/');
+                                    that.$parent.hideAll();
+                                    that.$parent.getUserInfo();
                                 },
                                 error(res) {
                                     that.bbbug_loading = false;

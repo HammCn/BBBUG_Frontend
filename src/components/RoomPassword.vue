@@ -26,18 +26,18 @@
             },
             created() {
                 if (!this.global.userInfo) {
-                    this.$router.push('/');
                     localStorage.setItem('room_change_id', 888);
+                    this.$parent.hideAll();
+                    this.$parent.getRoomInfo();
                     return;
                 }
                 this.userInfo = this.global.userInfo;
             },
             methods: {
                 enterRoom() {
-                    let that = this;
-                    that.global.room_password = that.room_password;
-                    that.$emit('App', 'getRoomInfo');
-                    that.$router.push('/');
+                    this.global.room_password = this.room_password;
+                    this.$parent.hideAll();
+                    this.$parent.getRoomInfo();
                 },
             },
         }

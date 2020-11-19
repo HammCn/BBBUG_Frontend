@@ -46,26 +46,13 @@
                     }, {
                         value: 1,
                         title: "点歌音乐房"
-                        // }, {
-                        //     value: 2,
-                        //     title: "猜歌游戏房"
                     }, {
-                        //     value: 3,
-                        //     title: "有声故事房"
-                        // }, {
                         value: 4,
                         title: "房主电台房"
-                        // }, {
-                        //     value: 5,
-                        //     title: "虎牙直播房"
                     }],
                 }
             },
             created() {
-                if (!this.global.userInfo) {
-                    this.$router.push('/');
-                    return;
-                }
                 this.userInfo = this.global.userInfo;
             },
             methods: {
@@ -81,10 +68,10 @@
                                 type: 'warning'
                             }).then(function () {
                                 localStorage.setItem('room_change_id', res.data.room_id);
-                                that.$emit('App', 'getUserInfo');
-                                that.$router.push('/');
+                                that.$parent.hideAll();
+                                that.$parent.getUserInfo();
                             }).catch(function () {
-                                that.$router.push('/');
+                                that.$parent.hideAll();
                             });
                         }
                     });

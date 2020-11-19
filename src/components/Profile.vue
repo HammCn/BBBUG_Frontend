@@ -66,10 +66,6 @@
                 }
             },
             created() {
-                if (!this.global.roomInfo) {
-                    this.$router.push('/');
-                    return;
-                }
                 this.roomInfo = this.global.roomInfo;
                 this.getUserProfile();
                 this.getSongList();
@@ -108,7 +104,8 @@
                     if (that.userInfo.myRoom) {
                         let room_id = that.userInfo.myRoom.room_id;
                         localStorage.setItem('room_change_id', room_id);
-                        that.$emit('App', 'changeRoom');
+                        that.$parent.hideAll();
+                        that.$parent.changeRoom();
                     } else {
                         that.$message.error("Ta当前没有创建自己的音乐房间");
                     }
