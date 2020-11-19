@@ -572,7 +572,7 @@
                                 }
                             });
                             break;
-                        default:
+                        case '/':
                             if (location.search != '') {
                                 let room_id = this.getQueryString("room_id") || 888;
                                 let access_token = this.getQueryString("access_token") || false;
@@ -584,6 +584,14 @@
                                 return;
                             }
                             callback();
+                            break;
+                        default:
+                            let room_id = location.pathname.replace("/", '');
+                            if ((/(^[1-9]\d*$)/).test(room_id)) {
+                                localStorage.setItem('room_change_id', room_id);
+                            }
+                            location.replace("/");
+                            return;
                     }
                 },
                 getQueryString(name) {
@@ -1293,7 +1301,7 @@
                             that.copyData = decodeURIComponent(that.songInfo.user.user_name) + " 在 " + that.roomInfo.room_name + ' 点了一首 ' + that.songInfo.song.name + "(" + that.songInfo.song.singer + ")快来一起听听吧~\n";
                         }
                     }
-                    that.copyData += location.origin + "/" + that.roomInfo.room_id + ".html";
+                    that.copyData += location.origin + "/" + that.roomInfo.room_id;
                 },
                 passTheSong() {
                     let that = this;
