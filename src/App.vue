@@ -1293,7 +1293,7 @@
                             that.copyData = decodeURIComponent(that.songInfo.user.user_name) + " 在 " + that.roomInfo.room_name + ' 点了一首 ' + that.songInfo.song.name + "(" + that.songInfo.song.singer + ")快来一起听听吧~\n";
                         }
                     }
-                    that.copyData += location.origin + that.roomInfo.room_id + ".html";
+                    that.copyData += location.origin + "/" + that.roomInfo.room_id + ".html";
                 },
                 passTheSong() {
                     let that = this;
