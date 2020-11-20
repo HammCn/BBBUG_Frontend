@@ -12,14 +12,6 @@
                     <el-form-item label="房间公告">
                         <el-input v-model="roomInfo.room_notice" placeholder="请输入房间公告"></el-input>
                     </el-form-item>
-                    <el-form-item label="二级域名">
-                        <el-input v-model="roomInfo.room_domain" placeholder="请输入一个二级域名前缀"></el-input>
-                    </el-form-item>
-                    <div v-if="roomInfo.room_domain" class="bbbug_room_domain_tips">
-                        地址：<a target="_blank" style="text-decoration:none;color:#666;"
-                            :href="'https://'+roomInfo.room_domain+'.bbbug.com'">
-                            {{roomInfo.room_domain}}.bbbug.com</a>
-                    </div>
                     <el-form-item label="房间类型">
                         <el-select size="small" v-model="roomInfo.room_type" placeholder="请选择房间类型">
                             <el-option v-for="(item,index) in room_type" :label="item.title" :value="item.value">
