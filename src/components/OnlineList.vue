@@ -135,7 +135,7 @@
                                 user_id: cmd.row.user_id,
                                 user_name: cmd.row.user_name
                             };
-                            that.$emit('App', 'atUser');
+                            that.$parent.atUser();
                             that.$parent.hideAll();
                             break;
                         case 'touch':
