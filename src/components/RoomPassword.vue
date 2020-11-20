@@ -7,7 +7,8 @@
                 </div>
                 <el-form label-width="80px" class="bbbug_room_setting_form">
                     <el-form-item label="房间密码">
-                        <el-input v-model="room_password" placeholder="请输入房间密码"></el-input>
+                        <el-input v-model="room_password" placeholder="请输入房间密码" @keydown.13.native="enterRoom">
+                        </el-input>
                     </el-form-item>
                 </el-form>
             </div>
