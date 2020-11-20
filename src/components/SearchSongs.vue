@@ -4,7 +4,6 @@
       <div class="bbbug_main_right_song">
         <div class="bbbug_main_right_song_title">
           歌曲搜索
-          <!-- <router-link to="/search_songs" class="bbbug_main_right_song_right">我要点歌</router-link> -->
           <el-input style="margin-top: 20px" placeholder="歌名/歌手/专辑搜索" size="small" v-model="keyword" clearable
             @keydown.13.native="getList">
             <el-button slot="append" icon="el-icon-search" @click="getList">搜索</el-button>

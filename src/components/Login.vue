@@ -1,6 +1,6 @@
 <template>
     <div id="login">
-        <!-- <div class="bbbug_bg"></div> -->
+        <div class="bbbug_bg"></div>
         <div class="bbbug_login">
             <el-form :model="form" ref="bbbug_login_form" label-width="60px" class="bbbug_login_form"
                 v-loading="bbbug_loading">
