@@ -28,19 +28,15 @@
                     roomInfo: {},
                     isEnableNoticePlayer: true,
                     isEnableNotification: true,
-                    isDarkModelTemp: true
+                    isDarkModelTemp: false
                 }
             },
             created() {
-                if (!this.global.userInfo || !this.global.roomInfo) {
-                    this.$router.push('/');
-                    return;
-                }
                 this.userInfo = Object.assign({}, this.global.userInfo);
                 this.roomInfo = Object.assign({}, this.global.roomInfo);
                 this.isEnableNoticePlayer = localStorage.getItem('isEnableNoticePlayer') != 1 ? true : false;
                 this.isEnableNotification = localStorage.getItem('isEnableNotification') != 1 ? true : false;
-                this.isDarkModelTemp = localStorage.getItem('isDarkModel') == 1 ? true : false;
+                this.isDarkModelTemp = this.$parent.isDarkModel;
             },
             methods: {
                 isEnableNoticePlayerChanged() {
@@ -52,14 +48,7 @@
                     this.$emit('App', 'loadConfig');
                 },
                 isDarkModelChanged() {
-                    let that = this;
-                    console.log(this.isDarkModelTemp)
-                    this.isDarkModel = this.isDarkModelTemp;
-                    localStorage.setItem('isDarkModel', this.isDarkModel ? 1 : 0);
-                    this.$emit('App', 'updateDarkModel');
-                    this.$nextTick(function(){
-                        that.$router.push('/');
-                    });
+                    this.$parent.updateDarkModel(this.isDarkModelTemp);
                 }
             },
         }

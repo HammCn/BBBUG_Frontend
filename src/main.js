@@ -1,11 +1,12 @@
 //main.js文件中引入
 import Vue from 'vue';
-import VueRouter from 'vue-router';
 //导入ElementUI
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
 import axios from 'axios';
+import preview from 'vue-photo-preview'
+import 'vue-photo-preview/dist/skin.css'
 import './assets/css/bbbug.css';
 Vue.prototype.$axios = axios;
 import clipboard from 'clipboard';
@@ -14,7 +15,7 @@ Vue.prototype.clipboard = clipboard;
 
 Vue.prototype.Event = new Vue();
 Vue.prototype.global = {
-    isDarkModel:true,
+    isDarkModel: true,
     room_id: 888,
     room_password: "",
     guestUserInfo: {
@@ -39,19 +40,13 @@ Vue.prototype.global = {
         url: "https://api.bbbug.com/api/",
         static: "https://cdn.bbbug.com/",//这里修改为 https://api.bbbug.com/ 对应你的api 根路径
     },
-    songKeyword:"",
+    songKeyword: "",
 };
 
 Vue.prototype.isDarkModel = false;
-Vue.prototype.changeDarkModel=function(enabled){
+Vue.prototype.changeDarkModel = function (enabled) {
     this.isDarkModel = enabled;
 };
-Vue.prototype.doLogout = function () {
-    this.global.userInfo = this.global.guestUserInfo;
-    this.global.baseData.access_token = this.global.guestUserInfo.access_token;
-    localStorage.removeItem('access_token');
-};
-
 Vue.prototype.urldecode = function (str) {
     return decodeURIComponent(str);
 };
@@ -75,6 +70,9 @@ Vue.prototype.request = function (_data) {
                 case 401:
                     that.$emit('App', 'hideLoading');
                     that.$emit('App', 'hideAll');
+                    that.$parent.$emit('App', 'hideLoading');
+                    that.$parent.$emit('App', 'hideAll');
+                    console.log(that);
                     if (_data.login) {
                         that.$message.error(response.data.msg);
                         _data.login();
@@ -86,11 +84,14 @@ Vue.prototype.request = function (_data) {
                             closeOnPressEscape: false,
                             type: 'warning'
                         }).then(function () {
-                            that.doLogout();
-                            that.$router.push('/login');
+                            that.$emit('App', 'loginGuest');
+                            that.$emit('App', 'showLoginForm');
+                            that.$parent.$emit('App', 'loginGuest');
+                            that.$parent.$emit('App', 'showLoginForm');
                         }).catch(function () {
                             if (that.global.baseData.access_token != that.global.guestUserInfo.access_token) {
-                                that.doLogout();
+                                that.$emit('App', 'loginGuest');
+                                that.$parent.$emit('App', 'loginGuest');
                                 that.request(_data);
                             }
                         });
@@ -129,100 +130,11 @@ Vue.prototype.websocket = {
 };
 //主体
 import App from './App.vue';
-import preview from 'vue-photo-preview'
-import 'vue-photo-preview/dist/skin.css'
-import RoomList from './components/RoomList.vue';
-import MySongList from './components/MySongList.vue';
-import PlayingSongList from './components/PlayingSongList.vue';
-import SearchSongs from './components/SearchSongs.vue';
-import Login from './components/Login.vue';
-import GiteeCallback from './components/GiteeCallback.vue';
-import OSChinaCallback from './components/OSChinaCallback.vue';
-import DingCallback from './components/DingCallback.vue';
-import QQCallback from './components/QQCallback.vue';
-// import GithubCallback from './components/GithubCallback.vue';
-import OnlineList from './components/OnlineList.vue';
-import RoomSetting from './components/RoomSetting.vue';
-import RoomCreate from './components/RoomCreate.vue';
-import RoomPassword from './components/RoomPassword.vue';
-import MySetting from './components/MySetting.vue';
-import AutoLogin from './components/AutoLogin.vue';
-import Profile from './components/Profile.vue';
-import SystemSetting from './components/SystemSetting.vue';
 
 Vue.use(vuePhotoPreview, {});
-//安装插件
-Vue.use(VueRouter); //挂载属性
-//创建路由对象并配置路由规则
-let router = new VueRouter({
-    mode: 'history',
-    routes: [
-        //一个个对象
-        {
-            path: '/login',
-            component: Login
-        }, {
-            path: '/hot_rooms',
-            component: RoomList
-        }, {
-            path: '/my_songs',
-            component: MySongList
-        }, {
-            path: '/playing_songs',
-            component: PlayingSongList
-        }, {
-            path: '/search_songs',
-            component: SearchSongs
-        }, {
-            path: '/gitee',
-            component: GiteeCallback
-        }, {
-            path: '/oschina',
-            component: OSChinaCallback
-        }, {
-            path: '/qq',
-            component: QQCallback
-        }, {
-            path: '/ding',
-            component: DingCallback
-        }, {
-            path: '/online',
-            component: OnlineList
-        }, {
-            path: '/room_setting',
-            component: RoomSetting
-        }, {
-            path: '/room_password',
-            component: RoomPassword
-        }, {
-            path: '/create_room',
-            component: RoomCreate
-        }, {
-            path: '/my_setting',
-            component: MySetting
-        }, {
-            path: '/auto_login',
-            component: AutoLogin
-        }, {
-            path: '/*.html',
-            component: AutoLogin
-        }, {
-            path: '/profile',
-            component: Profile
-        }, {
-            path: '/system_setting',
-            component: SystemSetting
-        },
-        // {
-        //     path: '/github',
-        //     component: GithubCallback
-        // }
-    ]
-});
+
 //new Vue 启动
 new Vue({
     el: '#app',
-    //让vue知道我们的路由规则
-    router: router, //可以简写router
     render: c => c(App),
 });

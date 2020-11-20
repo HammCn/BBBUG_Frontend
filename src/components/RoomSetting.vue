@@ -12,14 +12,6 @@
                     <el-form-item label="房间公告">
                         <el-input v-model="roomInfo.room_notice" placeholder="请输入房间公告"></el-input>
                     </el-form-item>
-                    <el-form-item label="二级域名">
-                        <el-input v-model="roomInfo.room_domain" placeholder="请输入一个二级域名前缀"></el-input>
-                    </el-form-item>
-                    <div v-if="roomInfo.room_domain" class="bbbug_room_domain_tips">
-                        地址：<a target="_blank" style="text-decoration:none;color:#666;"
-                            :href="'https://'+roomInfo.room_domain+'.bbbug.com'">
-                            {{roomInfo.room_domain}}.bbbug.com</a>
-                    </div>
                     <el-form-item label="房间权限">
                         <el-select size="small" v-model="roomInfo.room_public" placeholder="请选择房间权限类别">
                             <el-option v-for="(item,index) in room_public" :label="item.title" :value="item.value">
@@ -168,26 +160,13 @@
                     }, {
                         value: 1,
                         title: "点歌音乐房"
-                        // }, {
-                        //     value: 2,
-                        //     title: "猜歌游戏房"
                     }, {
-                        //     value: 3,
-                        //     title: "有声故事房"
-                        // }, {
                         value: 4,
                         title: "房主电台房"
-                        // }, {
-                        //     value: 5,
-                        //     title: "虎牙直播房"
                     }],
                 }
             },
             created() {
-                if (!this.global.userInfo || !this.global.roomInfo) {
-                    this.$router.push('/');
-                    return;
-                }
                 this.userInfo = this.global.userInfo;
                 this.roomInfo = Object.assign({}, this.global.roomInfo);
             },

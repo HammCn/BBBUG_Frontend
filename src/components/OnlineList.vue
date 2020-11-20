@@ -47,7 +47,8 @@
                                     </el-dropdown>
                                 </div>
                                 <div class="bbbug_main_right_online_user">
-                                    <div class="bbbug_main_right_online_user_nick" :style="{color:item.user_shutdown?'#aaa':'#333'}">
+                                    <div class="bbbug_main_right_online_user_nick"
+                                        :style="{color:item.user_shutdown?'#aaa':'#333'}">
                                         <i class="iconfont icon-icon_certification_f user_icon"
                                             style="font-size:18px;color:#097AD8;" v-if="item.user_vip"
                                             :title="item.user_vip"></i>
@@ -92,7 +93,7 @@
                     this.roomInfo = this.global.roomInfo;
                     this.getList();
                 } else {
-                    this.$router.push('/');
+                    this.$parent.hideAll();
                 }
             },
             methods: {
@@ -134,8 +135,8 @@
                                 user_id: cmd.row.user_id,
                                 user_name: cmd.row.user_name
                             };
-                            that.$emit('App', 'atUser');
-                            that.$router.push('/');
+                            that.$parent.atUser();
+                            that.$parent.hideAll();
                             break;
                         case 'touch':
                             that.doTouch(cmd.row.user_id);
@@ -182,12 +183,14 @@
                         case 'profile':
                             that.global.profileUserId = cmd.row.user_id;
                             that.$nextTick(function () {
-                                that.$router.push('/profile');
+                                that.$parent.hideAll();
+                                that.$parent.dialog.Profile = true;
                             });
                             break;
                         case 'sendSong':
                             that.global.atSongUserInfo = cmd.row;
-                            that.$router.push('/search_songs');
+                            that.$parent.hideAll();
+                            that.$parent.dialog.SearchSongs = true;
                             break;
                         default:
                             that.$message.error('即将上线，敬请期待');

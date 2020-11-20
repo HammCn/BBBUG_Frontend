@@ -21,31 +21,31 @@
                     <div v-if="roomInfo.room_type==1 || roomInfo.room_type==4">
                         <div class="bbbug_main_menu_icon"
                             v-if="roomInfo.room_addsong==0 || roomInfo.room_user==userInfo.user_id || userInfo.user_admin">
-                            <router-link to="/search_songs">
+                            <div @click="hideAll();dialog.SearchSongs=true;">
                                 <img src="//cdn.bbbug.com/new/images/menubar_picksong.png" title="点歌" />
                                 <div>点歌</div>
-                            </router-link>
+                            </div>
                         </div>
                         <div class="bbbug_main_menu_icon"
                             v-if="roomInfo.room_type==1 || (roomInfo.room_type==4 &&  roomInfo.room_addsong==0)">
-                            <router-link to="/playing_songs">
+                            <div @click="hideAll();dialog.PlayingSongList=true;">
                                 <img src="//cdn.bbbug.com/new/images/menubar_pickedsong.png" title="已点歌曲列表" />
                                 <div>已点</div>
-                            </router-link>
+                            </div>
                         </div>
                         <div class="bbbug_main_menu_icon"
                             v-if="roomInfo.room_type==1 || (roomInfo.room_type==4 && (roomInfo.room_addsong==0 || roomInfo.room_user==userInfo.user_id))">
-                            <router-link to="/my_songs">
+                            <div @click="hideAll();dialog.MySongList=true;">
                                 <img src="//cdn.bbbug.com/new/images/menubar_mysong.png" title="我点过的歌单" />
                                 <div>歌单</div>
-                            </router-link>
+                            </div>
                         </div>
                     </div>
                     <div class="bbbug_main_menu_icon">
-                        <router-link to="/hot_rooms">
+                        <div @click="hideAll();dialog.RoomList=true;">
                             <img src="//cdn.bbbug.com/new/images/menubar_selectroom.png" title="切换房间" />
                             <div>房间</div>
-                        </router-link>
+                        </div>
 
                     </div>
                     <div class="bbbug_main_menu_song_ctrl">
@@ -64,9 +64,9 @@
                         <img src="//cdn.bbbug.com/new/images/loading.png" />
                     </div>
                     <div class="bbbug_main_menu_setting">
-                        <router-link to="/system_setting"><img src="//cdn.bbbug.com/new/images/menubar_setting.png"
-                                title="系统设置" />
-                        </router-link>
+                        <div @click="hideAll();dialog.SystemSetting=true;">
+                            <img src="//cdn.bbbug.com/new/images/menubar_setting.png" title="系统设置" />
+                        </div>
                     </div>
                 </div>
                 <div class="bbbug_main_chat">
@@ -284,9 +284,22 @@
                             {{urldecode(songInfo.user.user_name)}}</font>
                     </div>
                 </div>
+                <div class="bbbug_frame">
+                    <MySetting class="bbbug_frame_box" v-if="dialog && dialog.MySetting"></MySetting>
+                    <MySongList class="bbbug_frame_box" v-if="dialog && dialog.MySongList"></MySongList>
+                    <OnlineList class="bbbug_frame_box" v-if="dialog && dialog.OnlineList"></OnlineList>
+                    <PlayingSongList class="bbbug_frame_box" v-if="dialog && dialog.PlayingSongList">
+                    </PlayingSongList>
+                    <Profile class="bbbug_frame_box" v-if="dialog && dialog.Profile"></Profile>
+                    <RoomCreate class="bbbug_frame_box" v-if="dialog && dialog.RoomCreate"></RoomCreate>
+                    <RoomList class="bbbug_frame_box" v-if="dialog && dialog.RoomList"></RoomList>
+                    <RoomPassword class="bbbug_frame_box" v-if="dialog && dialog.RoomPassword"></RoomPassword>
+                    <RoomSetting class="bbbug_frame_box" v-if="dialog && dialog.RoomSetting"></RoomSetting>
+                    <SearchSongs class="bbbug_frame_box" v-if="dialog && dialog.SearchSongs"></SearchSongs>
+                    <SystemSetting class="bbbug_frame_box" v-if="dialog && dialog.SystemSetting"></SystemSetting>
+                    <Login v-if="dialog && dialog.Login"></Login>
+                </div>
             </div>
-            <router-view @App="AppController" class="bbbug_frame">
-            </router-view>
         </div>
         <div v-if="isLocked">
             <div class="bbbug_locked bbbug_bg" @click.stop="isLocked=!isLocked;"
@@ -309,10 +322,28 @@
     </div>
 </template>
 <script>
+    import MySetting from './components/MySetting.vue';
+    import MySongList from './components/MySongList.vue';
+    import OnlineList from './components/OnlineList.vue';
+    import PlayingSongList from './components/PlayingSongList.vue';
+    import Profile from './components/Profile.vue';
+    import RoomCreate from './components/RoomCreate.vue';
+    import RoomList from './components/RoomList.vue';
+    import RoomPassword from './components/RoomPassword.vue';
+    import RoomSetting from './components/RoomSetting.vue';
+    import SearchSongs from './components/SearchSongs.vue';
+    import SystemSetting from './components/SystemSetting.vue';
+
+    import Login from './components/Login.vue';
+
     export
         default {
+            components: {
+                MySetting, MySongList, OnlineList, PlayingSongList, Profile, RoomCreate, RoomList, RoomPassword, RoomSetting, SearchSongs, SystemSetting, Login
+            },
             data() {
                 return {
+                    dialog: false,
                     audioUrl: "",
                     audioImage: "//cdn.bbbug.com/new/images/loading.png",
                     uploadImageUrl: "",
@@ -361,85 +392,50 @@
             },
             created() {
                 let that = this;
-                that.updateDarkModel();
-                for (let i = 1; i <= 30; i++) {
-                    that.emojiList.push('https://cdn.bbbug.com/images/emoji/' + i + '.png');
-                }
             },
             mounted() {
                 let that = this;
-                let access_token = localStorage.getItem("access_token") || false;
-                that.updateServerTime();
-                window.onkeydown = function (e) {
-                    switch (e.keyCode) {
-                        case 27:
-                            that.isLocked = !that.isLocked;
-                            break;
-                        default:
-                    }
-                };
 
-                if (access_token) {
-                    that.global.baseData.access_token = access_token;
-                } else {
-                    that.global.baseData.access_token = that.global.guestUserInfo.access_token;
-                }
-                that.baseData = that.global.baseData;
-                that.uploadImageUrl = that.global.api.url + "attach/uploadimage";
-
-                let room_change_id = localStorage.getItem('room_change_id') || that.global.room_id;
-                that.request({
-                    url: "room/getRoomByDomain",
-                    data: {
-                        room_domain: location.host.replace(".bbbug.com", "")
-                    },
-                    success(res) {
-                        if (!room_change_id) {
-                            localStorage.setItem('room_change_id', res.data.room_id);
-                        }
-                    }
-                    , error(res) {
-                        if (!room_change_id) {
-                            localStorage.setItem('room_change_id', that.global.room_id);
-                        }
-                    }
-                });
-                if (!localStorage.getItem('isDarkModel') && localStorage.getItem('isDarkModel') != 0) {
-                    that.$confirm('全新的BBBUG暗黑模式上线啦,是否体验一下?', '暗黑模式上线啦', {
-                        confirmButtonText: '体验',
-                        cancelButtonText: '暂不',
-                        closeOnClickModal: false,
-                        closeOnPressEscape: false,
-                        type: 'warning'
-                    }).then(function () {
-                        that.isDarkModel = true;
-                        localStorage.setItem('isDarkModel', 1);
-                        that.updateDarkModel();
-                        that.getUserInfo();
-                        that.callParentFunction('noticeClicked', 'success');
-                        that.$nextTick(function () {
-                            that.$refs.audio.volume = parseFloat(that.audioVolume / 100);
-                            if (that.audioUrl) {
-                                that.$refs.audio.play();
-                            }
-                        });
-                    }).catch(function () {
-                        that.isDarkModel = false;
-                        localStorage.setItem('isDarkModel', 0);
-                        that.updateDarkModel();
-                        that.getUserInfo();
-                        that.callParentFunction('noticeClicked', 'success');
-                        that.$nextTick(function () {
-                            that.$refs.audio.volume = parseFloat(that.audioVolume / 100);
-                            if (that.audioUrl) {
-                                that.$refs.audio.play();
-                            }
-                        });
+                that.checkInitUrl(function () {
+                    that.$on('App', function (data) {
+                        that.AppController(data);
                     });
-                } else {
-                    that.$alert('嗨，欢迎来到BBBUG音乐聊天室一起听歌聊天呀~', 'BBBUG.COM', {
-                        confirmButtonText: '确定',
-                        callback() {
+                    let isDarkModel = localStorage.getItem("isDarkModel") == 1 ? true : false;
+                    that.updateDarkModel(isDarkModel);
+                    for (let i = 1; i <= 30; i++) {
+                        that.emojiList.push('https://cdn.bbbug.com/images/emoji/' + i + '.png');
+                    }
+
+                    that.hideAll();
+                    let access_token = localStorage.getItem("access_token") || false;
+                    that.updateServerTime();
+                    window.onkeydown = function (e) {
+                        switch (e.keyCode) {
+                            case 27:
+                                that.isLocked = !that.isLocked;
+                                break;
+                            default:
+                        }
+                    };
+
+                    if (access_token) {
+                        that.global.baseData.access_token = access_token;
+                    } else {
+                        that.global.baseData.access_token = that.global.guestUserInfo.access_token;
+                    }
+                    that.baseData = that.global.baseData;
+                    that.uploadImageUrl = that.global.api.url + "attach/uploadimage";
+
+                    let room_change_id = localStorage.getItem('room_change_id') || that.global.room_id;
+                    if (!localStorage.getItem('isDarkModel') && localStorage.getItem('isDarkModel') != 0) {
+                        that.$confirm('全新的BBBUG暗黑模式上线啦,是否体验一下?', '暗黑模式上线啦', {
+                            confirmButtonText: '体验',
+                            cancelButtonText: '暂不',
+                            closeOnClickModal: false,
+                            closeOnPressEscape: false,
+                            type: 'warning'
+                        }).then(function () {
+                            that.updateDarkModel(true);
                             that.getUserInfo();
                             that.callParentFunction('noticeClicked', 'success');
                             that.$nextTick(function () {
@@ -448,32 +444,183 @@
                                     that.$refs.audio.play();
                                 }
                             });
-                        }
+                        }).catch(function () {
+                            that.updateDarkModel(false);
+                            that.getUserInfo();
+                            that.callParentFunction('noticeClicked', 'success');
+                            that.$nextTick(function () {
+                                that.$refs.audio.volume = parseFloat(that.audioVolume / 100);
+                                if (that.audioUrl) {
+                                    that.$refs.audio.play();
+                                }
+                            });
+                        });
+                    } else {
+                        that.$alert('嗨，欢迎来到BBBUG音乐聊天室一起听歌聊天呀~', 'BBBUG.COM', {
+                            confirmButtonText: '确定',
+                            callback() {
+                                that.getUserInfo();
+                                that.callParentFunction('noticeClicked', 'success');
+                                that.$nextTick(function () {
+                                    that.$refs.audio.volume = parseFloat(that.audioVolume / 100);
+                                    if (that.audioUrl) {
+                                        that.$refs.audio.play();
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    that._clipboard = new that.clipboard(".bbbug_main_chat_invate");
+                    that._clipboard.on('success', function () {
+                        that.$message.success("复制成功，快去发给好友吧~");
                     });
-                }
-                that._clipboard = new that.clipboard(".bbbug_main_chat_invate");
-                that._clipboard.on('success', function () {
-                    that.$message.success("复制成功，快去发给好友吧~");
+                    that._clipboard.on('error', function () {
+                        that.$message.error("复制失败")
+                    });
+                    let volume = localStorage.getItem('volume');
+                    if (volume == '' || volume == undefined || volume == null) {
+                        volume = 50;
+                    }
+                    that.audioVolume = parseInt(volume);
+                    document.addEventListener('paste', that.getClipboardFiles);
+                    that.loadConfig();
                 });
-                that._clipboard.on('error', function () {
-                    that.$message.error("复制失败")
-                });
-                let volume = localStorage.getItem('volume');
-                if (volume == '' || volume == undefined || volume == null) {
-                    volume = 50;
-                }
-                that.audioVolume = parseInt(volume);
-                document.addEventListener('paste', that.getClipboardFiles);
-                that.loadConfig();
             },
             methods: {
-                updateDarkModel() {
-                    this.isDarkModel = localStorage.getItem('isDarkModel') == 1 ? true : false;
+                checkInitUrl(callback) {
+                    let that = this;
+                    let code = '';
+                    switch (location.pathname) {
+                        case '/gitee':
+                            code = location.search.replace('?code=', '');
+                            that.request({
+                                url: 'user/thirdlogin',
+                                data: {
+                                    from: "gitee",
+                                    code: code,
+                                },
+                                success(res) {
+                                    that.global.baseData.access_token = res.data.access_token;
+                                    localStorage.setItem('access_token', res.data.access_token);
+                                    location.replace("/");
+                                },
+                                error(res) {
+                                    setTimeout(function () {
+                                        location.replace("/");
+                                    }, 3000);
+                                }
+                            });
+                            break;
+                        case '/ding':
+                            code = location.search.replace('?code=', '').replace('&state=STATE', '');
+                            that.request({
+                                url: 'user/thirdlogin',
+                                data: {
+                                    from: "ding",
+                                    code: code,
+                                },
+                                success(res) {
+                                    that.global.baseData.access_token = res.data.access_token;
+                                    localStorage.setItem('access_token', res.data.access_token);
+                                    location.replace("/");
+                                },
+                                error(res) {
+                                    setTimeout(function () {
+                                        location.replace("/");
+                                    }, 3000);
+                                }
+                            });
+                            break;
+                        case '/oschina':
+                            code = location.search.replace('?code=', '').replace('&state=', '');
+                            console.log(code);
+                            that.request({
+                                url: 'user/thirdlogin',
+                                data: {
+                                    from: "oschina",
+                                    code: code,
+                                },
+                                success(res) {
+                                    that.global.baseData.access_token = res.data.access_token;
+                                    localStorage.setItem('access_token', res.data.access_token);
+                                    location.replace("/");
+                                },
+                                error(res) {
+                                    setTimeout(function () {
+                                        location.replace("/");
+                                    }, 3000);
+                                }
+                            });
+                            break;
+                        case '/qq':
+                            code = location.search.replace('?code=', '').replace('&state=' + encodeURIComponent(location.origin), '');
+                            that.request({
+                                url: 'user/thirdlogin',
+                                data: {
+                                    from: "qq",
+                                    code: code,
+                                },
+                                success(res) {
+                                    that.global.baseData.access_token = res.data.access_token;
+                                    localStorage.setItem('access_token', res.data.access_token);
+                                    location.replace("/");
+                                },
+                                error(res) {
+                                    setTimeout(function () {
+                                        location.replace("/");
+                                    }, 3000);
+                                }
+                            });
+                            break;
+                        case '/':
+                            if (location.search != '') {
+                                let room_id = this.getQueryString("room_id") || 888;
+                                let access_token = this.getQueryString("access_token") || false;
+                                if (access_token) {
+                                    localStorage.setItem('access_token', access_token);
+                                }
+                                localStorage.setItem('room_change_id', room_id);
+                                location.replace("/");
+                                return;
+                            }
+                            callback();
+                            break;
+                        default:
+                            let room_id = location.pathname.replace("/", '');
+                            if ((/(^[1-9]\d*$)/).test(room_id)) {
+                                localStorage.setItem('room_change_id', room_id);
+                            }
+                            location.replace("/");
+                            return;
+                    }
+                },
+                getQueryString(name) {
+                    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+                    var r = window.location.search.substr(1).match(reg);
+                    if (r != null) return unescape(r[2]); return null;
+                },
+                loginGuest() {
+                    localStorage.removeItem('access_token');
+                    this.global.baseData.access_token = this.global.guestUserInfo.access_token;
+                    this.global.userInfo = this.global.guestUserInfo;
+                    this.hideAll();
+                    this.getUserInfo();
+                },
+                showLoginForm() {
+                    this.userInfo = this.global.guestUserInfo;
+                    this.hideAll();
+                    this.dialog.Login = true;
+                },
+                updateDarkModel(isDarkModel) {
+                    this.isDarkModel = isDarkModel;
                     if (this.isDarkModel) {
                         document.body.className = 'bbbug_dark';
+                        localStorage.setItem('isDarkModel', 1);
                     } else {
                         document.body.className = '';
+                        localStorage.setItem('isDarkModel', 0);
                     }
+                    this.$forceUpdate();
                 },
                 loadConfig() {
                     this.isEnableNoticePlayer = localStorage.getItem('isEnableNoticePlayer') != 1 ? true : false;
@@ -593,7 +740,7 @@
                     return;
                 },
                 showQrCode() {
-                    this.$alert('<center><span class="item" style="color:red;font-size:14px;"><font color=black style="font-size:20px;">手机扫码立即穿梭</font><br><br><img width="200px" src="https://qr.hamm.cn?data=' + encodeURIComponent('https://bbbug.com/auto_login?access_token=' + this.baseData.access_token) + '"/><br>请不要截图发给其他人,避免账号被盗</span></center>', {
+                    this.$alert('<center><span class="item" style="color:red;font-size:14px;"><font color=black style="font-size:20px;">手机扫码立即穿梭</font><br><br><img width="200px" src="https://qr.hamm.cn?data=' + encodeURIComponent(location.origin + '/?access_token=' + this.baseData.access_token) + '"/><br>请不要截图发给其他人,避免账号被盗</span></center>', {
                         dangerouslyUseHTMLString: true
                     });
                 },
@@ -770,25 +917,32 @@
                     }
                 },
                 openMySetting() {
-                    if (location.pathname != '/') {
-                        this.hideAll();
-                    } else {
-                        this.$router.push('/my_setting');
-                    }
+                    this.hideAll();
+                    this.dialog.MySetting = true;
                 },
                 openRoomSetting() {
-                    if (location.pathname != '/room_setting') {
-                        this.$router.push('/room_setting');
-                    }
+                    this.hideAll();
+                    this.dialog.RoomSetting = true;
                 },
                 hideAll() {
-                    if (location.pathname != '/') {
-                        this.$router.push('/');
-                    }
                     this.isEmojiBoxShow = false;
                     this.isSongPannelShow = false;
                     this.closeMenu();
                     this.global.songKeyword = '';
+                    this.dialog = {
+                        MySetting: false,
+                        MySongList: false,
+                        OnlineList: false,
+                        PlayingSongList: false,
+                        Profile: false,
+                        RoomCreate: false,
+                        RoomList: false,
+                        RoomPassword: false,
+                        RoomSetting: false,
+                        SearchSongs: false,
+                        SystemSetting: false,
+                        Login: false,
+                    };
                 },
                 hideAllDialog() {
                     this.isEmojiBoxShow = false;
@@ -848,7 +1002,8 @@
 
                     if (e.keyCode && e.keyCode == 13 && e.ctrlKey) {
                         that.global.songKeyword = that.message;
-                        that.$router.push('/search_songs');
+                        that.hideAll();
+                        that.dialog.SearchSongs = true;
                         return;
                     }
 
@@ -893,6 +1048,7 @@
                     });
                 },
                 AppController(data) {
+                    console.log(data);
                     eval("this." + data + "()");
                 },
                 hideLoading() {
@@ -957,8 +1113,6 @@
                                 }
                             }
                             that.addSystemMessage(that.global.roomInfo.room_notice ? that.global.roomInfo.room_notice : ('欢迎来到' + that.global.roomInfo.room_name + '!'));
-                            // that.messageList.push(JSON.parse('{"type":"text","content":"兄弟萌,BBBUG微信小程序开源并上线啦,欢迎体验一下呀,也欢迎牛逼的你来贡献代码~","where":"channel","at":false,"message_id":"14385","time":1705447369,"resource":"","user":{"user_id":10000,"user_icon":1,"user_sex":1,"user_vip":"BBBUG项目发起者与开发者","user_device":"MacOS","user_name":"Hamm","user_head":"https://cdn.bbbug.com/uploads/thumb/image/20201110/02cf1719d8b759c3c4927e544ec1b28e.gif","user_remark":"开发者交流群1140258698","app_id":1,"app_name":"BBBUG","app_url":"https://bbbug.com","user_admin":true}}'));
-                            // that.messageList.push(JSON.parse('{"type":"img","content":"https://cdn.bbbug.com/new/images/qrcode.jpg","where":"channel","at":null,"message_id":"-1","time":1705447367,"resource":"https://cdn.bbbug.com/new/images/qrcode.jpg","user":{"user_id":10000,"user_icon":1,"user_sex":1,"user_vip":"BBBUG项目发起者与开发者","user_extra":"","user_device":"MacOS","user_name":"Hamm","user_head":"https://cdn.bbbug.com/uploads/thumb/image/20201110/02cf1719d8b759c3c4927e544ec1b28e.gif","app_id":1,"app_name":"BBBUG","app_url":"https://bbbug.com","user_admin":true}}'));
                             that.autoScroll();
                         }
                     });
@@ -1044,7 +1198,7 @@
                         case 'sendSong':
                             that.global.atSongUserInfo = cmd.row;
                             that.hideAll();
-                            that.$router.push('/search_songs');
+                            that.dialog.SearchSongs = true;
                             break;
                         case 'shutdown':
                             that.request({
@@ -1080,10 +1234,8 @@
                             that.global.profileUserId = cmd.row.user_id;
                             that.hideAll();
                             that.$nextTick(function () {
-                                if (location.pathname == '/profile') {
-                                    that.$router.push('/');
-                                }
-                                that.$router.push('/profile');
+                                that.hideAll();
+                                that.dialog.Profile = true;
                             });
                             break;
                         case 'sendSong':
@@ -1093,7 +1245,8 @@
                     }
                 },
                 showOnlineList() {
-                    this.$router.push('/online');
+                    this.hideAll();
+                    this.dialog.OnlineList = true;
                 },
                 autoScroll() {
                     let that = this;
@@ -1128,8 +1281,12 @@
                             that.appLoading = false;
                             switch (res.code) {
                                 case 302:
-                                    if (location.pathname != '/room_password') {
-                                        that.$router.push('/room_password');
+                                    if (that.global.roomInfo) {
+                                        that.hideAll();
+                                        that.dialog.RoomPassword = true;
+                                    } else {
+                                        localStorage.setItem('room_change_id', 888);
+                                        that.getRoomInfo();
                                     }
                                     break;
                                 default:
@@ -1149,15 +1306,7 @@
                             that.copyData = decodeURIComponent(that.songInfo.user.user_name) + " 在 " + that.roomInfo.room_name + ' 点了一首 ' + that.songInfo.song.name + "(" + that.songInfo.song.singer + ")快来一起听听吧~\n";
                         }
                     }
-                    if (that.roomInfo.room_domain && that.roomInfo.room_domainstatus) {
-                        if (that.roomInfo.room_single) {
-                            that.copyData += that.roomInfo.room_url;
-                        } else {
-                            that.copyData += "https://" + that.roomInfo.room_domain + ".bbbug.com";
-                        }
-                    } else {
-                        that.copyData += "https://bbbug.com/" + that.roomInfo.room_id + ".html";
-                    }
+                    that.copyData += location.origin + "/" + that.roomInfo.room_id;
                 },
                 passTheSong() {
                     let that = this;

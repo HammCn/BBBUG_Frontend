@@ -2,9 +2,7 @@
     <div id="MySongList">
         <div class="bbbug_main_right">
             <div class="bbbug_main_right_song">
-                <div class="bbbug_main_right_song_title">我点过的歌
-                    <!-- <router-link to="/search_songs" class="bbbug_main_right_song_right">我要点歌</router-link> -->
-                </div>
+                <div class="bbbug_main_right_song_title">我点过的歌</div>
                 <div class="bbbug_main_right_song_list" v-loading="bbbug_loading">
                     <div class="bbbug_scroll" v-if="list.length>0" @scroll="onScroll">
                         <div class="bbbug_main_right_song_item" v-for="(item,index) in list" v-loading="item.loading">
@@ -46,10 +44,6 @@
                 }
             },
             created() {
-                if (!this.global.userInfo || !this.global.roomInfo) {
-                    this.$router.push('/');
-                    return;
-                }
                 this.userInfo = this.global.userInfo;
                 this.roomInfo = Object.assign({}, this.global.roomInfo);
                 this.getList();

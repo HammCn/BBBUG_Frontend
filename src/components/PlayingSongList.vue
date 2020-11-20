@@ -3,7 +3,7 @@
         <div class="bbbug_main_right">
             <div class="bbbug_main_right_song">
                 <div class="bbbug_main_right_song_title">正在等待播放的歌
-                    <router-link to="/search_songs" class="bbbug_main_right_song_right">我要点歌</router-link>
+                    <div @click="searchSong" class="bbbug_main_right_song_right">我要点歌</div>
                 </div>
                 <div class="bbbug_main_right_song_list" v-loading="bbbug_loading">
                     <div class="bbbug_scroll" v-if="list.length>0">
@@ -54,15 +54,15 @@
                 }
             },
             created() {
-                if (!this.global.userInfo || !this.global.roomInfo) {
-                    this.$router.push('/');
-                    return;
-                }
                 this.userInfo = this.global.userInfo;
                 this.roomInfo = Object.assign({}, this.global.roomInfo);
                 this.getList();
             },
             methods: {
+                searchSong() {
+                    this.$parent.hideAll();
+                    this.$parent.dialog.SearchSongs = true;
+                },
                 getList() {
                     let that = this;
                     if (that.bbbug_loading) {

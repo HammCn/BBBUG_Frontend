@@ -38,9 +38,6 @@
                             href="https://oapi.dingtalk.com/connect/qrconnect?appid=dingoag8afgz20g2otw0jf&response_type=code&scope=snsapi_login&state=STATE&redirect_uri=https://bbbug.com/ding">
                             钉钉
                         </el-link>
-                        <!-- <el-link href="http://github.com/login/oauth/authorize?client_id=Iv1.c287a5d998f38f1f&redirect_uri=https://bbbug.com/github">
-                            Github
-                        </el-link> -->
                     </span>
 
                     <el-button type="primary" @click="doLogin('bbbug_login_form')">立即登录</el-button>
@@ -67,11 +64,7 @@
             },
             methods: {
                 loginGuest() {
-                    let that = this;
-                    that.global.baseData.access_token = that.global.guestUserInfo.access_token;
-                    that.global.userInfo = that.global.guestUserInfo;
-                    that.$emit('App', 'getUserInfo');
-                    that.$router.push('/');
+                    this.$parent.loginGuest();
                 },
                 doLogin(formName) {
                     let that = this;
@@ -85,8 +78,8 @@
                                     that.bbbug_loading = false;
                                     that.global.baseData.access_token = res.data.access_token;
                                     localStorage.setItem('access_token', res.data.access_token);
-                                    that.$emit('App', 'getUserInfo');
-                                    that.$router.push('/');
+                                    that.$parent.hideAll();
+                                    that.$parent.getUserInfo();
                                 },
                                 error(res) {
                                     that.bbbug_loading = false;

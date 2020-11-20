@@ -5,7 +5,7 @@
                 <div class="bbbug_main_right_room_title">我的个人中心
                     <div class="bbbug_main_right_song_right" @click="updateMyInfo">保存</div>
                 </div>
-                <el-form label-width="60px" class="bbbug_my_setting__form">
+                <el-form label-width="60px" class="bbbug_my_setting__form" v-loading="loading">
                     <div style="text-align: center;margin-bottom: 20px;">
                         <el-upload :action="uploadHeadUrl" :show-file-list="false"
                             :on-success="handleProfileHeadUploadSuccess" :before-upload="doUploadBefore"
@@ -54,6 +54,7 @@
         default {
             data() {
                 return {
+                    loading: false,
                     userInfo: {},
                     roomInfo: {},
                     uploadHeadUrl: "",
@@ -68,10 +69,6 @@
                 }
             },
             created() {
-                if (!this.global.userInfo || !this.global.roomInfo) {
-                    this.$router.push('/');
-                    return;
-                }
                 this.userInfo = Object.assign({}, this.global.userInfo);
                 this.roomInfo = Object.assign({}, this.global.roomInfo);
 
@@ -80,8 +77,8 @@
                 this.uploadHeadUrl = this.global.api.url + "attach/uploadHead";
                 this.baseData = this.global.baseData;
                 if (this.userInfo.user_id < 0) {
-                    this.$emit('App', 'hideAll');
-                    this.$router.push('/login');
+                    this.$parent.hideAll();
+                    this.$parent.showLoginForm();
                 }
             },
             methods: {
@@ -117,13 +114,26 @@
                 },
                 updateMyInfo() {
                     let that = this;
+                    that.loading = true;
                     that.request({
                         url: "user/updateMyInfo",
                         data: that.userInfo,
                         success(res) {
                             that.$message.success(res.msg);
-                            that.$emit('App', 'getUserInfo');
-                            that.$router.push('/');
+                            that.request({
+                                url: "user/getmyinfo",
+                                success(res) {
+                                    that.loading = false;
+                                    that.$parent.userInfo = res.data;
+                                    that.global.userInfo = res.data;
+                                    that.$parent.hideAll();
+                                },
+                                error() {
+                                    that.loading = false;
+                                }
+                            });
+                        }, error() {
+                            that.loading = false;
                         }
                     });
                 },
@@ -137,8 +147,8 @@
                         localStorage.removeItem('access_token');
                         that.global.userInfo = that.global.guestUserInfo;
                         that.global.baseData.access_token = that.global.guestUserInfo.access_token;
-                        that.$emit('App', 'getUserInfo');
-                        that.$router.push('/');
+                        that.$parent.hideAll();
+                        that.$parent.getUserInfo();
                     }).catch(function () { });
                 },
             },

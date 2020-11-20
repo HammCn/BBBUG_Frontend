@@ -34,8 +34,8 @@
                         </div>
                         <div class="bbbug_main_profile_user_name"><i :title="userInfo.user_vip" v-if="userInfo.user_vip"
                                 class="iconfont icon-icon_certification_f user_icon"
-                                style="font-size: 18px; color: rgb(9, 122, 216);"></i> <i title="1024程序员节彩蛋"
-                                class="iconfont icon-github user_icon"
+                                style="font-size: 18px; color: rgb(9, 122, 216);"></i> <i title="使用微信小程序登录过即可获得"
+                                class="iconfont icon-weixin user_icon"
                                 style="font-size: 16px; color: rgb(102, 102, 102);" v-if="userInfo.user_icon"></i>
                             {{urldecode(userInfo.user_name)}}</div>
                     </div>
@@ -66,10 +66,6 @@
                 }
             },
             created() {
-                if (!this.global.roomInfo) {
-                    this.$router.push('/');
-                    return;
-                }
                 this.roomInfo = this.global.roomInfo;
                 this.getUserProfile();
                 this.getSongList();
@@ -108,7 +104,8 @@
                     if (that.userInfo.myRoom) {
                         let room_id = that.userInfo.myRoom.room_id;
                         localStorage.setItem('room_change_id', room_id);
-                        that.$emit('App', 'changeRoom');
+                        that.$parent.hideAll();
+                        that.$parent.changeRoom();
                     } else {
                         that.$message.error("Ta当前没有创建自己的音乐房间");
                     }

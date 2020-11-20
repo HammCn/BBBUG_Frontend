@@ -7,7 +7,8 @@
                 </div>
                 <el-form label-width="80px" class="bbbug_room_setting_form">
                     <el-form-item label="房间密码">
-                        <el-input v-model="room_password" placeholder="请输入房间密码"></el-input>
+                        <el-input v-model="room_password" placeholder="请输入房间密码" @keydown.13.native="enterRoom">
+                        </el-input>
                     </el-form-item>
                 </el-form>
             </div>
@@ -26,18 +27,18 @@
             },
             created() {
                 if (!this.global.userInfo) {
-                    this.$router.push('/');
                     localStorage.setItem('room_change_id', 888);
+                    this.$parent.hideAll();
+                    this.$parent.getRoomInfo();
                     return;
                 }
                 this.userInfo = this.global.userInfo;
             },
             methods: {
                 enterRoom() {
-                    let that = this;
-                    that.global.room_password = that.room_password;
-                    that.$emit('App', 'getRoomInfo');
-                    that.$router.push('/');
+                    this.global.room_password = this.room_password;
+                    this.$parent.hideAll();
+                    this.$parent.getRoomInfo();
                 },
             },
         }
