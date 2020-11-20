@@ -1281,8 +1281,13 @@
                             that.appLoading = false;
                             switch (res.code) {
                                 case 302:
-                                    that.hideAll();
-                                    that.dialog.RoomPassword = true;
+                                    if (that.global.roomInfo) {
+                                        that.hideAll();
+                                        that.dialog.RoomPassword = true;
+                                    } else {
+                                        localStorage.setItem('room_change_id', 888);
+                                        that.getRoomInfo();
+                                    }
                                     break;
                                 default:
                                     localStorage.setItem('room_change_id', 888);
