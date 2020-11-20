@@ -4,10 +4,12 @@
       <div class="bbbug_main_right_song">
         <div class="bbbug_main_right_song_title">
           歌曲搜索
-          <el-input style="margin-top: 20px" placeholder="歌名/歌手/专辑搜索" size="small" v-model="keyword" clearable
+          <!-- <router-link to="/search_songs" class="bbbug_main_right_song_right">我要点歌</router-link> -->
+          <el-autocomplete @select="handleSelect" :fetch-suggestions="querySearch"
+            style="margin-top: 20px;display:block;" placeholder="歌名/歌手/专辑搜索" size="small" v-model="keyword" clearable
             @keydown.13.native="getList">
             <el-button slot="append" icon="el-icon-search" @click="getList">搜索</el-button>
-          </el-input>
+          </el-autocomplete>
         </div>
         <div class="bbbug_main_right_song_list_search" v-loading="bbbug_loading">
           <div class="bbbug_scroll">
@@ -51,6 +53,7 @@
         keyword: "",
         userInfo: false,
         roomInfo: false,
+        historyList: [],
         atSongUserInfo: false,
       };
     },
@@ -58,9 +61,13 @@
       this.userInfo = this.global.userInfo;
       this.roomInfo = Object.assign({}, this.global.roomInfo);
       this.atSongUserInfo = this.global.atSongUserInfo;
-      if(this.global.songKeyword){
+      if (this.global.songKeyword) {
         this.keyword = this.global.songKeyword;
         this.getList();
+      }
+      let historyList = localStorage.getItem('search_history') || false;
+      if (historyList) {
+        this.historyList = JSON.parse(historyList);
       }
     },
     methods: {
@@ -72,6 +79,20 @@
       getList() {
         let that = this;
         that.bbbug_loading = true;
+        if (that.keyword) {
+          if (that.historyList.length > 10) {
+            that.historyList.pop();
+          }
+          for (let i = 0; i < that.historyList.length; i++) {
+            if (that.historyList[i].value == that.keyword) {
+              that.historyList.splice(i, 1);
+            }
+          }
+          that.historyList.unshift({
+            value: that.keyword
+          });
+          localStorage.setItem("search_history", JSON.stringify(that.historyList));
+        }
         that.request({
           url: "song/search",
           data: {
@@ -86,6 +107,15 @@
             that.bbbug_loading = false;
           }
         });
+      },
+      querySearch(queryString, cb) {
+        //设置历史
+        cb(JSON.parse(JSON.stringify(this.historyList)));
+        console.log(this.historyList);
+      },
+      handleSelect(item) {
+        this.keyword = item.value;
+        this.getList();
       },
       addSong(index) {
         let that = this;
