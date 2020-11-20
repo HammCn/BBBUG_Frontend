@@ -38,9 +38,6 @@
                             href="https://oapi.dingtalk.com/connect/qrconnect?appid=dingoag8afgz20g2otw0jf&response_type=code&scope=snsapi_login&state=STATE&redirect_uri=https://bbbug.com/ding">
                             钉钉
                         </el-link>
-                        <!-- <el-link href="http://github.com/login/oauth/authorize?client_id=Iv1.c287a5d998f38f1f&redirect_uri=https://bbbug.com/github">
-                            Github
-                        </el-link> -->
                     </span>
 
                     <el-button type="primary" @click="doLogin('bbbug_login_form')">立即登录</el-button>
