@@ -21,28 +21,28 @@
                     <div v-if="roomInfo.room_type==1 || roomInfo.room_type==4">
                         <div class="bbbug_main_menu_icon"
                             v-if="roomInfo.room_addsong==0 || roomInfo.room_user==userInfo.user_id || userInfo.user_admin">
-                            <div @click="hideAll();dialog.SearchSongs=true;">
+                            <div @click="showSearchSongs">
                                 <img src="//cdn.bbbug.com/new/images/menubar_picksong.png" title="点歌" />
                                 <div>点歌</div>
                             </div>
                         </div>
                         <div class="bbbug_main_menu_icon"
                             v-if="roomInfo.room_type==1 || (roomInfo.room_type==4 &&  roomInfo.room_addsong==0)">
-                            <div @click="hideAll();dialog.PlayingSongList=true;">
+                            <div @click="showPlaySongList">
                                 <img src="//cdn.bbbug.com/new/images/menubar_pickedsong.png" title="已点歌曲列表" />
                                 <div>已点</div>
                             </div>
                         </div>
                         <div class="bbbug_main_menu_icon"
                             v-if="roomInfo.room_type==1 || (roomInfo.room_type==4 && (roomInfo.room_addsong==0 || roomInfo.room_user==userInfo.user_id))">
-                            <div @click="hideAll();dialog.MySongList=true;">
+                            <div @click="showMySongList">
                                 <img src="//cdn.bbbug.com/new/images/menubar_mysong.png" title="我点过的歌单" />
                                 <div>歌单</div>
                             </div>
                         </div>
                     </div>
                     <div class="bbbug_main_menu_icon">
-                        <div @click="hideAll();dialog.RoomList=true;">
+                        <div @click="showRoomList">
                             <img src="//cdn.bbbug.com/new/images/menubar_selectroom.png" title="切换房间" />
                             <div>房间</div>
                         </div>
@@ -50,7 +50,9 @@
                     </div>
                     <div class="bbbug_main_menu_song_ctrl">
                         <i @click.stop="passTheSong" title="切歌/不喜欢" class="iconfont icon-xiayige"></i>
-                        <i title="音量" @click="setEnableOrDisableVolume" @mouseover="showAudioVolumeBar" class="iconfont volume_bar" :class="audioVolume>0?'icon-changyongtubiao-xianxingdaochu-zhuanqu-39':'icon-changyongtubiao-xianxingdaochu-zhuanqu-40'"></i>
+                        <i title="音量" @click="setEnableOrDisableVolume" @mouseover="showAudioVolumeBar"
+                            class="iconfont volume_bar"
+                            :class="audioVolume>0?'icon-changyongtubiao-xianxingdaochu-zhuanqu-39':'icon-changyongtubiao-xianxingdaochu-zhuanqu-40'"></i>
                     </div>
                     <el-slider class="bbbug_main_menu_song_volume_bar" v-if="isVolumeBarShow" v-model="audioVolume"
                         vertical show-stops @change="audioVolumeChanged" height="80px">
@@ -62,7 +64,7 @@
                         <img src="//cdn.bbbug.com/new/images/loading.png" />
                     </div>
                     <div class="bbbug_main_menu_setting">
-                        <div @click="hideAll();dialog.SystemSetting=true;">
+                        <div @click="showSystemSetting">
                             <img src="//cdn.bbbug.com/new/images/menubar_setting.png" title="系统设置" />
                         </div>
                     </div>
@@ -280,9 +282,10 @@
                     </div>
                     <div class="bbbug_main_menu_song_user">
                         <i @click.stop="loveTheSong" title="收藏"
-                            class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-15"></i>点歌人: <font color="orangered">
+                            class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-15"></i>点歌人: <font
+                            color="orangered">
                             {{urldecode(songInfo.user.user_name)}}</font>
-                            
+
                     </div>
                 </div>
                 <div class="bbbug_frame">
@@ -778,15 +781,15 @@
                         },
                     });
                 },
-                setEnableOrDisableVolume(){
+                setEnableOrDisableVolume() {
                     //TODO
-                    if(this.audioVolume>0){
+                    if (this.audioVolume > 0) {
                         //设置静音
-                        localStorage.setItem("volume_old",this.audioVolume);
+                        localStorage.setItem("volume_old", this.audioVolume);
                         this.audioVolume = 0;
                         this.$refs.audio.volume = 0;
                         localStorage.setItem('volume', 0);
-                    }else{
+                    } else {
                         //取消静音
                         let volume = localStorage.getItem("volume_old") || 30;
                         volume = parseInt(volume);
@@ -935,12 +938,60 @@
                     }
                 },
                 openMySetting() {
-                    this.hideAll();
-                    this.dialog.MySetting = true;
+                    if (this.dialog.MySetting) {
+                        this.hideAll();
+                    } else {
+                        this.hideAll();
+                        this.dialog.MySetting = true;
+                    }
+                },
+                showMySongList() {
+                    if (this.dialog.MySongList) {
+                        this.hideAll();
+                    } else {
+                        this.hideAll();
+                        this.dialog.MySongList = true;
+                    }
+                },
+                showSearchSongs() {
+                    if (this.dialog.SearchSongs) {
+                        this.hideAll();
+                    } else {
+                        this.hideAll();
+                        this.dialog.SearchSongs = true;
+                    }
+                },
+                showPlaySongList() {
+                    if (this.dialog.PlayingSongList) {
+                        this.hideAll();
+                    } else {
+                        this.hideAll();
+                        this.dialog.PlayingSongList = true;
+                    }
+                },
+                showRoomList() {
+                    if (this.dialog.RoomList) {
+                        this.hideAll();
+                    } else {
+                        this.hideAll();
+                        this.dialog.RoomList = true;
+                    }
+                },
+                showSystemSetting() {
+                    if (this.dialog.SystemSetting) {
+                        this.hideAll();
+                    } else {
+                        this.hideAll();
+                        this.dialog.SystemSetting = true;
+                    }
                 },
                 openRoomSetting() {
-                    this.hideAll();
-                    this.dialog.RoomSetting = true;
+                    if (this.dialog.RoomSetting) {
+                        this.hideAll();
+                    } else {
+                        this.hideAll();
+                        this.dialog.RoomSetting = true;
+                    }
                 },
                 hideAll() {
                     this.isEmojiBoxShow = false;
@@ -1263,8 +1314,12 @@
                     }
                 },
                 showOnlineList() {
-                    this.hideAll();
-                    this.dialog.OnlineList = true;
+                    if (this.dialog.OnlineList) {
+                        this.hideAll();
+                    } else {
+                        this.hideAll();
+                        this.dialog.OnlineList = true;
+                    }
                 },
                 autoScroll() {
                     let that = this;
