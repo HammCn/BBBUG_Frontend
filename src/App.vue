@@ -1349,6 +1349,26 @@
                             that.songInfo = null;
                             that.getRoomHistory();
                             that.getWebsocketUrl();
+                            let room_history = localStorage.getItem('room_history') || false;
+                            if (room_history) {
+                                room_history = JSON.parse(room_history);
+                            } else {
+                                room_history = [];
+                            }
+                            if (room_history.length > 2) {
+                                room_history.pop();
+                            }
+
+                            for (let i = 0; i < room_history.length; i++) {
+                                if (room_history[i].room_id == res.data.room_id) {
+                                    room_history.splice(i, 1);
+                                }
+                            }
+                            room_history.unshift({
+                                value: "ID: " + res.data.room_id + " " + res.data.room_name,
+                                room_id: res.data.room_id
+                            });
+                            localStorage.setItem("room_history", JSON.stringify(room_history));
                         },
                         error(res) {
                             that.appLoading = false;
