@@ -50,9 +50,7 @@
                     </div>
                     <div class="bbbug_main_menu_song_ctrl">
                         <i @click.stop="passTheSong" title="切歌/不喜欢" class="iconfont icon-xiayige"></i>
-                        <i title="音量" @click="showAudioVolumeBar" class="iconfont icon-icon_horn"></i>
-                        <i @click.stop="loveTheSong" title="收藏"
-                            class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-15"></i>
+                        <i title="音量" @click="setEnableOrDisableVolume" @mouseover="showAudioVolumeBar" class="iconfont volume_bar" :class="audioVolume>0?'icon-changyongtubiao-xianxingdaochu-zhuanqu-39':'icon-changyongtubiao-xianxingdaochu-zhuanqu-40'"></i>
                     </div>
                     <el-slider class="bbbug_main_menu_song_volume_bar" v-if="isVolumeBarShow" v-model="audioVolume"
                         vertical show-stops @change="audioVolumeChanged" height="80px">
@@ -280,8 +278,11 @@
                     <div class="bbbug_main_menu_song_title">
                         <marquee scrollamount="3">{{songInfo.song.name}} - {{songInfo.song.singer}}</marquee>
                     </div>
-                    <div class="bbbug_main_menu_song_user">点歌人: <font color="orangered">
+                    <div class="bbbug_main_menu_song_user">
+                        <i @click.stop="loveTheSong" title="收藏"
+                            class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-15"></i>点歌人: <font color="orangered">
                             {{urldecode(songInfo.user.user_name)}}</font>
+                            
                     </div>
                 </div>
                 <div class="bbbug_frame">
@@ -776,6 +777,23 @@
                             console.log("timeDiff is : " + that.timeDiff + "ms");
                         },
                     });
+                },
+                setEnableOrDisableVolume(){
+                    //TODO
+                    if(this.audioVolume>0){
+                        //设置静音
+                        localStorage.setItem("volume_old",this.audioVolume);
+                        this.audioVolume = 0;
+                        this.$refs.audio.volume = 0;
+                        localStorage.setItem('volume', 0);
+                    }else{
+                        //取消静音
+                        let volume = localStorage.getItem("volume_old") || 30;
+                        volume = parseInt(volume);
+                        this.audioVolume = volume;
+                        this.$refs.audio.volume = parseFloat(volume / 100);
+                        localStorage.setItem('volume', volume);
+                    }
                 },
                 showAudioVolumeBar() {
                     let that = this;

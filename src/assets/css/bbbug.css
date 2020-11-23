@@ -261,6 +261,20 @@
      overflow: hidden;
      text-overflow: ellipsis;
      white-space: nowrap;
+     vertical-align: middle;
+ }
+ .bbbug_main_menu_song_user .iconfont{
+     font-size:18px;
+     color:#666;
+     margin-right:5px;
+     vertical-align: middle;
+     cursor: pointer;
+     display: inline-block;
+     margin-top: -2px;
+     font-weight: bolder;
+ }
+ .bbbug_main_menu_song_user .iconfont:hover{
+     color:orangered;
  }
  .bbbug_main_menu_song_bg{
      width:200px;
@@ -286,14 +300,19 @@
     vertical-align: middle;
     font-size:20px;
     color: #666;
+    margin: 0px 3px;
+ }
+ .bbbug_main_menu_song_ctrl .volume_bar{
+    cursor: pointer;
+    font-size: 24px;
  }
  .bbbug_main_menu_song_ctrl .iconfont:hover{
      color:orangered;
  }
  .bbbug_main_menu_song_volume_bar{
     position: absolute!important;
-    right: 22px;
-    bottom: 160px;
+    right: 5px;
+    bottom: 165px;
  }
  
  .bbbug_main_menu_setting img {
