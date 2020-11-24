@@ -1087,7 +1087,7 @@
                         type: "text",
                         user: that.userInfo,
                         at: that.atUserInfo,
-                        content: message,
+                        content: encodeURIComponent(message),
                         time: parseInt(new Date().valueOf() / 1000),
                         loading: 1,
                     });
@@ -1100,7 +1100,7 @@
                             where: 'channel',
                             to: that.global.room_id,
                             type: 'text',
-                            msg: message,
+                            msg: encodeURIComponent(message),
                         },
 
                         success(res) {
