@@ -142,7 +142,7 @@
                                         </el-dropdown-menu>
                                     </el-dropdown>
                                 </div>
-                                <div class="bbbug_main_chat_name">
+                                <div class="bbbug_main_chat_name" :style="{color:item.user.user_id<10000?'orangered':''}" :title="item.user.user_id<10000?'赞助BBBUG项目即可获得靓号':''">
                                     {{urldecode(item.user.user_name)}}
                                     <i class="iconfont icon-icon_certification_f user_icon"
                                         style="font-size:18px;color:#097AD8;" v-if="item.user.user_vip"
@@ -1903,7 +1903,8 @@
         max-width: 50%;
         overflow: hidden;
         text-overflow: ellipsis;
-        white-space: nowrap
+        white-space: nowrap;
+        cursor: pointer;
     }
 
     .bbbug_main_chat_mine .bbbug_main_chat_name {

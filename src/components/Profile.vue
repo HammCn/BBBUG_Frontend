@@ -32,8 +32,10 @@
                             <i class="iconfont user_device icon-android-fill" v-if="userInfo.user_device=='Android'"
                                 title="Android 在线"></i>
                         </div>
-                        <div class="bbbug_main_profile_user_name"><i :title="userInfo.user_vip" v-if="userInfo.user_vip"
-                                class="iconfont icon-icon_certification_f user_icon"
+                        <div class="bbbug_main_profile_user_name"
+                            :style="{color:userInfo.user_id<10000?'orangered':''}"
+                            :title="userInfo.user_id<10000?'赞助BBBUG项目即可获得靓号':''"><i :title="userInfo.user_vip"
+                                v-if="userInfo.user_vip" class="iconfont icon-icon_certification_f user_icon"
                                 style="font-size: 18px; color: rgb(9, 122, 216);"></i> <i title="使用微信小程序登录过即可获得"
                                 class="iconfont icon-weixin user_icon"
                                 style="font-size: 16px; color: rgb(102, 102, 102);" v-if="userInfo.user_icon"></i>
@@ -219,6 +221,7 @@
         vertical-align: middle;
         margin-top: 10px;
         line-height: 20px;
+        cursor: pointer;
     }
 
     .bbbug_main_profile_song_item {
@@ -231,6 +234,10 @@
     .bbbug_main_profile_song_name {
         color: #333;
         font-size: 14px;
+        margin-right:30px;
+        white-space:nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
 
     .bbbut_main_profile_box {
