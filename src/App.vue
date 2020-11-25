@@ -360,6 +360,7 @@
                     isEnableScroll: true,
                     isEnableNotification: true,
                     isEnableNoticePlayer: true,
+                    isEnableTouchNotice:true,
                     isEnableSendMessage: false,
                     isEmojiBoxShow: false,
                     messageList: [],
@@ -629,6 +630,7 @@
                 loadConfig() {
                     this.isEnableNoticePlayer = localStorage.getItem('isEnableNoticePlayer') != 1 ? true : false;
                     this.isEnableNotification = localStorage.getItem('isEnableNotification') != 1 ? true : false;
+                    this.isEnableTouchNotice = localStorage.getItem('isEnableTouchNotice') != 1 ? true : false;
                 },
                 openMenu(e, item) {
                     this.rightClickItem = item;
@@ -1504,26 +1506,26 @@
                                             duration: 10000,
                                             dangerouslyUseHTMLString: true
                                         });
-                                        // if (that.isEnableNotification) {
-                                        //     if (window.Notification && Notification.permission !== "denied") {
-                                        //         Notification.requestPermission(function (status) { // 请求权限
-                                        //             if (status === 'granted') {
-                                        //                 // 弹出一个通知
-                                        //                 var n = new Notification("摸一摸", {
-                                        //                     body: that.urldecode(obj.user.user_name) + " 摸了摸你" + that.urldecode(obj.at.user_touchtip),
-                                        //                     icon: ""
-                                        //                 });
-                                        //                 // 两秒后关闭通知
-                                        //                 setTimeout(function () {
-                                        //                     n.close();
-                                        //                 }, 5000);
-                                        //             }
-                                        //         });
-                                        //     }
-                                        // }
-                                        // if (that.isEnableNoticePlayer) {
-                                        //     that.playSystemAudio()
-                                        // }
+                                        if (that.isEnableTouchNotice) {
+                                            if (window.Notification && Notification.permission !== "denied") {
+                                                Notification.requestPermission(function (status) { // 请求权限
+                                                    if (status === 'granted') {
+                                                        // 弹出一个通知
+                                                        var n = new Notification("摸一摸", {
+                                                            body: that.urldecode(obj.user.user_name) + " 摸了摸你" + that.urldecode(obj.at.user_touchtip),
+                                                            icon: ""
+                                                        });
+                                                        // 两秒后关闭通知
+                                                        setTimeout(function () {
+                                                            n.close();
+                                                        }, 5000);
+                                                    }
+                                                });
+                                            }
+                                        }
+                                        if (that.isEnableNoticePlayer) {
+                                            that.playSystemAudio()
+                                        }
                                     }
                                 }
                                 break;

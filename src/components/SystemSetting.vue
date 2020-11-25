@@ -11,6 +11,9 @@
                     <el-form-item label="显示通知">
                         <el-switch v-model="isEnableNotification" @change="isEnableNotificationChanged"></el-switch>
                     </el-form-item>
+                    <el-form-item label="摸摸提醒">
+                        <el-switch v-model="isEnableTouchNotice" @change="isEnableTouchNoticeChanged"></el-switch>
+                    </el-form-item>
                     <el-form-item label="暗黑模式">
                         <el-switch v-model="isDarkModelTemp" @change="isDarkModelChanged"></el-switch>
                     </el-form-item>
@@ -28,6 +31,7 @@
                     roomInfo: {},
                     isEnableNoticePlayer: true,
                     isEnableNotification: true,
+                    isEnableTouchNotice: true,
                     isDarkModelTemp: false
                 }
             },
@@ -36,6 +40,7 @@
                 this.roomInfo = Object.assign({}, this.global.roomInfo);
                 this.isEnableNoticePlayer = localStorage.getItem('isEnableNoticePlayer') != 1 ? true : false;
                 this.isEnableNotification = localStorage.getItem('isEnableNotification') != 1 ? true : false;
+                this.isEnableTouchNotice = localStorage.getItem('isEnableTouchNotice') != 1 ? true : false;
                 this.isDarkModelTemp = this.$parent.isDarkModel;
             },
             methods: {
@@ -45,6 +50,10 @@
                 },
                 isEnableNotificationChanged() {
                     localStorage.setItem('isEnableNotification', this.isEnableNotification ? 0 : 1);
+                    this.$parent.loadConfig();
+                },
+                isEnableTouchNoticeChanged() {
+                    localStorage.setItem('isEnableTouchNotice', this.isEnableTouchNotice ? 0 : 1);
                     this.$parent.loadConfig();
                 },
                 isDarkModelChanged() {
