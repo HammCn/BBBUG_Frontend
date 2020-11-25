@@ -1087,7 +1087,7 @@
                         type: "text",
                         user: that.userInfo,
                         at: that.atUserInfo,
-                        content: message,
+                        content: encodeURIComponent(message),
                         time: parseInt(new Date().valueOf() / 1000),
                         loading: 1,
                     });
@@ -1100,7 +1100,7 @@
                             where: 'channel',
                             to: that.global.room_id,
                             type: 'text',
-                            msg: message,
+                            msg: encodeURIComponent(message),
                         },
 
                         success(res) {
@@ -1340,6 +1340,7 @@
                             room_password: that.global.room_password
                         },
                         success(res) {
+                            document.title = res.data.room_name;
                             localStorage.setItem('room_change_id', res.data.room_id);
                             that.global.room_id = res.data.room_id;
                             that.global.roomInfo = res.data;

@@ -57,7 +57,11 @@ Vue.prototype.http2https = function (str) {
 
 Vue.prototype.request = function (_data) {
     let that = this;
-    axios.post(that.global.api.url + (_data.url || ""), Object.assign({}, that.global.baseData, _data.data || {}))
+    axios.post(that.global.api.url + (_data.url || ""), Object.assign({}, that.global.baseData, _data.data || {}), {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
         .then(function (response) {
             switch (response.data.code) {
                 case 200:

@@ -41,11 +41,11 @@
             methods: {
                 isEnableNoticePlayerChanged() {
                     localStorage.setItem('isEnableNoticePlayer', this.isEnableNoticePlayer ? 0 : 1);
-                    this.$emit('App', 'loadConfig');
+                    this.$parent.loadConfig();
                 },
                 isEnableNotificationChanged() {
                     localStorage.setItem('isEnableNotification', this.isEnableNotification ? 0 : 1);
-                    this.$emit('App', 'loadConfig');
+                    this.$parent.loadConfig();
                 },
                 isDarkModelChanged() {
                     this.$parent.updateDarkModel(this.isDarkModelTemp);
