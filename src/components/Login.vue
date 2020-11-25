@@ -60,7 +60,6 @@
             },
             created() {
                 this.callParentFunction('needLogin', 'please login first!');
-                this.$emit("App", 'hideAllDialog');
             },
             methods: {
                 loginGuest() {
