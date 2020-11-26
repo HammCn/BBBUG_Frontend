@@ -12,6 +12,13 @@
                     <el-form-item label="房间公告">
                         <el-input v-model="roomInfo.room_notice" placeholder="请输入房间公告"></el-input>
                     </el-form-item>
+                    <el-form-item label="隐藏房间">
+                        <el-select size="small" v-model="roomInfo.room_hide" placeholder="是否隐藏房间">
+                            <el-option v-for="(item,index) in room_hide" :label="item.title" :value="item.value">
+                            </el-option>
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="房间权限">
                         <el-select size="small" v-model="roomInfo.room_public" placeholder="请选择房间权限类别">
                             <el-option v-for="(item,index) in room_public" :label="item.title" :value="item.value">
@@ -109,6 +116,13 @@
                     }, {
                         value: 1,
                         title: "开启全员禁言"
+                    }],
+                    room_hide: [{
+                        value: 0,
+                        title: "显示到列表公共房间"
+                    }, {
+                        value: 1,
+                        title: "从列表隐藏并独立房间"
                     }],
                     room_public: [{
                         value: 0,

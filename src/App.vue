@@ -41,7 +41,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bbbug_main_menu_icon">
+                    <div class="bbbug_main_menu_icon" v-if="!roomInfo.room_hide">
                         <div @click="showRoomList">
                             <img src="//cdn.bbbug.com/new/images/menubar_selectroom.png" title="切换房间" />
                             <div>房间</div>
@@ -72,7 +72,7 @@
                 <div class="bbbug_main_chat">
                     <div class="bbbug_main_chat_header">
                         <div class="bbbug_main_chat_room_info">
-                            <span class="bbbug_main_chat_room_id">ID:{{roomInfo.room_id}}</span>
+                            <span class="bbbug_main_chat_room_id" v-if="!roomInfo.room_hide">ID:{{roomInfo.room_id}}</span>
                             <span class="bbbug_main_chat_room_name hideWhenPhone">{{roomInfo.room_name}}
                                 <i title="点歌音乐房" class="iconfont bbbug_main_room_icon icon-changyongtubiao-mianxing-61"
                                     v-if="roomInfo.room_type==1"></i></span>

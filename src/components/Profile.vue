@@ -50,7 +50,7 @@
                         </div>
                     </div>
                     <div class="bbbug_main_profile_song_tips" v-if="songList.length==0">好尴尬，Ta还没有点过歌...</div>
-                    <div class="bbbug_main_profile_button" @click="enterHisRoom">去Ta房间看看</div>
+                    <div class="bbbug_main_profile_button" @click="enterHisRoom"v-if="roomInfo&&!roomInfo.room_hide">去Ta房间看看</div>
                 </div>
             </div>
         </div>
