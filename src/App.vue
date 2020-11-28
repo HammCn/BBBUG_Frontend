@@ -85,7 +85,7 @@
 
                         </div>
                         <div class="bbbug_main_chat_online">
-                            <span title="复制邀请链接" class="bbbug_main_chat_invate hideWhenPhone"
+                            <span title="复制邀请链接" class="bbbug_main_chat_invate"
                                 :data-clipboard-text="copyData">邀请</span>
                             <span title="无缝穿梭到手机" class="bbbug_main_chat_invate hideWhenPhone" @click="showQrCode"
                                 v-if="userInfo && userInfo.user_id>0">穿梭到手机</span>
