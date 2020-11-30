@@ -59,7 +59,7 @@ Vue.prototype.http2https = function(str) {
     return str.toString().replace("http://", "https://");
 };
 Vue.prototype.getStaticUrl = function(url) {
-    url = this.http2https(url);
+    url = this.http2https(url.toString());
     if (url.indexOf('http://') == 0 || url.indexOf("https://") == 0) {
         return url;
     } else {

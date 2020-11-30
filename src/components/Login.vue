@@ -1,5 +1,8 @@
 <template>
     <div id="login">
+        <div class="bbbug_bg" @click.stop="isLocked=!isLocked;"
+            :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
+        </div>
         <div class="bbbug_login">
             <el-form :model="form" ref="bbbug_login_form" label-width="60px" class="bbbug_login_form"
                 v-loading="bbbug_loading">
@@ -50,6 +53,7 @@
     default {
         data() {
             return {
+                background: "new/images/bg_dark.jpg",
                 bbbug_loading: false,
                 localhost: "",
                 form: {

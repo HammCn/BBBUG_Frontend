@@ -311,7 +311,7 @@
         </div>
         <div v-if="isLocked">
             <div class="bbbug_locked bbbug_bg" @click.stop="isLocked=!isLocked;"
-                :style="{backgroundImage:'url('+background+')'}">
+            :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
                 <div class="bbbug_locked_player">
                     <div class="bbbug_locked_player_lrc">{{lrcString}}</div>
                     <div class="bbbug_locked_player_song">
