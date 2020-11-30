@@ -16,7 +16,7 @@
             <div class="bbbug_main_box" v-if="roomInfo && userInfo" v-loading="appLoading">
                 <div class="bbbug_main_menu">
                     <div class="bbbug_main_menu_head" @click="openMySetting" title="我的个人中心"><img
-                            :src="userInfo ? http2https(userInfo.user_head) : getStaticUrl('new/images/nohead.jpg')"
+                            :src="userInfo ? getStaticUrl(userInfo.user_head) : getStaticUrl('new/images/nohead.jpg')"
                             :onerror="getStaticUrl('new/images/nohead.jpg')" />
                     </div>
                     <div v-if="roomInfo.room_type==1 || roomInfo.room_type==4">
@@ -106,7 +106,7 @@
                                 :class="item.user.user_id==userInfo.user_id?'bbbug_main_chat_mine':''">
                                 <div class="bbbug_main_chat_head">
                                     <el-dropdown trigger="hover" @command="commandUserHead" :index="index">
-                                        <img class="bbbug_main_chat_head_image" :src="http2https(item.user.user_head)"
+                                        <img class="bbbug_main_chat_head_image" :src="getStaticUrl(item.user.user_head)"
                                             :onerror="getStaticUrl('new/images/nohead.jpg')"
                                             @dblclick="doTouch(item.user.user_id)" />
 
@@ -313,9 +313,6 @@
             <div class="bbbug_locked bbbug_bg" @click.stop="isLocked=!isLocked;"
                 :style="{backgroundImage:'url('+background+')'}">
                 <div class="bbbug_locked_player">
-                    <!-- <div class="bbbug_locked_player_bg"></div>
-                    <div class="bbbug_locked_player_bar"></div> -->
-                    <!-- <div class="bbbug_locked_player_img"><img :src="songInfo && songInfo.song ? http2https(songInfo.song.pic) : ''"/></div> -->
                     <div class="bbbug_locked_player_lrc">{{lrcString}}</div>
                     <div class="bbbug_locked_player_song">
                         {{songInfo && songInfo.song ? (songInfo.song.name+" ("+songInfo.song.singer+")"):''}} 点歌人:

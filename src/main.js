@@ -55,7 +55,11 @@ Vue.prototype.urldecode = function(str) {
     return decodeURIComponent(str);
 };
 
+Vue.prototype.http2https = function(str) {
+    return str.toString().replace("http://", "https://");
+};
 Vue.prototype.getStaticUrl = function(url) {
+    url = this.http2https(url);
     if (url.indexOf('http://') == 0 || url.indexOf("https://") == 0) {
         return url;
     } else {
@@ -65,9 +69,6 @@ Vue.prototype.getStaticUrl = function(url) {
             return this.global.apiUrl + "/uploads/" + url;
         }
     }
-};
-Vue.prototype.http2https = function(str) {
-    return this.getStaticUrl(str.toString().replace("http://", "https://"));
 };
 
 Vue.prototype.request = function(_data) {

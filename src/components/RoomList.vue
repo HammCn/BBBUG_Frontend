@@ -27,7 +27,7 @@
                                     class="room_lock iconfont icon-lock_fill"></i>ID:{{item.room_id}}</div>
                             <div class="bbbug_main_right_room_info">
                                 <img class="bbbug_main_right_room_user_head"
-                                    :src="item ? http2https(item.user_head) : getStaticUrl('new/images/nohead.jpg')"
+                                    :src="item ? getStaticUrl(item.user_head) : getStaticUrl('new/images/nohead.jpg')"
                                     :onerror="getStaticUrl('new/images/nohead.jpg')" />
                                 <div class="bbbug_main_right_room_user">
                                     <div class="bbbug_main_right_room_user_nick"><span class="bbbug_main_room_online"
