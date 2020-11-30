@@ -27,8 +27,8 @@
                                     class="room_lock iconfont icon-lock_fill"></i>ID:{{item.room_id}}</div>
                             <div class="bbbug_main_right_room_info">
                                 <img class="bbbug_main_right_room_user_head"
-                                    :src="item ? http2https(item.user_head) : '//cdn.bbbug.com/new/images/nohead.jpg'"
-                                    onerror="this.src='//cdn.bbbug.com/new/images/nohead.jpg'" />
+                                    :src="item ? http2https(item.user_head) : getStaticUrl('new/images/nohead.jpg')"
+                                    :onerror="getStaticUrl('new/images/nohead.jpg')" />
                                 <div class="bbbug_main_right_room_user">
                                     <div class="bbbug_main_right_room_user_nick"><span class="bbbug_main_room_online"
                                             v-if="item.room_online>0">({{item.room_online}})
@@ -47,74 +47,74 @@
 </template>
 <script>
     export
-        default {
-            data() {
-                return {
-                    bbbug_loading: false,
-                    list: [],
-                    userInfo: null,
-                    room_id: "",
-                    roomHistory: []
-                }
-            },
-            created() {
-                this.userInfo = this.global.userInfo;
-                this.getList();
-                this.roomHistory = localStorage.getItem("room_history") || [];
-                if (this.roomHistory) {
-                    this.roomHistory = JSON.parse(this.roomHistory);
-                }
+    default {
+        data() {
+            return {
+                bbbug_loading: false,
+                list: [],
+                userInfo: null,
+                room_id: "",
+                roomHistory: []
+            }
+        },
+        created() {
+            this.userInfo = this.global.userInfo;
+            this.getList();
+            this.roomHistory = localStorage.getItem("room_history") || [];
+            if (this.roomHistory) {
+                this.roomHistory = JSON.parse(this.roomHistory);
+            }
 
+        },
+        methods: {
+            querySearch(queryString, cb) {
+                //设置历史
+                cb(JSON.parse(JSON.stringify(this.roomHistory)));
             },
-            methods: {
-                querySearch(queryString, cb) {
-                    //设置历史
-                    cb(JSON.parse(JSON.stringify(this.roomHistory)));
-                },
-                handleSelect(item) {
-                    console.log(item)
-                    this.room_id = item.room_id;
-                    this.joinRoom(item.room_id);
-                },
-                urldecode(str) {
-                    return decodeURIComponent(str);
-                },
-                createNewRoom() {
-                    this.$parent.hideAll();
-                    this.$parent.dialog.RoomCreate = true;
-                },
-                joinRoom(room_id) {
-                    if (room_id) {
-                        localStorage.setItem('room_change_id', room_id);
-                        this.$parent.hideAll();
-                        this.$parent.changeRoom();
-                    }
-                },
-                joinMyRoom() {
-                    let room_id = this.userInfo.myRoom.room_id;
+            handleSelect(item) {
+                console.log(item)
+                this.room_id = item.room_id;
+                this.joinRoom(item.room_id);
+            },
+            urldecode(str) {
+                return decodeURIComponent(str);
+            },
+            createNewRoom() {
+                this.$parent.hideAll();
+                this.$parent.dialog.RoomCreate = true;
+            },
+            joinRoom(room_id) {
+                if (room_id) {
                     localStorage.setItem('room_change_id', room_id);
                     this.$parent.hideAll();
                     this.$parent.changeRoom();
-                },
-                getList() {
-                    let that = this;
-                    if (that.bbbug_loading) {
-                        return;
-                    }
-                    that.bbbug_loading = true;
-                    that.request({
-                        url: "room/hotRooms",
-                        success(res) {
-                            that.bbbug_loading = false;
-                            that.list = res.data;
-                        },
-                        error(res) {
-                            that.bbbug_loading = false;
-                        }
-                    });
                 }
             },
-        }
+            joinMyRoom() {
+                let room_id = this.userInfo.myRoom.room_id;
+                localStorage.setItem('room_change_id', room_id);
+                this.$parent.hideAll();
+                this.$parent.changeRoom();
+            },
+            getList() {
+                let that = this;
+                if (that.bbbug_loading) {
+                    return;
+                }
+                that.bbbug_loading = true;
+                that.request({
+                    url: "room/hotRooms",
+                    success(res) {
+                        that.bbbug_loading = false;
+                        that.list = res.data;
+                    },
+                    error(res) {
+                        that.bbbug_loading = false;
+                    }
+                });
+            }
+        },
+    }
 </script>
 <style>
     .room_lock {

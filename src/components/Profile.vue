@@ -7,7 +7,7 @@
                     <div class="bbbug_main_profile_user_badge"
                         v-if="!userInfo.user_admin && userInfo.user_id == roomInfo.room_user">房</div>
                     <div class="bbbug_main_profile_head">
-                        <img :src="userInfo.user_head" onerror="this.src='//cdn.bbbug.com/images/nohead.jpg'"
+                        <img :src="userInfo.user_head" :onerror="getStaticUrl('new/images/nohead.jpg')"
                             style="border-radius: 100%;width:80px;height:80px;" />
                     </div>
                     <div class="bbbug_main_profile_user">
@@ -58,62 +58,62 @@
 </template>
 <script>
     export
-        default {
-            data() {
-                return {
-                    userInfo: {},
-                    songList: [],
-                    roomInfo: {},
-                    loading: true,
+    default {
+        data() {
+            return {
+                userInfo: {},
+                songList: [],
+                roomInfo: {},
+                loading: true,
+            }
+        },
+        created() {
+            this.roomInfo = this.global.roomInfo;
+            this.getUserProfile();
+            this.getSongList();
+        },
+        methods: {
+            getThirdUrl(url, ext) {
+                return url.replace('#extra#', ext);
+            },
+            getUserProfile() {
+                let that = this;
+                that.request({
+                    url: "user/getuserinfo",
+                    data: {
+                        user_id: that.global.profileUserId
+                    },
+                    success(res) {
+                        that.userInfo = res.data;
+                    }
+                });
+            },
+            getSongList() {
+                let that = this;
+                that.request({
+                    url: "song/getusersongs",
+                    data: {
+                        user_id: that.global.profileUserId
+                    },
+                    success(res) {
+                        that.songList = res.data;
+                        that.loading = false;
+                    }
+                });
+            },
+            enterHisRoom() {
+                let that = this;
+                if (that.userInfo.myRoom) {
+                    let room_id = that.userInfo.myRoom.room_id;
+                    localStorage.setItem('room_change_id', room_id);
+                    that.$parent.hideAll();
+                    that.$parent.changeRoom();
+                } else {
+                    that.$message.error("Ta当前没有创建自己的音乐房间");
                 }
             },
-            created() {
-                this.roomInfo = this.global.roomInfo;
-                this.getUserProfile();
-                this.getSongList();
-            },
-            methods: {
-                getThirdUrl(url, ext) {
-                    return url.replace('#extra#', ext);
-                },
-                getUserProfile() {
-                    let that = this;
-                    that.request({
-                        url: "user/getuserinfo",
-                        data: {
-                            user_id: that.global.profileUserId
-                        },
-                        success(res) {
-                            that.userInfo = res.data;
-                        }
-                    });
-                },
-                getSongList() {
-                    let that = this;
-                    that.request({
-                        url: "song/getusersongs",
-                        data: {
-                            user_id: that.global.profileUserId
-                        },
-                        success(res) {
-                            that.songList = res.data;
-                            that.loading = false;
-                        }
-                    });
-                },
-                enterHisRoom() {
-                    let that = this;
-                    if (that.userInfo.myRoom) {
-                        let room_id = that.userInfo.myRoom.room_id;
-                        localStorage.setItem('room_change_id', room_id);
-                        that.$parent.hideAll();
-                        that.$parent.changeRoom();
-                    } else {
-                        that.$message.error("Ta当前没有创建自己的音乐房间");
-                    }
-                },
-            },
-        }
+        },
+    }
 </script>
 <style>
     .user_device {
@@ -121,11 +121,11 @@
         margin-left: 5px;
         cursor: pointer;
     }
-
+    
     .user_device::before {
         font-size: 18px;
     }
-
+    
     .bbbug_main_profile_user_badge {
         background-color: #ddd;
         color: #666;
@@ -139,7 +139,7 @@
         line-height: 78px;
         font-size: 12px;
     }
-
+    
     .bbbug_main_profile_user_badge_admin {
         background-color: #666;
         color: #fff;
@@ -153,15 +153,15 @@
         line-height: 78px;
         font-size: 12px;
     }
-
+    
     .bbbug_main_profile_user {
         vertical-align: middle;
     }
-
+    
     .bbbug_main_profile_user * {
         vertical-align: middle;
     }
-
+    
     .bbbug_my_setting__form {
         background-color: white;
         padding: 20px;
@@ -174,7 +174,7 @@
         overflow: hidden;
         overflow-y: auto;
     }
-
+    
     .bbbug_main_profile_song_tips {
         background: #fff;
         color: #aaa;
@@ -188,7 +188,7 @@
         align-items: center;
         display: flex;
     }
-
+    
     .bbbug_main_profile_button {
         position: absolute;
         right: 10px;
@@ -203,15 +203,15 @@
         cursor: pointer;
         font-size: 12px;
     }
-
+    
     .bbbug_main_profile_button:active {
         background-color: #333;
     }
-
+    
     .bbbug_main_profile_head {
         margin-top: 50px;
     }
-
+    
     .bbbug_main_profile_user_name {
         font-size: 16px;
         overflow: hidden;
@@ -223,23 +223,23 @@
         line-height: 20px;
         cursor: pointer;
     }
-
+    
     .bbbug_main_profile_song_item {
         position: relative;
         border-bottom: 1px solid #f5f5f5;
         text-align: left;
         padding: 10px;
     }
-
+    
     .bbbug_main_profile_song_name {
         color: #333;
         font-size: 14px;
-        margin-right:30px;
-        white-space:nowrap;
+        margin-right: 30px;
+        white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
     }
-
+    
     .bbbut_main_profile_box {
         background-color: #f5f5f5;
         position: absolute;
@@ -248,7 +248,7 @@
         top: 0;
         bottom: 0;
     }
-
+    
     .bbbug_main_profile_song {
         overflow: hidden;
         overflow-y: auto;
@@ -260,13 +260,13 @@
         bottom: 50px;
         border-bottom: 1px solid #eee;
     }
-
+    
     .bbbug_main_profile_song_singer {
         font-size: 12px;
         color: #999;
         margin-top: 10px;
     }
-
+    
     .bbbug_main_profile_song_played {
         position: absolute;
         right: 10px;
@@ -274,17 +274,17 @@
         font-size: 12px;
         color: orangered;
     }
-
+    
     .bbbug_main_profile_user_icon {
         font-size: 12px;
         color: #999;
         vertical-align: middle;
     }
-
+    
     .bbbug_main_profile_user_icon * {
         vertical-align: middle;
     }
-
+    
     .bbbug_main_profile_user_id {
         background-color: #999;
         color: white;
@@ -292,7 +292,7 @@
         padding: 0px 3px;
         margin-right: 5px;
     }
-
+    
     .bbbug_main_profile_song_title {
         text-align: left;
         font-size: 14px;

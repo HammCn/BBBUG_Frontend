@@ -21,7 +21,7 @@ Vue.prototype.global = {
     guestUserInfo: {
         myRoom: false,
         user_admin: false,
-        user_head: "//cdn.bbbug.com/new/images/nohead.jpg",
+        user_head: "new/images/nohead.jpg",
         user_id: -1,
         user_name: "Ghost",
         access_token: "45af3cfe44942c956e026d5fd58f0feffbd3a237",
@@ -36,33 +36,48 @@ Vue.prototype.global = {
         plat: 'vue',
         version: 10000,
     },
-    api: {
-        url: "https://api.bbbug.com/api/",
-        static: "https://cdn.bbbug.com/",//这里修改为 https://api.bbbug.com/ 对应你的api 根路径
-    },
+    apiUrl: "https://api.bbbug.com/",
+    wssUrl: "wss://websocket.bbbug.com",
     songKeyword: "",
+    appIdList: {
+        qq: "101904044",
+        gitee: "d2c3e3c6f5890837a69c65585cc14488e4075709db1e89d4cb4c64ef1712bdbb",
+        oschina: "utwQOfbgBgBcwBolfNft",
+        ding: "dingoag8afgz20g2otw0jf"
+    },
 };
 
 Vue.prototype.isDarkModel = false;
-Vue.prototype.changeDarkModel = function (enabled) {
+Vue.prototype.changeDarkModel = function(enabled) {
     this.isDarkModel = enabled;
 };
-Vue.prototype.urldecode = function (str) {
+Vue.prototype.urldecode = function(str) {
     return decodeURIComponent(str);
 };
 
-Vue.prototype.http2https = function (str) {
-    return str.toString().replace("http://", "https://");
+Vue.prototype.getStaticUrl = function(url) {
+    if (url.indexOf('http://') == 0 || url.indexOf("https://") == 0) {
+        return url;
+    } else {
+        if (url.indexOf("new/images") > -1 || url.indexOf("new/mp3") > -1) {
+            return this.global.apiUrl + "/" + url;
+        } else {
+            return this.global.apiUrl + "/uploads/" + url;
+        }
+    }
+};
+Vue.prototype.http2https = function(str) {
+    return this.getStaticUrl(str.toString().replace("http://", "https://"));
 };
 
-Vue.prototype.request = function (_data) {
+Vue.prototype.request = function(_data) {
     let that = this;
-    axios.post(that.global.api.url + (_data.url || ""), Object.assign({}, that.global.baseData, _data.data || {}), {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-        .then(function (response) {
+    axios.post(that.global.apiUrl + "api/" + (_data.url || ""), Object.assign({}, that.global.baseData, _data.data || {}), {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(function(response) {
             switch (response.data.code) {
                 case 200:
                     if (_data.success) {
@@ -87,12 +102,12 @@ Vue.prototype.request = function (_data) {
                             closeOnClickModal: false,
                             closeOnPressEscape: false,
                             type: 'warning'
-                        }).then(function () {
+                        }).then(function() {
                             that.$emit('App', 'loginGuest');
                             that.$emit('App', 'showLoginForm');
                             that.$parent.$emit('App', 'loginGuest');
                             that.$parent.$emit('App', 'showLoginForm');
-                        }).catch(function () {
+                        }).catch(function() {
                             if (that.global.baseData.access_token != that.global.guestUserInfo.access_token) {
                                 that.$emit('App', 'loginGuest');
                                 that.$parent.$emit('App', 'loginGuest');
@@ -110,12 +125,12 @@ Vue.prototype.request = function (_data) {
                     }
             }
         })
-        .catch(function (error) {
+        .catch(function(error) {
             console.log(error)
         });
 };
 
-Vue.prototype.callParentFunction = function (event, msg) {
+Vue.prototype.callParentFunction = function(event, msg) {
     //触发父容器方法
     if (self != top) {
         window.parent.postMessage({
@@ -136,6 +151,7 @@ Vue.prototype.websocket = {
 import App from './App.vue';
 
 Vue.use(vuePhotoPreview, {});
+
 
 //new Vue 启动
 new Vue({

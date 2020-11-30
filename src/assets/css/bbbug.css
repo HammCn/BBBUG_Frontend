@@ -6,11 +6,13 @@
      padding: 0;
      background-color: #000;
  }
- audio{
+ 
+ audio {
      position: fixed;
-     right:10px;
-     top:10px;
+     right: 10px;
+     top: 10px;
  }
+ 
  [v-cloak] {
      visibility: hidden !important;
  }
@@ -47,12 +49,16 @@
      /*早期浏览器*/
      user-select: none;
  }
- input,textarea,.bbbug_main_chat_name,.bbbug_main_chat_content{
-    -moz-user-select:text; 
-    -webkit-user-select:text; 
-    -ms-user-select:text; 
-    -khtml-user-select:text; 
-    user-select:text;
+ 
+ input,
+ textarea,
+ .bbbug_main_chat_name,
+ .bbbug_main_chat_content {
+     -moz-user-select: text;
+     -webkit-user-select: text;
+     -ms-user-select: text;
+     -khtml-user-select: text;
+     user-select: text;
  }
  
  ::-webkit-scrollbar {
@@ -84,28 +90,34 @@
  ::-webkit-scrollbar-corner {
      background: transparent;
  }
+ 
  .love {
-    -webkit-animation: rotate 20s linear infinite;
-    -moz-animation: rotate 20s linear infinite;
-    -o-animation: rotate 20s linear infinite;
-    animation: rotate 20s linear infinite;
-}
-.love_fast {
-    -webkit-animation: rotate 5s linear infinite;
-    -moz-animation: rotate 5s linear infinite;
-    -o-animation: rotate 5s linear infinite;
-    animation: rotate 5s linear infinite;
-}
-.user_icon{
-    cursor: pointer;
-    vertical-align: middle;
-}
-.user_male{
-    color:#759FD1 ;
-}
-.user_female{
-    color:#F288A4;
-}
+     -webkit-animation: rotate 20s linear infinite;
+     -moz-animation: rotate 20s linear infinite;
+     -o-animation: rotate 20s linear infinite;
+     animation: rotate 20s linear infinite;
+ }
+ 
+ .love_fast {
+     -webkit-animation: rotate 5s linear infinite;
+     -moz-animation: rotate 5s linear infinite;
+     -o-animation: rotate 5s linear infinite;
+     animation: rotate 5s linear infinite;
+ }
+ 
+ .user_icon {
+     cursor: pointer;
+     vertical-align: middle;
+ }
+ 
+ .user_male {
+     color: #759FD1;
+ }
+ 
+ .user_female {
+     color: #F288A4;
+ }
+ 
  .bbbug_scroll {
      overflow: hidden;
      overflow-y: scroll;
@@ -134,7 +146,7 @@
  /* 主窗体开始 */
  
  .bbbug_bg {
-     background: #000 url("//cdn.bbbug.com/new/images/bg_dark.jpg") top center no-repeat;
+     background: #000 url('/') top center no-repeat;
      background-size: cover;
      position: fixed;
      left: 0;
@@ -150,27 +162,29 @@
      top: 8%;
      bottom: 8%;
  }
- .bbbug_main_box{
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    left:0;
+ 
+ .bbbug_main_box {
+     -moz-border-radius: 10px;
+     -webkit-border-radius: 10px;
+     border-radius: 10px;
+     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+     overflow: hidden;
+     position: absolute;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     left: 0;
  }
- .bbbug_frame{
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    border-radius: 10px;
-    background-color: white;
-    -moz-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-    -webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
+ 
+ .bbbug_frame {
+     -moz-border-radius: 10px;
+     -webkit-border-radius: 10px;
+     border-radius: 10px;
+     background-color: white;
+     -moz-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+     -webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+     overflow: hidden;
  }
  
  .bbbug_main_menu {
@@ -182,7 +196,7 @@
      background-color: #333;
      text-align: center;
      border-top-left-radius: 10px;
-     border-bottom-left-radius:10px;
+     border-bottom-left-radius: 10px;
  }
  
  .bbbug_main_menu_head {
@@ -201,17 +215,20 @@
      margin-top: 20px;
      text-align: center;
      text-decoration: none;
-     outline:none;
+     outline: none;
  }
- .bbbug_main_menu_icon div{
-    font-size:12px;
-    color:#999;
-    text-decoration: none;
-    outline:none;
+ 
+ .bbbug_main_menu_icon div {
+     font-size: 12px;
+     color: #999;
+     text-decoration: none;
+     outline: none;
  }
- .bbbug_main_menu_icon a:hover{
-    color:#fff;
+ 
+ .bbbug_main_menu_icon a:hover {
+     color: #fff;
  }
+ 
  .bbbug_main_menu_icon img {
      width: 32px;
      height: 32px;
@@ -232,30 +249,33 @@
      height: 48px;
      border-radius: 100%;
      cursor: pointer;
-     box-shadow: 0px 0px 15px rgba(255,255,255,0.5);
+     box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.5);
  }
- .bbbug_main_menu_song_box{
-    background-color: white;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
-    position: absolute;
-    left: 90px;
-    bottom:110px;
-    z-index: 99;
-    padding: 10px;
-    font-size: 14px;
-    color: #333;
-    border-radius: 10px;
+ 
+ .bbbug_main_menu_song_box {
+     background-color: white;
+     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+     position: absolute;
+     left: 90px;
+     bottom: 110px;
+     z-index: 99;
+     padding: 10px;
+     font-size: 14px;
+     color: #333;
+     border-radius: 10px;
  }
- .bbbug_main_menu_song_title{
-     font-size:16px;
-     text-align:left;
+ 
+ .bbbug_main_menu_song_title {
+     font-size: 16px;
+     text-align: left;
      font-weight: bold;
-     color:#666;
-     width:200px;
+     color: #666;
+     width: 200px;
  }
- .bbbug_main_menu_song_user{
-     font-size:12px;
-     text-align:left;
+ 
+ .bbbug_main_menu_song_user {
+     font-size: 12px;
+     text-align: left;
      margin-top: 0px;
      color: #999;
      overflow: hidden;
@@ -263,56 +283,65 @@
      white-space: nowrap;
      vertical-align: middle;
  }
- .bbbug_main_menu_song_user .iconfont{
-     font-size:18px;
-     color:#666;
-     margin-right:5px;
+ 
+ .bbbug_main_menu_song_user .iconfont {
+     font-size: 18px;
+     color: #666;
+     margin-right: 5px;
      vertical-align: middle;
      cursor: pointer;
      display: inline-block;
      margin-top: -2px;
      font-weight: bolder;
  }
- .bbbug_main_menu_song_user .iconfont:hover{
-     color:orangered;
+ 
+ .bbbug_main_menu_song_user .iconfont:hover {
+     color: orangered;
  }
- .bbbug_main_menu_song_bg{
-     width:200px;
+ 
+ .bbbug_main_menu_song_bg {
+     width: 200px;
      border: 1px solid #eeeeee;
      border-radius: 5px;
  }
+ 
  .bbbug_main_menu_setting {
      position: absolute;
      left: 0;
      bottom: 10px;
      right: 0;
  }
- .bbbug_main_menu_song_ctrl{
+ 
+ .bbbug_main_menu_song_ctrl {
      text-align: center;
      vertical-align: middle;
      position: absolute;
-     left:0;
-     right:0;
-     bottom:130px;
+     left: 0;
+     right: 0;
+     bottom: 130px;
  }
- .bbbug_main_menu_song_ctrl .iconfont{
-    cursor: pointer;
-    vertical-align: middle;
-    font-size:20px;
-    color: #666;
-    margin: 0px 3px;
+ 
+ .bbbug_main_menu_song_ctrl .iconfont {
+     cursor: pointer;
+     vertical-align: middle;
+     font-size: 20px;
+     color: #666;
+     margin: 0px 3px;
  }
- .bbbug_main_menu_song_ctrl .volume_bar{
-    cursor: pointer;
-    font-size: 24px;
+ 
+ .bbbug_main_menu_song_ctrl .volume_bar {
+     cursor: pointer;
+     font-size: 24px;
  }
- .bbbug_main_menu_song_ctrl .iconfont:hover{
-     color:orangered;
+ 
+ .bbbug_main_menu_song_ctrl .iconfont:hover {
+     color: orangered;
  }
- .bbbug_main_menu_song_volume_bar{
-    position: absolute!important;
-    right: 5px;
-    bottom: 165px;
+ 
+ .bbbug_main_menu_song_volume_bar {
+     position: absolute!important;
+     right: 5px;
+     bottom: 165px;
  }
  
  .bbbug_main_menu_setting img {
@@ -326,13 +355,13 @@
      right: 0;
      top: 0;
      bottom: 0;
-     z-index:10;
+     z-index: 10;
      width: 25%;
      min-width: 360px;
      text-align: center;
      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
      background-color: #f5f5f5;
-     height: 100%;    
+     height: 100%;
      border-top-right-radius: 10px;
      border-bottom-right-radius: 10px;
      overflow: hidden;
@@ -345,22 +374,25 @@
      color: #333;
      border-bottom: 1px solid #eee;
  }
- .bbbug_main_chat_online{
+ 
+ .bbbug_main_chat_online {
      position: absolute;
-     right:20px;
-     top:12px;
+     right: 20px;
+     top: 12px;
      cursor: pointer;
-     font-size:14px;
+     font-size: 14px;
      color: #999;
      vertical-align: middle;
  }
- .bbbug_main_chat_online .iconfont{
-     font-size:14px;
+ 
+ .bbbug_main_chat_online .iconfont {
+     font-size: 14px;
      vertical-align: middle;
  }
- .bbbug_main_chat_online font{
+ 
+ .bbbug_main_chat_online font {
      margin-left: 3px;
-     font-size:14px;
+     font-size: 14px;
      vertical-align: middle;
      display: inline-block;
  }
@@ -377,122 +409,130 @@
  }
  
  .bbbug_main_room_icon {
-    vertical-align: middle;
-    font-size: 16px;
-    color: orangered;
-    font-weight: bold;
-    margin-right: 5px;
-    cursor: pointer;
-}
-.bbbug_main_room_icon_setting::before{
-    font-size:16px;
-    vertical-align: middle;
-}
-.bbbug_main_room_icon_setting {
-    font-size: 14px;
-    cursor: pointer;
-}
+     vertical-align: middle;
+     font-size: 16px;
+     color: orangered;
+     font-weight: bold;
+     margin-right: 5px;
+     cursor: pointer;
+ }
+ 
+ .bbbug_main_room_icon_setting::before {
+     font-size: 16px;
+     vertical-align: middle;
+ }
+ 
+ .bbbug_main_room_icon_setting {
+     font-size: 14px;
+     cursor: pointer;
+ }
+ 
  .bbbug_main_room_online {
      color: orangered;
      margin-right: 5px;
  }
  /* 主窗体结束 */
- 
  /* 在线列表开始 */
- .bbbug_main_right_online_box{
-    width:300px;min-width:auto;
- }
- .bbbug_main_right_online_title {
-    padding: 12px;
-    text-align: left;
-    font-size: 18px;
-    background-color: white;
-    margin-bottom: 10px;
-}
- .bbbug_main_right_online_list{
-    position: absolute;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    top: 50px;
-}
-.bbbug_main_right_online_item{
-    background-color: white;
-    margin: 5px;
-    border-radius: 5px;
-    height: 55px;
-    cursor: pointer;
-    text-align: left;
-    padding: 10px;
-    position: relative;
-    overflow: hidden;
-}
-
  
-.bbbug_main_right_online_user_head {
-    position: absolute;
-    left: 10px;
-    top: 10px;
-}
-
-.bbbug_main_right_online_user_head_image {
-    width:50px;
-    height: 50px;
-    border-radius: 100%;
-    border:1px solid #f5f5f5;
-}
-.bbbug_main_right_online_user_badge{
-    background-color: #ddd;
-    color: #666;
-    transform: rotate(45deg);
-    position: absolute;
-    right: -25px;
-    top: -25px;
-    height: 50px;
-    width: 50px;
-    text-align: center;
-    line-height: 78px;
-    font-size:12px;
-}
-.bbbug_main_right_online_user_badge_admin{
-    background-color: #666;
-    color: #fff;
-    transform: rotate(45deg);
-    position: absolute;
-    right: -25px;
-    top: -25px;
-    height: 50px;
-    width: 50px;
-    text-align: center;
-    line-height: 78px;
-    font-size:12px;
-}
-
-.bbbug_main_right_online_user_nick {
-    font-size: 14px;
-    color: #333;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    vertical-align: middle;
-    line-height: 20px;
-}
-
-.bbbug_main_right_online_user {
-    margin-left: 60px;
-    margin-top:3px;
-}
-
-.bbbug_main_right_online_desc {
-    font-size: 12px;
-    color: #ccc;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    margin-top: 10px;
-    vertical-align: middle;
-}
-/* 在线列表结束 */
+ .bbbug_main_right_online_box {
+     width: 300px;
+     min-width: auto;
+ }
+ 
+ .bbbug_main_right_online_title {
+     padding: 12px;
+     text-align: left;
+     font-size: 18px;
+     background-color: white;
+     margin-bottom: 10px;
+ }
+ 
+ .bbbug_main_right_online_list {
+     position: absolute;
+     right: 0;
+     left: 0;
+     bottom: 0;
+     top: 50px;
+ }
+ 
+ .bbbug_main_right_online_item {
+     background-color: white;
+     margin: 5px;
+     border-radius: 5px;
+     height: 55px;
+     cursor: pointer;
+     text-align: left;
+     padding: 10px;
+     position: relative;
+     overflow: hidden;
+ }
+ 
+ .bbbug_main_right_online_user_head {
+     position: absolute;
+     left: 10px;
+     top: 10px;
+ }
+ 
+ .bbbug_main_right_online_user_head_image {
+     width: 50px;
+     height: 50px;
+     border-radius: 100%;
+     border: 1px solid #f5f5f5;
+ }
+ 
+ .bbbug_main_right_online_user_badge {
+     background-color: #ddd;
+     color: #666;
+     transform: rotate(45deg);
+     position: absolute;
+     right: -25px;
+     top: -25px;
+     height: 50px;
+     width: 50px;
+     text-align: center;
+     line-height: 78px;
+     font-size: 12px;
+ }
+ 
+ .bbbug_main_right_online_user_badge_admin {
+     background-color: #666;
+     color: #fff;
+     transform: rotate(45deg);
+     position: absolute;
+     right: -25px;
+     top: -25px;
+     height: 50px;
+     width: 50px;
+     text-align: center;
+     line-height: 78px;
+     font-size: 12px;
+ }
+ 
+ .bbbug_main_right_online_user_nick {
+     font-size: 14px;
+     color: #333;
+     overflow: hidden;
+     text-overflow: ellipsis;
+     white-space: nowrap;
+     vertical-align: middle;
+     line-height: 20px;
+ }
+ 
+ .bbbug_main_right_online_user {
+     margin-left: 60px;
+     margin-top: 3px;
+ }
+ 
+ .bbbug_main_right_online_desc {
+     font-size: 12px;
+     color: #ccc;
+     overflow: hidden;
+     text-overflow: ellipsis;
+     white-space: nowrap;
+     margin-top: 10px;
+     vertical-align: middle;
+ }
+ /* 在线列表结束 */
  /* 右边房间列表开始 */
  
  .bbbug_main_right_room_item {
@@ -719,13 +759,13 @@
          width: 100%;
          height: 100%;
      }
-     .bbbug_main_box{
-        -moz-border-radius: 0;
-        -webkit-border-radius: 0;
-        border-radius: 0;
+     .bbbug_main_box {
+         -moz-border-radius: 0;
+         -webkit-border-radius: 0;
+         border-radius: 0;
      }
-     .bbbug_main_right{
-        border-radius: 0!important;
+     .bbbug_main_right {
+         border-radius: 0!important;
      }
  }
  
@@ -739,53 +779,54 @@
          width: 100%;
          height: 100%;
      }
-     .bbbug_main_box{
-        -moz-border-radius: 0;
-        -webkit-border-radius: 0;
-        border-radius: 0;
+     .bbbug_main_box {
+         -moz-border-radius: 0;
+         -webkit-border-radius: 0;
+         border-radius: 0;
      }
-     .bbbug_main_right{
-        border-radius: 0!important;
+     .bbbug_main_right {
+         border-radius: 0!important;
      }
  }
  
- .bbbug_phone_message_back{
-    display: none;
-}
+ .bbbug_phone_message_back {
+     display: none;
+ }
+ 
  @media screen and (max-width: 480px) {
      .bbbug_main_right {
          left: 80px;
          right: 0;
          width: auto!important;
          min-width: auto!important;
-         box-shadow:none!important;
+         box-shadow: none!important;
          border-radius: 0!important;
      }
-     .bbbug_phone_message_back{
+     .bbbug_phone_message_back {
          display: inline-block;
      }
-     .hideWhenPhone{
+     .hideWhenPhone {
          display: none!important;
      }
-     .bbbug_main_chat_emojis{
-         width:auto!important;
-         position:fixed!important;
-         left:10px!important;
-         right:10px!important;
+     .bbbug_main_chat_emojis {
+         width: auto!important;
+         position: fixed!important;
+         left: 10px!important;
+         right: 10px!important;
      }
-     .el-message-box__wrapper{
+     .el-message-box__wrapper {
          display: flex;
          align-items: center;
          justify-content: center;
      }
-     .bbbug_login{
-         padding:0px 20px;
+     .bbbug_login {
+         padding: 0px 20px;
      }
-     .el-message-box{
-         width:90%;
+     .el-message-box {
+         width: 90%;
      }
-     .el-message{
-         width:90%;
-         min-width:auto;
+     .el-message {
+         width: 90%;
+         min-width: auto;
      }
  }

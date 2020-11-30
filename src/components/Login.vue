@@ -1,6 +1,5 @@
 <template>
     <div id="login">
-        <div class="bbbug_bg"></div>
         <div class="bbbug_login">
             <el-form :model="form" ref="bbbug_login_form" label-width="60px" class="bbbug_login_form"
                 v-loading="bbbug_loading">
@@ -23,19 +22,19 @@
                 </el-form-item>
                 <el-form-item class="bbbug_login_form_submit" style="margin-left:10px;"> <span style="float:left;">
                         <el-link
-                            href="https://graph.qq.com/oauth2.0/authorize?client_id=101904044&redirect_uri=https%3A%2F%2Fbbbug.com%2Fqq&response_type=code&state=https%3A%2F%2Fbbbug.com">
+                            :href="'https://graph.qq.com/oauth2.0/authorize?client_id='+global.appIdList.qq+'&redirect_uri='+localhost+'qq&response_type=code&state='+localhost">
                             QQ
                         </el-link>
                         <el-link
-                            href="https://gitee.com/oauth/authorize?client_id=d2c3e3c6f5890837a69c65585cc14488e4075709db1e89d4cb4c64ef1712bdbb&redirect_uri=https%3A%2F%2Fbbbug.com%2Fgitee&response_type=code">
+                            :href="'https://gitee.com/oauth/authorize?client_id='+global.appIdList.gitee+'&redirect_uri='+localhost+'gitee&response_type=code'">
                             码云
                         </el-link>
                         <el-link
-                            href="https://www.oschina.net/action/oauth2/authorize?client_id=utwQOfbgBgBcwBolfNft&redirect_uri=https%3A%2F%2Fbbbug.com%2Foschina&response_type=code">
+                            :href="'https://www.oschina.net/action/oauth2/authorize?client_id='+global.appIdList.oschina+'&redirect_uri='+localhost+'oschina&response_type=code'">
                             开源中国
                         </el-link>
                         <el-link
-                            href="https://oapi.dingtalk.com/connect/qrconnect?appid=dingoag8afgz20g2otw0jf&response_type=code&scope=snsapi_login&state=STATE&redirect_uri=https://bbbug.com/ding">
+                            :href="'https://oapi.dingtalk.com/connect/qrconnect?appid='+global.appIdList.ding+'&response_type=code&scope=snsapi_login&state=STATE&redirect_uri='+localhost+'ding'">
                             钉钉
                         </el-link>
                     </span>
@@ -48,60 +47,62 @@
 </template>
 <script>
     export
-        default {
-            data() {
-                return {
-                    bbbug_loading: false,
-                    form: {
-                        user_account: "",
-                        user_password: "",
-                    }
-                }
-            },
-            created() {
-                this.callParentFunction('needLogin', 'please login first!');
-            },
-            methods: {
-                loginGuest() {
-                    this.$parent.loginGuest();
-                },
-                doLogin(formName) {
-                    let that = this;
-                    that.$refs[formName].validate(function (valid) {
-                        if (valid) {
-                            that.bbbug_loading = true;
-                            that.request({
-                                url: "user/login",
-                                data: that.form,
-                                success(res) {
-                                    that.bbbug_loading = false;
-                                    that.global.baseData.access_token = res.data.access_token;
-                                    localStorage.setItem('access_token', res.data.access_token);
-                                    that.$parent.hideAll();
-                                    that.$parent.getUserInfo();
-                                },
-                                error(res) {
-                                    that.bbbug_loading = false;
-                                }
-                            });
-                        }
-                    });
-                },
-                sendMail() {
-                    let that = this;
-                    that.request({
-                        url: "sms/email",
-                        loading: true,
-                        data: {
-                            email: that.form.user_account
-                        },
-                        success(res) {
-                            that.$message.success(res.msg);
-                        }
-                    });
+    default {
+        data() {
+            return {
+                bbbug_loading: false,
+                localhost: "",
+                form: {
+                    user_account: "",
+                    user_password: "",
                 }
             }
+        },
+        created() {
+            this.localhost = encodeURIComponent(location.href);
+            this.callParentFunction('needLogin', 'please login first!');
+        },
+        methods: {
+            loginGuest() {
+                this.$parent.loginGuest();
+            },
+            doLogin(formName) {
+                let that = this;
+                that.$refs[formName].validate(function(valid) {
+                    if (valid) {
+                        that.bbbug_loading = true;
+                        that.request({
+                            url: "user/login",
+                            data: that.form,
+                            success(res) {
+                                that.bbbug_loading = false;
+                                that.global.baseData.access_token = res.data.access_token;
+                                localStorage.setItem('access_token', res.data.access_token);
+                                that.$parent.hideAll();
+                                that.$parent.getUserInfo();
+                            },
+                            error(res) {
+                                that.bbbug_loading = false;
+                            }
+                        });
+                    }
+                });
+            },
+            sendMail() {
+                let that = this;
+                that.request({
+                    url: "sms/email",
+                    loading: true,
+                    data: {
+                        email: that.form.user_account
+                    },
+                    success(res) {
+                        that.$message.success(res.msg);
+                    }
+                });
+            }
         }
+    }
 </script>
 <style>
     .bbbug_login {
@@ -115,7 +116,7 @@
         top: 0;
         bottom: 0;
     }
-
+    
     .bbbug_login_form {
         width: 400px;
         background-color: white;
@@ -126,28 +127,28 @@
         position: relative;
         box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
     }
-
+    
     .bbbug_login_form_title_guest {
         position: absolute;
         right: 20px;
         top: 20px;
     }
-
+    
     .bbbug_login_form_title {
         margin-bottom: 20px;
         padding: 10px 20px;
         font-size: 18px;
     }
-
+    
     .bbbug_login_form_submit {
         text-align: right;
         margin-bottom: 0px !important;
     }
-
+    
     .bbbug_login_form_submit .el-form-item__content {
         margin-left: 10px !important;
     }
-
+    
     .el-loading-mask {
         border-radius: 10px;
     }
