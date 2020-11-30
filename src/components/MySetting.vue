@@ -74,7 +74,7 @@
 
             this.userInfo.user_name = decodeURIComponent(this.userInfo.user_name);
 
-            this.uploadHeadUrl = this.global.apiUrl + "attach/uploadHead";
+            this.uploadHeadUrl = this.global.apiUrl + "/api/attach/uploadHead";
             this.baseData = this.global.baseData;
             if (this.userInfo.user_id < 0) {
                 this.$parent.hideAll();
