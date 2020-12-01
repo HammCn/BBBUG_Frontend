@@ -14,10 +14,11 @@
                     <div class="bbbug_scroll">
                         <div class="bbbug_main_right_song_item" v-for="(item, index) in list" v-loading="item.loading">
                             <div class="bbbug_main_right_song_name">
-                                {{item.name}}
+                                <span class="bbbug_singer_hover" @click="searchSongByKeyword(item.name)"
+                                    :title="'搜索 '+item.name+' 的歌曲'">{{item.name}}</span>
                             </div>
                             <div class="bbbug_main_right_song_singer">
-                                歌手: <span class="bbbug_singer_hover" @click="searchSongBySinger(item)"
+                                歌手: <span class="bbbug_singer_hover" @click="searchSongByKeyword(item.singer)"
                                     :title="'搜索 '+item.singer+' 的歌曲'">{{item.singer}}</span>
                             </div>
                             <div class="bbbug_main_right_song_controll">
@@ -79,8 +80,8 @@
                 that.atSongUserInfo = false;
                 that.global.atSongUserInfo = false;
             },
-            searchSongBySinger(item) {
-                this.keyword = item.singer;
+            searchSongByKeyword(keyword) {
+                this.keyword = keyword;
                 this.getList();
             },
             getList() {
