@@ -311,7 +311,7 @@
         </div>
         <div v-if="isLocked">
             <div class="bbbug_locked bbbug_bg" @click.stop="isLocked=!isLocked;"
-            :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
+                :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
                 <div class="bbbug_locked_player">
                     <div class="bbbug_locked_player_lrc">{{lrcString}}</div>
                     <div class="bbbug_locked_player_song">
@@ -509,7 +509,7 @@
                 let code = '';
                 switch (location.pathname) {
                     case '/gitee':
-                        code = location.search.replace('?code=', '');
+                        code = that.getQueryString('code');
                         that.request({
                             url: 'user/thirdlogin',
                             data: {
@@ -529,7 +529,7 @@
                         });
                         break;
                     case '/ding':
-                        code = location.search.replace('?code=', '').replace('&state=STATE', '');
+                        code = that.getQueryString('code');
                         that.request({
                             url: 'user/thirdlogin',
                             data: {
@@ -549,7 +549,7 @@
                         });
                         break;
                     case '/oschina':
-                        code = location.search.replace('?code=', '').replace('&state=', '');
+                        code = that.getQueryString('code');
                         console.log(code);
                         that.request({
                             url: 'user/thirdlogin',
@@ -570,7 +570,7 @@
                         });
                         break;
                     case '/qq':
-                        code = location.search.replace('?code=', '').replace('&state=' + encodeURIComponent(location.origin), '');
+                        code = that.getQueryString('code');
                         that.request({
                             url: 'user/thirdlogin',
                             data: {

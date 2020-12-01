@@ -632,6 +632,73 @@
      margin-top: 5px;
  }
  /* 右边房间列表结束 */
+ 
+ .bbbug_search_song_user {
+     position: absolute;
+     left: 0;
+     right: 0;
+     bottom: 20px;
+     text-align: center;
+ }
+ 
+ .bbbug_search_song_user_box {
+     width: 300px;
+     display: inline-block;
+     position: relative;
+     height: 60px;
+     background: #fff;
+     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+     border-radius: 10px;
+ }
+ 
+ .bbbug_search_song_head {
+     width: 50px;
+     height: 50px;
+     border-radius: 100%;
+     border: 1px solid #eee;
+     position: absolute;
+     left: 5px;
+     top: 5px;
+ }
+ 
+ .bbbug_search_song_name {
+     font-size: 14px;
+     color: #333;
+     position: absolute;
+     left: 65px;
+     top: 5px;
+     font-weight: bold;
+     overflow: hidden;
+     text-overflow: ellipsis;
+     white-space: nowrap;
+     width: 190px;
+     text-align: left;
+ }
+ 
+ .bbbug_search_song_tips {
+     font-size: 12px;
+     color: #999;
+     position: absolute;
+     left: 65px;
+     top: 35px;
+     text-align: left;
+ }
+ 
+ .bbbug_search_song_cancel {
+     background-color: #eee;
+     position: absolute;
+     right: 5px;
+     top: 5px;
+     font-size: 12px;
+     color: #666;
+     padding: 3px 10px;
+     border-radius: 5px;
+     cursor: pointer;
+ }
+ 
+ .bbbug_search_song_cancel:active {
+     background-color: #ccc;
+ }
  /* 右边歌单列表开始 */
  
  .bbbug_main_right_song_item {
