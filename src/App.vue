@@ -874,7 +874,7 @@
                 that.audioImage = that.getStaticUrl('new/images/loading.png');
                 if (that.audioUrl) {
                     setTimeout(function() {
-                        that.$refs.audio.src = getStaticUrl("music/" + that.songInfo.song.mid + ".mp3");
+                        that.$refs.audio.src = that.getStaticUrl("music/" + that.songInfo.song.mid + ".mp3");
                     }, 500);
                 }
             },
