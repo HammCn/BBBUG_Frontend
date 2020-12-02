@@ -59,7 +59,7 @@
                         vertical show-stops @change="audioVolumeChanged" height="80px">
                     </el-slider>
                     <div class="bbbug_main_menu_song love" title="查看歌曲信息" v-if="songInfo" @click.stop="showSongPanel">
-                        <img :src="audioImage" :onerror="getStaticUrl('new/images/nohead.jpg')" />
+                        <img :src="getStaticUrl(audioImage)" :onerror="getStaticUrl('new/images/nohead.jpg')" />
                     </div>
                     <div class="bbbug_main_menu_song love" title="歌曲加载中" v-if="!songInfo">
                         <img :src="getStaticUrl('new/images/loading.png')" />
