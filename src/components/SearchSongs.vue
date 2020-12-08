@@ -118,8 +118,11 @@
             },
             querySearch(queryString, cb) {
                 //设置历史
-                cb(JSON.parse(JSON.stringify(this.historyList)));
-                console.log(this.historyList);
+                if(this.keyword){
+                    cb([]);
+                }else{
+                    cb(JSON.parse(JSON.stringify(this.historyList)));
+                }
             },
             handleSelect(item) {
                 this.keyword = item.value;
