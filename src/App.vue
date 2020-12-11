@@ -1190,7 +1190,27 @@
                                 that.messageList.unshift(_obj);
                             }
                         }
-                        that.addSystemMessage(that.global.roomInfo.room_notice ? that.global.roomInfo.room_notice : ('欢迎来到' + that.global.roomInfo.room_name + '!'));
+                        // that.addSystemMessage(that.global.roomInfo.room_notice ? that.global.roomInfo.room_notice : ('欢迎来到' + that.global.roomInfo.room_name + '!'));
+
+
+                        if (that.messageList.length > that.historyMax) {
+                            that.messageList.shift();
+                        }
+                        let roomAdminInfo = Object.assign({},that.global.roomInfo.admin);
+                        // roomAdminInfo.user_name = encodeURIComponent(that.global.roomInfo.room_name+" 房间公告");
+                        roomAdminInfo.message = {
+                            content:"来自房间公告"
+                        };
+                        that.messageList.push({
+                            type: "text",
+                            content:  encodeURIComponent(that.global.roomInfo.room_notice ? that.global.roomInfo.room_notice : ('欢迎来到' + that.global.roomInfo.room_name + '!')),
+                            where:"channel",
+                            at:roomAdminInfo,
+                            message_id:0,
+                            time: parseInt(new Date().valueOf()/1000),
+                            user:roomAdminInfo
+                        });
+
                         that.autoScroll();
                     }
                 });
