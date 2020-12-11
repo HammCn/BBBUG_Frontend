@@ -40,7 +40,7 @@
                                                 禁止点歌
                                             </el-dropdown-item>
                                             <el-dropdown-item :command="beforeHandleUserCommand(item, 'guestctrl')"
-                                                v-if="(userInfo.user_admin||userInfo.user_id==roomInfo.room_user) && roomInfo.room_sendmsg==2">
+                                                v-if="(userInfo.user_admin||userInfo.user_id==roomInfo.room_user) && roomInfo.room_sendmsg==2 && !item.user_admin">
                                                 <span v-if="item.user_guest">取消嘉宾身份</span>
                                                 <span v-if="!item.user_guest">设置为嘉宾</span>
                                             </el-dropdown-item>

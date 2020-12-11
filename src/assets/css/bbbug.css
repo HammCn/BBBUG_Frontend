@@ -496,7 +496,7 @@
  
  .bbbug_main_right_online_user_badge_guest {
      background-color: lightgreen;
-     color: #fff;
+     color: #999;
      transform: rotate(45deg);
      position: absolute;
      right: -25px;
