@@ -1699,6 +1699,14 @@
                             that.addSystemMessage(that.urldecode(obj.user.user_name) + " 禁止了用户 " + that.urldecode(obj.ban.user_name) + " 点歌");
 
                             break;
+                        case 'guest_remove':
+                            that.addSystemMessage(that.urldecode(obj.user.user_name) + " 取消了用户 " + that.urldecode(obj.guest.user_name) + " 嘉宾身份");
+
+                            break;
+                        case 'guest_add':
+                            that.addSystemMessage(that.urldecode(obj.user.user_name) + " 为用户 " + that.urldecode(obj.guest.user_name) + " 设置了嘉宾身份");
+
+                            break;
                         case 'pass':
                             that.addSystemMessage(that.urldecode(obj.user.user_name) + " 切掉了当前播放的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ", '#ff4500', '#eee');
 
