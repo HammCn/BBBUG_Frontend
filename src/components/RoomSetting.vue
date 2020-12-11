@@ -112,10 +112,13 @@
                     }],
                     room_sendmsg: [{
                         value: 0,
-                        title: "关闭全员禁言"
+                        title: "所有人可发言"
                     }, {
                         value: 1,
-                        title: "开启全员禁言"
+                        title: "管理房主可发言"
+                    }, {
+                        value: 2,
+                        title: "管理房主嘉宾可发言"
                     }],
                     room_hide: [{
                         value: 0,

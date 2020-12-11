@@ -264,9 +264,9 @@
                         <div class="bbbug_main_chat_input_toolbar"></div>
                         <div class="bbbug_main_chat_input_form">
                             <textarea @click="hideAll" class="bbug_main_chat_input_message"
-                                :placeholder="(roomInfo && roomInfo.room_sendmsg && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?'全员禁言中,你暂时无法发言...':'Wish you fuck your bugs...'"
+                                :placeholder="(roomInfo && roomInfo.room_sendmsg==1 && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?'全员禁言中,你暂时无法发言...':'Wish you fuck your bugs...'"
                                 @keydown.13="sendMessage" @input="messageChanged" v-model="message"
-                                :disabled="(roomInfo && roomInfo.room_sendmsg && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?true:false"></textarea>
+                                :disabled="(roomInfo && roomInfo.room_sendmsg==1 && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?true:false"></textarea>
                             <button class="bbbug_main_chat_input_send" id="qqLoginBtn" @click.stop="sendMessage"
                                 :class="isEnableSendMessage?'bbbug_main_chat_enable':''">发送(Enter)</button>
                             <el-tag class="bbbug_main_chat_input_quot" closable type="info"

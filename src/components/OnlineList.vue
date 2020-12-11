@@ -16,32 +16,36 @@
                                             :onerror="getStaticUrl('new/images/nohead.jpg')"
                                             @dblclick="doTouch(item.user_id)" />
                                         <el-dropdown-menu slot="dropdown">
-                                            <el-dropdown-item :command="beforeHandleUserCommand(item, 'at')"
-                                                v-if="item.user_id!=userInfo.user_id">
+                                            <el-dropdown-item :command="beforeHandleUserCommand(item, 'at')">
                                                 @Ta
                                             </el-dropdown-item>
                                             <el-dropdown-item :command="beforeHandleUserCommand(item, 'touch')"
                                                 v-if="item.user_id!=userInfo.user_id">
-                                                摸摸
+                                                摸一摸
                                             </el-dropdown-item>
                                             <el-dropdown-item :command="beforeHandleUserCommand(item, 'sendSong')"
                                                 v-if="item.user_id!=userInfo.user_id">
-                                                送歌
+                                                送歌给Ta
                                             </el-dropdown-item>
-                                            <el-dropdown-item :command="beforeHandleUserCommand(item, 'removeBan')"
-                                                v-if="userInfo.user_admin||userInfo.user_id==roomInfo.room_user">
-                                                解禁
+                                            <el-dropdown-item divided :command="beforeHandleUserCommand(item, 'removeBan')"
+                                                v-if="(userInfo.user_admin||userInfo.user_id==roomInfo.room_user) && (item.user_shutdown || item.user_songdown)">
+                                                解除所有限制
                                             </el-dropdown-item>
                                             <el-dropdown-item :command="beforeHandleUserCommand(item, 'shutdown')"
-                                                v-if="userInfo.user_admin||userInfo.user_id==roomInfo.room_user">
-                                                禁言
+                                                v-if="(userInfo.user_admin||userInfo.user_id==roomInfo.room_user) && !item.user_shutdown">
+                                                禁止发言
                                             </el-dropdown-item>
                                             <el-dropdown-item :command="beforeHandleUserCommand(item, 'songdown')"
-                                                v-if="userInfo.user_admin||userInfo.user_id==roomInfo.room_user">
-                                                禁歌
+                                                v-if="(userInfo.user_admin||userInfo.user_id==roomInfo.room_user) && !item.user_songdown">
+                                                禁止点歌
                                             </el-dropdown-item>
-                                            <el-dropdown-item :command="beforeHandleUserCommand(item, 'profile')">
-                                                主页
+                                            <el-dropdown-item :command="beforeHandleUserCommand(item, 'guestctrl')"
+                                                v-if="(userInfo.user_admin||userInfo.user_id==roomInfo.room_user) && roomInfo.room_sendmsg==2">
+                                                <span v-if="item.user_guest">取消嘉宾身份</span>
+                                                <span v-if="!item.user_guest">设置为嘉宾</span>
+                                            </el-dropdown-item>
+                                            <el-dropdown-item divided :command="beforeHandleUserCommand(item, 'profile')">
+                                                查看主页
                                             </el-dropdown-item>
                                         </el-dropdown-menu>
                                     </el-dropdown>
@@ -68,6 +72,9 @@
                             <div class="bbbug_main_right_online_user_badge_admin" v-if="item.user_admin">管</div>
                             <div class="bbbug_main_right_online_user_badge"
                                 v-if="!item.user_admin && item.user_id == roomInfo.room_user">房</div>
+
+
+                            <div class="bbbug_main_right_online_user_badge_guest" v-if="item.user_guest">宾</div>
                         </div>
                     </div>
                     <div class="bbbug_tips" v-if="list.length==0">没有查到房间</div>
@@ -157,6 +164,23 @@
                             data: {
                                 user_id: cmd.row.user_id,
                                 room_id: that.global.room_id
+                            },
+                            success(res){
+                                that.$message.success(res.msg);
+                                that.getList();
+                            }
+                        });
+                        break;
+                    case 'guestctrl':
+                        that.request({
+                            url: "user/guestctrl",
+                            data: {
+                                user_id: cmd.row.user_id,
+                                room_id: that.global.room_id
+                            },
+                            success(res){
+                                that.$message.success(res.msg);
+                                that.getList();
                             }
                         });
                         break;
@@ -166,6 +190,10 @@
                             data: {
                                 user_id: cmd.row.user_id,
                                 room_id: that.global.room_id
+                            },
+                            success(res){
+                                that.$message.success(res.msg);
+                                that.getList();
                             }
                         });
                         break;
@@ -176,8 +204,9 @@
                                 user_id: cmd.row.user_id,
                                 room_id: that.global.room_id
                             },
-                            success(res) {
+                            success(res){
                                 that.$message.success(res.msg);
+                                that.getList();
                             }
                         });
                         break;

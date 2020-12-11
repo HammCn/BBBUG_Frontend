@@ -494,6 +494,20 @@
      font-size: 12px;
  }
  
+ .bbbug_main_right_online_user_badge_guest {
+     background-color: lightgreen;
+     color: #fff;
+     transform: rotate(45deg);
+     position: absolute;
+     right: -25px;
+     top: -25px;
+     height: 50px;
+     width: 50px;
+     text-align: center;
+     line-height: 78px;
+     font-size: 12px;
+ }
+ 
  .bbbug_main_right_online_user_badge_admin {
      background-color: #666;
      color: #fff;
