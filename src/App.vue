@@ -507,87 +507,23 @@
             checkInitUrl(callback) {
                 let that = this;
                 let code = '';
+                let plat  = false;
                 switch (location.pathname) {
                     case '/gitee':
                         code = that.getQueryString('code');
-                        that.request({
-                            url: 'user/thirdlogin',
-                            data: {
-                                from: "gitee",
-                                code: code,
-                            },
-                            success(res) {
-                                that.global.baseData.access_token = res.data.access_token;
-                                localStorage.setItem('access_token', res.data.access_token);
-                                location.replace("/");
-                            },
-                            error(res) {
-                                setTimeout(function() {
-                                    location.replace("/");
-                                }, 3000);
-                            }
-                        });
+                        plat = 'gitee';
                         break;
                     case '/ding':
                         code = that.getQueryString('code');
-                        that.request({
-                            url: 'user/thirdlogin',
-                            data: {
-                                from: "ding",
-                                code: code,
-                            },
-                            success(res) {
-                                that.global.baseData.access_token = res.data.access_token;
-                                localStorage.setItem('access_token', res.data.access_token);
-                                location.replace("/");
-                            },
-                            error(res) {
-                                setTimeout(function() {
-                                    location.replace("/");
-                                }, 3000);
-                            }
-                        });
+                        plat = 'ding';
                         break;
                     case '/oschina':
                         code = that.getQueryString('code');
-                        console.log(code);
-                        that.request({
-                            url: 'user/thirdlogin',
-                            data: {
-                                from: "oschina",
-                                code: code,
-                            },
-                            success(res) {
-                                that.global.baseData.access_token = res.data.access_token;
-                                localStorage.setItem('access_token', res.data.access_token);
-                                location.replace("/");
-                            },
-                            error(res) {
-                                setTimeout(function() {
-                                    location.replace("/");
-                                }, 3000);
-                            }
-                        });
+                        plat = 'oschina';
                         break;
                     case '/qq':
                         code = that.getQueryString('code');
-                        that.request({
-                            url: 'user/thirdlogin',
-                            data: {
-                                from: "qq",
-                                code: code,
-                            },
-                            success(res) {
-                                that.global.baseData.access_token = res.data.access_token;
-                                localStorage.setItem('access_token', res.data.access_token);
-                                location.replace("/");
-                            },
-                            error(res) {
-                                setTimeout(function() {
-                                    location.replace("/");
-                                }, 3000);
-                            }
-                        });
+                        plat = 'qq';
                         break;
                     case '/':
                         if (location.search != '') {
@@ -601,6 +537,7 @@
                             return;
                         }
                         callback();
+                        return;
                         break;
                     default:
                         let room_id = location.pathname.replace("/", '');
@@ -610,6 +547,24 @@
                         location.replace("/");
                         return;
                 }
+
+                that.request({
+                    url: 'user/thirdlogin',
+                    data: {
+                        from: plat,
+                        code: code,
+                    },
+                    success(res) {
+                        that.global.baseData.access_token = res.data.access_token;
+                        localStorage.setItem('access_token', res.data.access_token);
+                        location.replace("/");
+                    },
+                    error(res) {
+                        setTimeout(function() {
+                            location.replace("/");
+                        }, 3000);
+                    }
+                });
             },
             getQueryString(name) {
                 var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
