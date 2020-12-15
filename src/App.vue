@@ -214,7 +214,7 @@
                                     </div>
                                 </div>
                                 <div class="bbbug_main_chat_name_time">{{friendlyTime(item.time)}}</div>
-                                <div class="bbbug_main_chat_content_quot" v-if="item.at && item.at.message">
+                                <div class="bbbug_main_chat_content_quot" v-if="item.at && item.at.message" :title="item.at.message.type=='img'?'[图片]':urldecode(item.at.message.content)">
                                     {{item.at.message.type=='img'?'[图片]':urldecode(item.at.message.content)}}</div>
                             </div>
                             <div v-if="item.type=='system'" class="bbbug_main_chat_system">
@@ -1215,7 +1215,7 @@
                 let that = this;
                 message = Object.assign({}, message);
                 if (message.type != 'img') {
-                    message.content = encodeURIComponent(decodeURIComponent(message.content).substring(0, 20));
+                    // message.content = encodeURIComponent(decodeURIComponent(message.content).substring(0, 20));
                 }
                 that.atUserInfo = {
                     user_id: message.user.user_id,
@@ -2127,6 +2127,10 @@
         position: absolute;
         left: 90px;
         bottom: 105px;
+        max-width:200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
     
     .bbbug_main_chat_content_quot {
