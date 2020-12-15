@@ -117,11 +117,11 @@
                                             </el-dropdown-item>
                                             <!-- <el-dropdown-item class="bbbug_phone_message_back" :command="beforeHandleUserCommand(item.user, 'pullback')" v-if="userInfo && (item.user.user_id==userInfo.user_id || userInfo.user_admin || user.user_id == roomInfo.room_user)">
                                                 撤回
-                                            </el-dropdown-item> -->
+                                            </el-dropdown-item>
                                             <el-dropdown-item :command="beforeHandleUserCommand(item.user, 'touch')"
                                                 v-if="item.user.user_id!=userInfo.user_id">
                                                 摸摸
-                                            </el-dropdown-item>
+                                            </el-dropdown-item> -->
                                             <el-dropdown-item :command="beforeHandleUserCommand(item.user, 'sendSong')"
                                                 v-if="item.user.user_id!=userInfo.user_id">
                                                 送歌

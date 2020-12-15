@@ -19,10 +19,12 @@
                                             <el-dropdown-item :command="beforeHandleUserCommand(item, 'at')">
                                                 @Ta
                                             </el-dropdown-item>
+                                            <!--
                                             <el-dropdown-item :command="beforeHandleUserCommand(item, 'touch')"
                                                 v-if="item.user_id!=userInfo.user_id">
                                                 摸一摸
                                             </el-dropdown-item>
+                                            -->
                                             <el-dropdown-item :command="beforeHandleUserCommand(item, 'sendSong')"
                                                 v-if="item.user_id!=userInfo.user_id">
                                                 送歌给Ta
