@@ -216,8 +216,8 @@
                                 </div>
                                 <div class="bbbug_main_chat_name_time">{{friendlyTime(item.time)}}</div>
                                 <div class="bbbug_main_chat_content_quot" v-if="item.at && item.at.message"
-                                    :title="item.at.message.type=='img'?'[图片]':urldecode(item.at.message.content)">
-                                    {{item.at.message.type=='img'?'[图片]':urldecode(item.at.message.content)}}</div>
+                                    :title="getQuotMessage(item.at)">
+                                    {{getQuotMessage(item.at)}}</div>
                             </div>
                             <div v-if="item.type=='system'" class="bbbug_main_chat_system">
                                 <span class="bbbug_main_chat_system_text">{{item.content}}</span>
@@ -273,7 +273,7 @@
                                 :class="isEnableSendMessage?'bbbug_main_chat_enable':''">发送(Enter)</button>
                             <el-tag class="bbbug_main_chat_input_quot" closable type="info"
                                 v-if="atUserInfo && atUserInfo.message" @close="atUserInfo={user:{}};">
-                                {{atUserInfo.message.type=='img'?'[图片]':urldecode(atUserInfo.message.content)}}
+                                {{getQuotMessage(atUserInfo)}}
                             </el-tag>
                             <div class="bbbug_main_chat_input_lrc">{{lrcString}}</div>
                         </div>
@@ -819,21 +819,23 @@
                     that.lrcString = '歌词读取中...';
                 },
                 audioEnded() {
-                    console.log("audioEnded");
                     let that = this;
-                    that.audioImage = that.getStaticUrl('new/images/loading.png');
+                    that.audioResetImage();
                     if (that.roomInfo && that.roomInfo.room_type == 4 && that.roomInfo.room_playone) {
                         that.playMusic();
                     }
                 },
                 audioError() {
                     let that = this;
-                    that.audioImage = that.getStaticUrl('new/images/loading.png');
+                    that.audioResetImage();
                     if (that.audioUrl) {
                         setTimeout(function () {
                             that.$refs.audio.src = that.getStaticUrl("music/" + that.songInfo.song.mid + ".mp3");
                         }, 500);
                     }
+                },
+                audioResetImage(){
+                    this.audioImage = this.getStaticUrl('new/images/loading.png');
                 },
                 audioLoaded() {
                     //加载成功
@@ -860,6 +862,24 @@
                         default:
                     }
                     // that.$refs.audio.play();
+                },
+                getQuotMessage(itemAt){
+                    if(!itemAt.message){
+                        return false;
+                    }
+                    switch(itemAt.message.type){
+                        case 'jump':
+                            return '[机票]';
+                            break;
+                        case 'img':
+                            return '[图片]';
+                            break;
+                        case 'link':
+                            return '[链接]';
+                            break;
+                        default:
+                            return this.urldecode(itemAt.message.content);
+                    }
                 },
                 getMusicLrc() {
                     let that = this;
@@ -1147,14 +1167,10 @@
                                     that.messageList.unshift(_obj);
                                 }
                             }
-                            // that.addSystemMessage(that.global.roomInfo.room_notice ? that.global.roomInfo.room_notice : ('欢迎来到' + that.global.roomInfo.room_name + '!'));
-
-
                             if (that.messageList.length > that.historyMax) {
                                 that.messageList.shift();
                             }
                             let roomAdminInfo = Object.assign({}, that.global.roomInfo.admin);
-                            // roomAdminInfo.user_name = encodeURIComponent(that.global.roomInfo.room_name+" 房间公告");
                             roomAdminInfo.message = {
                                 content: "来自房间公告"
                             };
@@ -1216,9 +1232,6 @@
                 quotMessage(message) {
                     let that = this;
                     message = Object.assign({}, message);
-                    if (message.type != 'img') {
-                        // message.content = encodeURIComponent(decodeURIComponent(message.content).substring(0, 20));
-                    }
                     that.atUserInfo = {
                         user_id: message.user.user_id,
                         user_name: message.user.user_name,
