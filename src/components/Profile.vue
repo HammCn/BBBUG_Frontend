@@ -7,7 +7,7 @@
                     <div class="bbbug_main_profile_user_badge"
                         v-if="!userInfo.user_admin && userInfo.user_id == roomInfo.room_user">房</div>
                     <div class="bbbug_main_profile_head">
-                        <img :src="userInfo.user_head" :onerror="getStaticUrl('new/images/nohead.jpg')"
+                        <img :src="getStaticUrl(userInfo.user_head)" :onerror="getStaticUrl('new/images/nohead.jpg')"
                             style="border-radius: 100%;width:80px;height:80px;" />
                     </div>
                     <div class="bbbug_main_profile_user">
