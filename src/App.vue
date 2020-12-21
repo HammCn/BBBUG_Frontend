@@ -109,7 +109,7 @@
                                         <img class="bbbug_main_chat_head_image" :src="getStaticUrl(item.user.user_head)"
                                             :onerror="getStaticUrl('new/images/nohead.jpg')"
                                             @dblclick="doTouch(item.user.user_id)" />
-                                        <img title="圣诞帽彩蛋" v-if="item.user.user_icon"  :src="getStaticUrl('new/images/shengdanmao.png')" style="width: 80px;height: 80px;position: absolute;right: -30px;top: -30px;transform: rotateY(180deg);z-index:1;">
+                                        <img title="圣诞帽彩蛋" v-if="item.user.user_icon"  :src="getStaticUrl('new/images/shengdan.png')" style="width: 60px;position: absolute;right: -15px;top: -30px;z-index:1;">
 
                                         <el-dropdown-menu slot="dropdown">
                                             <el-dropdown-item :command="beforeHandleUserCommand(item.user, 'at')"
@@ -1968,6 +1968,7 @@
         overflow: hidden;
         overflow-y: scroll;
         padding-bottom: 30px;
+        z-index:0;
     }
 
     .bbbug_main_chat_system {
