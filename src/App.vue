@@ -109,6 +109,7 @@
                                         <img class="bbbug_main_chat_head_image" :src="getStaticUrl(item.user.user_head)"
                                             :onerror="getStaticUrl('new/images/nohead.jpg')"
                                             @dblclick="doTouch(item.user.user_id)" />
+                                        <img title="圣诞帽彩蛋" v-if="item.user.user_icon"  :src="getStaticUrl('new/images/shengdanmao.png')" style="width: 80px;height: 80px;position: absolute;right: -30px;top: -30px;transform: rotateY(180deg);z-index:1;">
 
                                         <el-dropdown-menu slot="dropdown">
                                             <el-dropdown-item :command="beforeHandleUserCommand(item.user, 'at')"
@@ -151,8 +152,8 @@
                                     <i class="iconfont icon-icon_certification_f user_icon"
                                         style="font-size:18px;color:#097AD8;" v-if="item.user.user_vip"
                                         :title="item.user.user_vip"></i>
-                                    <i class="iconfont icon-weixin user_icon" style="font-size:16px;color:#666;"
-                                        v-if="item.user.user_icon" title="使用过微信小程序即可点亮"></i>
+                                    <!-- <i class="iconfont icon-weixin user_icon" style="font-size:16px;color:#666;"
+                                        v-if="item.user.user_icon" title="使用过微信小程序即可点亮"></i> -->
                                 </div>
                                 <div class="bbbug_main_chat_context_menu"
                                     @contextmenu.prevent.stop="openMenu($event,item)">
