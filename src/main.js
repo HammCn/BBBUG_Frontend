@@ -48,17 +48,20 @@ Vue.prototype.global = {
 };
 
 Vue.prototype.isDarkModel = false;
-Vue.prototype.changeDarkModel = function(enabled) {
+Vue.prototype.changeDarkModel = function (enabled) {
     this.isDarkModel = enabled;
 };
-Vue.prototype.urldecode = function(str) {
+Vue.prototype.urldecode = function (str) {
     return decodeURIComponent(str);
 };
 
-Vue.prototype.http2https = function(str) {
+Vue.prototype.http2https = function (str) {
     return str.toString().replace("http://", "https://");
 };
-Vue.prototype.getStaticUrl = function(url) {
+Vue.prototype.getStaticUrl = function (url) {
+    if (!url) {
+        url = "";
+    }
     url = this.http2https(url.toString());
     if (url.indexOf('http://') == 0 || url.indexOf("https://") == 0) {
         return url;
@@ -71,14 +74,14 @@ Vue.prototype.getStaticUrl = function(url) {
     }
 };
 
-Vue.prototype.request = function(_data) {
+Vue.prototype.request = function (_data) {
     let that = this;
     axios.post(that.global.apiUrl + "api/" + (_data.url || ""), Object.assign({}, that.global.baseData, _data.data || {}), {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(function(response) {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(function (response) {
             switch (response.data.code) {
                 case 200:
                     if (_data.success) {
@@ -103,12 +106,12 @@ Vue.prototype.request = function(_data) {
                             closeOnClickModal: false,
                             closeOnPressEscape: false,
                             type: 'warning'
-                        }).then(function() {
+                        }).then(function () {
                             that.$emit('App', 'loginGuest');
                             that.$emit('App', 'showLoginForm');
                             that.$parent.$emit('App', 'loginGuest');
                             that.$parent.$emit('App', 'showLoginForm');
-                        }).catch(function() {
+                        }).catch(function () {
                             if (that.global.baseData.access_token != that.global.guestUserInfo.access_token) {
                                 that.$emit('App', 'loginGuest');
                                 that.$parent.$emit('App', 'loginGuest');
@@ -126,12 +129,12 @@ Vue.prototype.request = function(_data) {
                     }
             }
         })
-        .catch(function(error) {
+        .catch(function (error) {
             console.log(error)
         });
 };
 
-Vue.prototype.callParentFunction = function(event, msg) {
+Vue.prototype.callParentFunction = function (event, msg) {
     //触发父容器方法
     if (self != top) {
         window.parent.postMessage({

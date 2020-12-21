@@ -1,8 +1,8 @@
 <template>
-    <div id="RoomSetting">
+    <div id="Profile">
         <div class="bbbug_main_right">
-            <div class="bbbug_main_right_room">
-                <div class="bbbut_main_profile_box" v-loading="loading">
+            <div class="bbbug_main_right_room" v-loading="loading">
+                <div class="bbbut_main_profile_box" v-if="userInfo">
                     <div class="bbbug_main_profile_user_badge_admin" v-if="userInfo.user_admin">管</div>
                     <div class="bbbug_main_profile_user_badge"
                         v-if="!userInfo.user_admin && userInfo.user_id == roomInfo.room_user">房</div>
@@ -61,7 +61,7 @@
     default {
         data() {
             return {
-                userInfo: {},
+                userInfo: false,
                 songList: [],
                 roomInfo: {},
                 loading: true,
