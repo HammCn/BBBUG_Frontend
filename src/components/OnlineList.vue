@@ -59,8 +59,6 @@
                                         <i class="iconfont icon-icon_certification_f user_icon"
                                             style="font-size:18px;color:#097AD8;" v-if="item.user_vip"
                                             :title="item.user_vip"></i>
-                                        <i class="iconfont icon-weixin user_icon" style="font-size:16px;color:#666;"
-                                            v-if="item.user_icon" title="使用过微信小程序即可点亮"></i>
                                         {{urldecode(item.user_name)}}</div>
                                     <div class="bbbug_main_right_online_desc">
                                         <i class="iconfont user_icon user_female icon-xingbie-nv" title="女生"

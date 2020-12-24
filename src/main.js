@@ -66,7 +66,7 @@ Vue.prototype.getStaticUrl = function (url) {
     if (url.indexOf('http://') == 0 || url.indexOf("https://") == 0) {
         return url;
     } else {
-        if (url.indexOf("new/images") > -1 || url.indexOf("new/mp3") > -1) {
+        if (url.indexOf("new/images") > -1 || url.indexOf("new/mp3") > -1 || url.indexOf("music/") > -1) {
             return this.global.apiUrl + "/" + url;
         } else {
             return this.global.apiUrl + "/uploads/" + url;

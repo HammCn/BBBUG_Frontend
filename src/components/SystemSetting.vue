@@ -5,14 +5,17 @@
                 <div class="bbbug_main_right_room_title">系统设置
                 </div>
                 <el-form label-width="120px" class="bbbug_my_setting__form">
-                    <el-form-item label="通知声音">
-                        <el-switch v-model="isEnableNoticePlayer" @change="isEnableNoticePlayerChanged"></el-switch>
-                    </el-form-item>
-                    <el-form-item label="显示通知">
-                        <el-switch v-model="isEnableNotification" @change="isEnableNotificationChanged"></el-switch>
+                    <el-form-item label="被@提醒">
+                        <el-switch v-model="isEnableAtNotification" @change="isEnableAtNotificationChanged"></el-switch>
                     </el-form-item>
                     <el-form-item label="摸摸提醒">
                         <el-switch v-model="isEnableTouchNotice" @change="isEnableTouchNoticeChanged"></el-switch>
+                    </el-form-item>
+                    <el-form-item label="声音提醒">
+                        <el-switch v-model="isEnableNoticePlayer" @change="isEnableNoticePlayerChanged"></el-switch>
+                    </el-form-item>
+                    <el-form-item label="浏览器通知">
+                        <el-switch v-model="isEnableNotification" @change="isEnableNotificationChanged"></el-switch>
                     </el-form-item>
                     <el-form-item label="暗黑模式">
                         <el-switch v-model="isDarkModelTemp" @change="isDarkModelChanged"></el-switch>
@@ -32,6 +35,7 @@
                     isEnableNoticePlayer: true,
                     isEnableNotification: true,
                     isEnableTouchNotice: true,
+                    isEnableAtNotification:true,
                     isDarkModelTemp: false
                 }
             },
@@ -41,9 +45,14 @@
                 this.isEnableNoticePlayer = localStorage.getItem('isEnableNoticePlayer') != 1 ? true : false;
                 this.isEnableNotification = localStorage.getItem('isEnableNotification') != 1 ? true : false;
                 this.isEnableTouchNotice = localStorage.getItem('isEnableTouchNotice') != 1 ? true : false;
+                this.isEnableAtNotification = localStorage.getItem('isEnableAtNotification') != 1 ? true : false;
                 this.isDarkModelTemp = this.$parent.isDarkModel;
             },
             methods: {
+                isEnableAtNotificationChanged(){
+                    localStorage.setItem('isEnableAtNotification', this.isEnableAtNotification ? 0 : 1);
+                    this.$parent.loadConfig();
+                },
                 isEnableNoticePlayerChanged() {
                     localStorage.setItem('isEnableNoticePlayer', this.isEnableNoticePlayer ? 0 : 1);
                     this.$parent.loadConfig();
