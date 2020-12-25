@@ -1856,7 +1856,7 @@
         font-size: 12px;
         color: white;
         background-color: orangered;
-        padding: 1px 2px;
+        padding: 2px;
         border-radius: 3px;
     }
 
