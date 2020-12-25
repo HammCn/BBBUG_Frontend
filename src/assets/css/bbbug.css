@@ -71,7 +71,7 @@
  
  ::-webkit-scrollbar-track {
      /* background-color: rgba(50, 50, 50, 0.1); */
-     background-color: white;
+     background-color: transparent;
      border-radius: 5px;
  }
  /*定义滑块颜色、内阴影及圆角*/

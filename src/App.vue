@@ -3,6 +3,7 @@
         <div class="bbbug_bg" @click.stop="isLocked=!isLocked;"
             :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
         </div>
+        <div class="snow"></div>
         <div class="bbbug_link">
             <a href="https://doc.bbbug.com" target="_blank">开发文档</a>
             <a href="https://gitee.com/bbbug_com" target="_blank">Gitee</a>
@@ -109,8 +110,6 @@
                                         <img class="bbbug_main_chat_head_image" :src="getStaticUrl(item.user.user_head)"
                                             :onerror="getStaticUrl('new/images/nohead.jpg')"
                                             @dblclick="doTouch(item.user.user_id)" />
-                                        <img title="圣诞帽彩蛋" v-if="item.user.user_icon"  :src="getStaticUrl('new/images/shengdan.png')" style="width: 60px;position: absolute;right: -15px;top: -30px;z-index:1;">
-
                                         <el-dropdown-menu slot="dropdown">
                                             <el-dropdown-item :command="beforeHandleUserCommand(item.user, 'at')"
                                                 v-if="item.user.user_id!=userInfo.user_id">
@@ -152,8 +151,7 @@
                                     <i class="iconfont icon-icon_certification_f user_icon"
                                         style="font-size:18px;color:#097AD8;" v-if="item.user.user_vip"
                                         :title="item.user.user_vip"></i>
-                                    <!-- <i class="iconfont icon-weixin user_icon" style="font-size:16px;color:#666;"
-                                        v-if="item.user.user_icon" title="使用过微信小程序即可点亮"></i> -->
+                                    <span class="bbbug_main_chat_name_icon" v-if="item.user.user_icon==1" title="2020&2021福蛋">福</span>
                                 </div>
                                 <div class="bbbug_main_chat_context_menu"
                                     @contextmenu.prevent.stop="openMenu($event,item)">
@@ -376,6 +374,7 @@
                     isEnableNotification: true,
                     isEnableNoticePlayer: true,
                     isEnableTouchNotice: true,
+                    isEnableAtNotification: true,
                     isEnableSendMessage: false,
                     isEmojiBoxShow: false,
                     messageList: [],
@@ -602,6 +601,7 @@
                     this.isEnableNoticePlayer = localStorage.getItem('isEnableNoticePlayer') != 1 ? true : false;
                     this.isEnableNotification = localStorage.getItem('isEnableNotification') != 1 ? true : false;
                     this.isEnableTouchNotice = localStorage.getItem('isEnableTouchNotice') != 1 ? true : false;
+                    this.isEnableAtNotification = localStorage.getItem('isEnableAtNotification') != 1 ? true : false;
                 },
                 openMenu(e, item) {
                     this.rightClickItem = item;
@@ -835,7 +835,7 @@
                         }, 500);
                     }
                 },
-                audioResetImage(){
+                audioResetImage() {
                     this.audioImage = this.getStaticUrl('new/images/loading.png');
                 },
                 audioLoaded() {
@@ -864,11 +864,11 @@
                     }
                     // that.$refs.audio.play();
                 },
-                getQuotMessage(itemAt){
-                    if(!itemAt.message){
+                getQuotMessage(itemAt) {
+                    if (!itemAt.message) {
                         return false;
                     }
-                    switch(itemAt.message.type){
+                    switch (itemAt.message.type) {
                         case 'jump':
                             return '[机票]';
                             break;
@@ -1057,8 +1057,8 @@
                     }
 
                     if (e.keyCode && e.keyCode == 13 && e.ctrlKey) {
-                        that.global.songKeyword = that.message;
                         that.hideAll();
+                        that.global.songKeyword = that.message;
                         that.dialog.SearchSongs = true;
                         return;
                     }
@@ -1502,13 +1502,15 @@
                                     if (obj.at.user_id == that.userInfo.user_id) {
                                         let notifyTitle = "摸一摸";
                                         let notifyContent = that.urldecode(obj.user.user_name) + " 摸了摸你" + that.urldecode(obj.at.user_touchtip);
-                                        that.$notify({
-                                            title: notifyTitle,
-                                            message: notifyContent,
-                                            duration: 10000,
-                                            dangerouslyUseHTMLString: true
-                                        });
                                         if (that.isEnableTouchNotice) {
+                                            that.$notify({
+                                                title: notifyTitle,
+                                                message: notifyContent,
+                                                duration: 10000,
+                                                dangerouslyUseHTMLString: true
+                                            });
+                                        }
+                                        if (that.isEnableNotification) {
                                             that.chromeNotify(notifyTitle, notifyContent);
                                         }
                                         if (that.isEnableNoticePlayer) {
@@ -1553,7 +1555,7 @@
                                         duration: 10000,
                                         dangerouslyUseHTMLString: true
                                     });
-                                    if (that.isEnableTouchNotice) {
+                                    if (that.isEnableNotification) {
                                         that.chromeNotify(notifyTitle, notifyContent);
                                     }
                                     if (that.isEnableNoticePlayer) {
@@ -1564,13 +1566,15 @@
                                     if (obj.at.user_id == that.userInfo.user_id || obj.isAtAll) {
                                         let notifyTitle = that.urldecode(obj.user.user_name) + "@了你：";
                                         let notifyContent = that.urldecode(obj.content);
-                                        that.$notify({
-                                            title: notifyTitle,
-                                            message: notifyContent,
-                                            duration: 10000,
-                                            dangerouslyUseHTMLString: true
-                                        });
-                                        if (that.isEnableTouchNotice) {
+                                        if (that.isEnableAtNotification) {
+                                            that.$notify({
+                                                title: notifyTitle,
+                                                message: notifyContent,
+                                                duration: 10000,
+                                                dangerouslyUseHTMLString: true
+                                            });
+                                        }
+                                        if (that.isEnableNotification) {
                                             that.chromeNotify(notifyTitle, notifyContent);
                                         }
                                         if (that.isEnableNoticePlayer) {
@@ -1618,13 +1622,14 @@
                                     if (obj.at.user_id == that.userInfo.user_id) {
                                         let notifyTitle = that.urldecode(obj.user.user_name) + "送了歌给你：";
                                         let notifyContent = "《" + obj.song.name + "》(" + obj.song.singer + ")";
+
                                         that.$notify({
                                             title: notifyTitle,
                                             message: notifyContent,
                                             duration: 5000,
                                             dangerouslyUseHTMLString: true
                                         });
-                                        if (that.isEnableTouchNotice) {
+                                        if (that.isEnableNotification) {
                                             that.chromeNotify(notifyTitle, notifyContent);
                                         }
                                         if (that.isEnableNoticePlayer) {
@@ -1705,7 +1710,7 @@
                                             duration: 5000,
                                             dangerouslyUseHTMLString: true
                                         });
-                                        if (that.isEnableTouchNotice) {
+                                        if (that.isEnableNotification) {
                                             that.chromeNotify(notifyTitle, notifyContent);
                                         }
                                         if (that.isEnableNoticePlayer) {
@@ -1720,7 +1725,7 @@
                                             duration: 5000,
                                             dangerouslyUseHTMLString: true
                                         });
-                                        if (that.isEnableTouchNotice) {
+                                        if (that.isEnableNotification) {
                                             that.chromeNotify(notifyTitle, notifyContent);
                                         }
                                         if (that.isEnableNoticePlayer) {
@@ -1847,6 +1852,14 @@
         cursor: pointer;
     }
 
+    .bbbug_main_chat_name_icon {
+        font-size: 12px;
+        color: white;
+        background-color: orangered;
+        padding: 1px 2px;
+        border-radius: 3px;
+    }
+
     .bbbug_main_chat_mine .bbbug_main_chat_name {
         position: absolute;
         left: auto;
@@ -1968,7 +1981,7 @@
         overflow: hidden;
         overflow-y: scroll;
         padding-bottom: 30px;
-        z-index:0;
+        z-index: 0;
     }
 
     .bbbug_main_chat_system {
@@ -2247,5 +2260,27 @@
 
     .bbbug_main_chat_emojis_input {
         margin-bottom: 10px;
+    }
+
+    @keyframes snow {
+        0% {
+            background-position: 0 0, 0 0;
+        }
+
+        100% {
+            background-position: 500px 500px, 1000px 500px;
+        }
+    }
+
+    .snow {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: url('https://api.bbbug.com/new/images/snow1.png'), url('https://api.bbbug.com/new/images/snow2.png');
+        animation: 10s snow linear infinite;
+        pointer-events: none;
+        z-index: 999;
     }
 </style>
