@@ -151,7 +151,8 @@
                                     <i class="iconfont icon-icon_certification_f user_icon"
                                         style="font-size:18px;color:#097AD8;" v-if="item.user.user_vip"
                                         :title="item.user.user_vip"></i>
-                                    <span class="bbbug_main_chat_name_icon" v-if="item.user.user_icon==1" title="2020&2021福蛋">福</span>
+                                    <span class="bbbug_main_chat_name_icon" v-if="item.user.user_icon==1"
+                                        title="2020&2021福蛋">福</span>
                                 </div>
                                 <div class="bbbug_main_chat_context_menu"
                                     @contextmenu.prevent.stop="openMenu($event,item)">
@@ -1858,6 +1859,8 @@
         background-color: orangered;
         padding: 2px;
         border-radius: 3px;
+        line-height: 12px;
+        display: inline-block;
     }
 
     .bbbug_main_chat_mine .bbbug_main_chat_name {
