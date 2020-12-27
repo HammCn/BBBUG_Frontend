@@ -16,18 +16,25 @@
                         <el-select size="small" v-model="roomInfo.room_hide" placeholder="是否隐藏房间">
                             <el-option v-for="(item,index) in room_hide" :label="item.title" :value="item.value">
                             </el-option>
-                            </el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="房间权限">
                         <el-select size="small" v-model="roomInfo.room_public" placeholder="请选择房间权限类别">
                             <el-option v-for="(item,index) in room_public" :label="item.title" :value="item.value">
                             </el-option>
-                            </el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="房间密码" v-if="roomInfo.room_public==1">
                         <el-input size="small" autocomplete="off" placeholder="" v-model="roomInfo.room_password">
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="房间背景">
+                        <el-input v-model="roomInfo.room_background" placeholder="请上传房间背景图" readonly="readonly">
+                            <template></template>
+                            <el-upload slot="append" :action="uploadUrl" :show-file-list="false"
+                                :on-success="handleBackgroudUploadSuccess" :before-upload="doUploadBefore"
+                                :data="baseData">选择
+                            </el-upload>
                         </el-input>
                     </el-form-item>
                     <el-form-item label="全员禁言">
@@ -103,6 +110,8 @@
                 return {
                     userInfo: null,
                     roomInfo: {},
+                    uploadUrl: "",
+                    baseData: false,
                     room_addsong: [{
                         value: 0,
                         title: "所有人可点歌"
@@ -186,8 +195,30 @@
             created() {
                 this.userInfo = this.global.userInfo;
                 this.roomInfo = Object.assign({}, this.global.roomInfo);
+                this.uploadUrl = this.global.apiUrl + "/api/attach/uploadImage";
+                this.baseData = this.global.baseData;
             },
             methods: {
+                handleBackgroudUploadSuccess(res, file) {
+                    var that = this;
+                    if (res.code == 200) {
+                        that.roomInfo.room_background = that.getStaticUrl(res.data.attach_path);
+                    } else {
+                        that.$message.error(res.msg);
+                    }
+                },
+                doUploadBefore(file) {
+                    const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
+                    const isLt2M = file.size / 1024 / 1024 < 2;
+
+                    if (!isJPG) {
+                        this.$message.error('发送图片只能是 JPG/PNG 格式!');
+                    }
+                    if (!isLt2M) {
+                        this.$message.error('发送图片大小不能超过 2MB!');
+                    }
+                    return isJPG && isLt2M;
+                },
                 updateRoom() {
                     let that = this;
                     that.request({

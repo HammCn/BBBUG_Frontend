@@ -1347,6 +1347,7 @@
                             that.global.roomInfo = res.data;
                             that.updateCopyData();
                             that.roomInfo = res.data;
+                            that.background = res.data.room_background;
                             that.audioUrl = '';
                             that.songInfo = null;
                             that.getRoomHistory();
