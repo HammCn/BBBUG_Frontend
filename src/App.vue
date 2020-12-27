@@ -1334,7 +1334,7 @@
                 getRoomInfo() {
                     let that = this;
                     that.appLoading = true;
-                    that.request({
+                    that.request({  
                         url: "room/getRoomInfo",
                         data: {
                             room_id: localStorage.getItem('room_change_id') || that.global.room_id,
