@@ -8,7 +8,6 @@
             <a href="https://doc.bbbug.com" target="_blank">开发文档</a>
             <a href="https://gitee.com/bbbug_com" target="_blank">Gitee</a>
             <a href="https://github.com/HammCn" target="_blank">Github</a>
-            <a href="https://gitee.com/organizations/bbbug_com/members/list" target="_blank">贡献名单</a>
         </div>
         <audio :src="getStaticUrl('new/mp3/dingdong.mp3')" ref="noticePlayer"></audio>
         <audio :src="audioUrl" ref="audio" autoplay="autoplay" control1 @playing="audioPlaying" @canplay="audioCanPlay"
@@ -88,6 +87,7 @@
 
                         </div>
                         <div class="bbbug_main_chat_online">
+                            <span title="打开你的年报" class="bbbug_main_chat_invate" @click="showMy2020" v-if="userInfo">2020&2021</span>
                             <span title="复制邀请链接" class="bbbug_main_chat_invate"
                                 :data-clipboard-text="copyData">邀请</span>
                             <span title="无缝穿梭到手机" class="bbbug_main_chat_invate hideWhenPhone" @click="showQrCode"
@@ -1104,6 +1104,9 @@
                         }
                     });
                 },
+                showMy2020() {
+                    window.open('https://api.bbbug.com/api/activity/?user_id=' + this.userInfo.user_id);
+                },
                 AppController(data) {
                     console.log(data);
                     eval("this." + data + "()");
@@ -1334,7 +1337,7 @@
                 getRoomInfo() {
                     let that = this;
                     that.appLoading = true;
-                    that.request({  
+                    that.request({
                         url: "room/getRoomInfo",
                         data: {
                             room_id: localStorage.getItem('room_change_id') || that.global.room_id,
