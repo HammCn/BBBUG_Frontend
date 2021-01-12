@@ -37,6 +37,7 @@ Vue.prototype.global = {
         version: 10000,
     },
     apiUrl: "https://api.bbbug.com/",
+    staticUrl: "https://bbbug.hamm.cn/",
     wssUrl: "wss://websocket.bbbug.com",
     songKeyword: "",
     appIdList: {
@@ -67,9 +68,9 @@ Vue.prototype.getStaticUrl = function (url) {
         return url;
     } else {
         if (url.indexOf("new/images") > -1 || url.indexOf("new/mp3") > -1 || url.indexOf("music/") > -1) {
-            return this.global.apiUrl + "/" + url;
+            return this.global.staticUrl + "/" + url;
         } else {
-            return this.global.apiUrl + "/uploads/" + url;
+            return this.global.staticUrl + "/uploads/" + url;
         }
     }
 };
