@@ -1,7 +1,12 @@
-<p align="left">
-<h1>BBBUG聊天室</h1>
+
+<h1 align="center">BBBUG聊天室 前端仓库</h1>
+
+<p align="center">
+<a href="https://github.com/HammCn/BBBUG_Frontend" target="_blank">Github</a> | 
+<a href="https://gitee.com/bbbug_com/ChatWEB" target="_blank">Gitee</a>
 </p>
-<p align="left">
+
+<p align="center">
 <a href="https://gitee.com/bbbug_com/ChatWEB/stargazers" target="_blank"><img src="https://svg.hamm.cn/gitee.svg?type=star&user=bbbug_com&project=ChatWEB"/></a>
 <a href="https://gitee.com/bbbug_com/ChatWEB/members" target="_blank"><img src="https://svg.hamm.cn/gitee.svg?type=fork&user=bbbug_com&project=ChatWEB"/></a>
 <img src="https://svg.hamm.cn/badge.svg?key=Base&value=Vue.Element"/>
