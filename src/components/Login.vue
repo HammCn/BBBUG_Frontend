@@ -24,23 +24,23 @@
                     </el-input>
                 </el-form-item>
                 <el-form-item class="bbbug_login_form_submit" style="margin-left:10px;"> <span style="float:left;">
-                        <el-link
+                        <el-link :underline="false"
                             :href="'https://graph.qq.com/oauth2.0/authorize?client_id='+global.appIdList.qq+'&redirect_uri='+localhost+'qq&response_type=code&state='+localhost" title="QQ">
                             <i class="iconfont icon-QQ-circle-fill" style="font-size:24px;margin-right:-1px;"></i>
                         </el-link>
-                        <el-link
+                        <el-link :underline="false"
                             :href="'https://gitee.com/oauth/authorize?client_id='+global.appIdList.gitee+'&redirect_uri='+localhost+'gitee&response_type=code'" title="Gitee 码云">
                             <i class="iconfont icon-gitee"></i>
                         </el-link>
-                        <el-link
+                        <el-link :underline="false"
                             :href="'https://www.oschina.net/action/oauth2/authorize?client_id='+global.appIdList.oschina+'&redirect_uri='+localhost+'oschina&response_type=code'" title="开源中国">
                             <i class="iconfont icon-icon-oschina-circle"></i>
                         </el-link>
-                        <el-link
+                        <el-link :underline="false"
                             :href="'https://oapi.dingtalk.com/connect/qrconnect?appid='+global.appIdList.ding+'&response_type=code&scope=snsapi_login&state=STATE&redirect_uri='+localhost+'ding'" title="钉钉">
                             <i class="iconfont icon-dingding"></i>
                         </el-link>
-                        <el-link
+                        <el-link :underline="false"
                             href="javascript:;" title="Github">
                             <i class="iconfont icon-git"></i>
                         </el-link>
@@ -155,9 +155,6 @@
     
     .bbbug_login_form_submit .el-form-item__content {
         margin-left: 10px !important;
-    }
-    .bbbug_login_form_submit a{
-        text-decoration: none;
     }
     .bbbug_login_form_submit .iconfont{
         font-size:20px;
