@@ -157,7 +157,7 @@
         margin-left: 10px !important;
     }
     .bbbug_login_form_submit a{
-        text-decoration: nonen;
+        text-decoration: none;
     }
     .bbbug_login_form_submit .iconfont{
         font-size:20px;
