@@ -13,6 +13,11 @@
 <img src="https://svg.hamm.cn/badge.svg?key=License&value=GPL-3.0"/>
 </p>
 
+
+<p align="center">
+<a href="https://bbbug.com" target="_blank"><img src="https://api.bbbug.com/api/badge/888"/></a>
+</p>
+
 ### 介绍
 
 一个可以聊天听歌的音乐聊天室，支持了Gitee/OSChina/QQ/钉钉等OAuth登录，支持多房间和创建私人房间，支持房间加密和切换房间模式。此仓库为PC站前端仓库。开发者QQ群：1140258698
