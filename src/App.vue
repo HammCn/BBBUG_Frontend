@@ -1740,7 +1740,7 @@
                                 }
                                 break;
                             case 'online':
-                                that.onlineList = obj.data;
+                                that.onlineList = obj.data || [];
                                 break;
                             case 'roomUpdate':
                                 that.getRoomInfo();
