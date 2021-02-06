@@ -315,15 +315,29 @@
         <div v-if="isLocked">
             <div class="bbbug_locked bbbug_bg" @click.stop="isLocked=!isLocked;"
                 :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
-                <div class="bbbug_locked_player">
-                    <div class="bbbug_locked_player_lrc">{{lrcString}}</div>
-                    <div class="bbbug_locked_player_song">
-                        {{songInfo && songInfo.song ? (songInfo.song.name+" ("+songInfo.song.singer+")"):''}} 点歌人:
-                        {{urldecode(songInfo.user.user_name)}}</div>
+                <div v-if="songInfo">
+                    <div class="bbbug_locked_player">
+                        <div class="bbbug_locked_player_lrc">{{lrcString}}</div>
+                        <div class="bbbug_locked_player_song">
+                            <marquee class="bbbug_locked_player_name">正在播放: {{songInfo.song.name}}
+                                ({{songInfo.song.singer}})　　点歌人: {{urldecode(songInfo.user.user_name)}}
+                            </marquee>
+                        </div>
+                    </div>
+                    <div class="bbbug_locked_player_qrcode">
+                        <img class="bbbug_locked_player_qrcode_img"
+                            :src="['https://api.bbbug.com/api/weapp/qrcode?room_id='+roomInfo.room_id]" />
+                        <div class="bbbug_locked_player_qrcode_tips">微信扫码参与</div>
+                    </div>
                 </div>
-            </div>
-            <div class="bbbug_link">
-                <a>按ESC快速切换房间聊天与沉浸式播放器</a>
+                <div class="bbbug_bullet">
+                    <marquee v-for="(item,index) in bulletList" :style="{paddingTop:item.top+'%'}">
+                        <span>
+                            <img class="bbbug_bullet_img" :src="getStaticUrl(item.head)" />
+                            {{urldecode(item.msg)}}
+                        </span>
+                    </marquee>
+                </div>
             </div>
         </div>
         <div class="bbbug_dark_cover" v-if="isDarkModel"></div>
@@ -362,6 +376,7 @@
             },
             data() {
                 return {
+                    bulletList: [],
                     dialog: false,
                     audioUrl: "",
                     audioImage: "new/images/loading.png",
@@ -1609,6 +1624,15 @@
                                     obj.content = '@' + obj.at.user_name + " " + obj.content;
                                 }
                                 that.messageList.push(obj);
+                                that.bulletList.push({
+                                    head: obj.user.user_head,
+                                    user: obj.user.user_name,
+                                    msg: obj.content,
+                                    top: parseInt((Math.random() * 14)) * 5
+                                });
+                                setTimeout(function () {
+                                    that.bulletList.shift();
+                                }, 20000);
                                 document.title = that.urldecode(obj.user.user_name) + "说：" + that.urldecode(obj.content);
                                 clearTimeout(that.timerForWebTitle);
                                 that.callParentFunction('onTextMessage', obj);
@@ -1832,6 +1856,90 @@
 <style>
     .el-dropdown-menu {
         padding: 0;
+    }
+
+    .bbbug_bullet {
+        color: white;
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 50px;
+        bottom: 0;
+    }
+
+    .bbbug_bullet marquee {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+    }
+
+    .bbbug_bullet marquee span {
+        background-color: rgba(255, 255, 255, 0.5);
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 32px;
+        border-radius: 50px;
+        padding: 0px 20px 0px 0px;
+    }
+
+    .bbbug_bullet marquee img {
+        width: 60px;
+        height: 60px;
+        border-radius: 100%;
+        vertical-align: middle;
+        font-size: 2;
+    }
+
+    .bbbug_locked_player_song {
+        position: fixed;
+        left: 10px;
+        top: 10px;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 24px;
+        max-width: 40%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        word-break: break-all;
+    }
+
+    .bbbug_locked_player_qrcode_img {
+        width: 100%;
+        border-radius: 100%;
+    }
+
+    .bbbug_locked_player_qrcode {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        text-align: left;
+        color: white;
+        width: 15%;
+        background-color: rgba(255, 255, 255, 0.2);
+        padding: 20px;
+        padding-bottom: 15px;
+        border-radius: 10px;
+    }
+
+    .bbbug_locked_player_qrcode_tips {
+        width: 100%;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .bbbug_locked_player_lrc {
+        position: fixed;
+        right: 10px;
+        top: 10px;
+        color: white;
+        font-size: 24px;
+        max-width: 50%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        word-break: break-all;
     }
 
     .bbbug_main_chat_item {
@@ -2266,24 +2374,9 @@
         right: 0;
         top: 0;
         bottom: 0;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     }
 
-    .bbbug_locked_player {
-        min-width: 200px;
-        text-align: center;
-    }
-
-    .bbbug_locked_player_lrc {
-        font-size: 32px;
-        color: rgba(255, 255, 255, 0.8);
-        text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
-    }
-
-    .bbbug_locked_player_song {
-        font-size: 16px;
-        color: rgba(255, 255, 255, 0.5);
-        text-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
-    }
 
     .bbbug_main_chat_emojis_input {
         margin-bottom: 10px;
