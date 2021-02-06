@@ -87,7 +87,8 @@
 
                         </div>
                         <div class="bbbug_main_chat_online">
-                            <span title="打开你的年报" class="bbbug_main_chat_invate" @click="showMy2020" v-if="userInfo">2020&2021</span>
+                            <span title="打开你的年报" class="bbbug_main_chat_invate" @click="showMy2020"
+                                v-if="userInfo">2020&2021</span>
                             <span title="复制邀请链接" class="bbbug_main_chat_invate"
                                 :data-clipboard-text="copyData">邀请</span>
                             <span title="无缝穿梭到手机" class="bbbug_main_chat_invate hideWhenPhone" @click="showQrCode"
@@ -1188,6 +1189,25 @@
                                 time: parseInt(new Date().valueOf() / 1000),
                                 user: roomAdminInfo
                             });
+                            // that.messageList.push({
+                            //     type: "text",
+                            //     content: encodeURIComponent('小程序码扫描直达房间上线啦,快微信扫码体验一下吧~'),
+                            //     where: "channel",
+                            //     at: roomAdminInfo,
+                            //     message_id: 0,
+                            //     time: parseInt(new Date().valueOf() / 1000),
+                            //     user: roomAdminInfo
+                            // });
+                            // that.messageList.push({
+                            //     type: "img",
+                            //     content: 'https://api.bbbug.com/api/weapp/qrcode?room_id=' + that.global.room_id,
+                            //     source: 'https://api.bbbug.com/api/weapp/qrcode?room_id=' + that.global.room_id,
+                            //     where: "channel",
+                            //     at: roomAdminInfo,
+                            //     message_id: 0,
+                            //     time: parseInt(new Date().valueOf() / 1000),
+                            //     user: roomAdminInfo
+                            // });
 
                             that.autoScroll();
                         }
