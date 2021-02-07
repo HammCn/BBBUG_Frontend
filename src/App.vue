@@ -319,9 +319,10 @@
                     <div class="bbbug_locked_player">
                         <div class="bbbug_locked_player_lrc">{{lrcString}}</div>
                         <div class="bbbug_locked_player_song">
-                            <marquee class="bbbug_locked_player_name">正在播放: {{songInfo.song.name}}
-                                ({{songInfo.song.singer}})　　点歌人: {{urldecode(songInfo.user.user_name)}}
-                            </marquee>
+                            <div class="bbbug_locked_player_name">
+                                <marquee scrollamount="3">正在播放: {{songInfo.song.name}}
+                                    ({{songInfo.song.singer}})　　点歌人: {{urldecode(songInfo.user.user_name)}}</marquee>
+                            </div>
                         </div>
                     </div>
                     <div class="bbbug_locked_player_qrcode">
@@ -331,12 +332,12 @@
                     </div>
                 </div>
                 <div class="bbbug_bullet">
-                    <marquee v-for="(item,index) in bulletList" :style="{paddingTop:item.top+'%'}">
+                    <div v-for="(item,index) in bulletList" :style="{top:item.top+'%'}">
                         <span>
                             <img class="bbbug_bullet_img" :src="getStaticUrl(item.head)" />
                             {{urldecode(item.msg)}}
                         </span>
-                    </marquee>
+                    </div>
                 </div>
             </div>
         </div>
@@ -386,7 +387,7 @@
                     userInfo: false,
                     roomInfo: false,
                     appLoading: false,
-                    isLocked: false,
+                    isLocked: true,
                     isEnableScroll: true,
                     isEnableNotification: true,
                     isEnableNoticePlayer: true,
@@ -520,6 +521,7 @@
                     that.audioVolume = parseInt(volume);
                     document.addEventListener('paste', that.getClipboardFiles);
                     that.loadConfig();
+                    that.doDeleteBullet();
                 });
             },
             methods: {
@@ -1628,11 +1630,9 @@
                                     head: obj.user.user_head,
                                     user: obj.user.user_name,
                                     msg: obj.content,
-                                    top: parseInt((Math.random() * 14)) * 5
+                                    top: parseInt((Math.random() * 18)) * 5,
+                                    time: new Date().valueOf()
                                 });
-                                setTimeout(function () {
-                                    that.bulletList.shift();
-                                }, 20000);
                                 document.title = that.urldecode(obj.user.user_name) + "说：" + that.urldecode(obj.content);
                                 clearTimeout(that.timerForWebTitle);
                                 that.callParentFunction('onTextMessage', obj);
@@ -1816,6 +1816,15 @@
                         }
                     };
                 },
+                doDeleteBullet() {
+                    let that = this;
+                    setTimeout(function () {
+                        if (that.bulletList.length > 0 && new Date().valueOf() - that.bulletList[0].time > 20000) {
+                            that.bulletList.shift();
+                        }
+                        that.doDeleteBullet();
+                    }, 3000);
+                },
                 doWebsocketHeartBeat() {
                     let that = this;
                     if (that.websocket.isForceStop) {
@@ -1867,15 +1876,40 @@
         bottom: 0;
     }
 
-    .bbbug_bullet marquee {
+    .bbbug_bullet div {
         position: absolute;
         left: 0;
         right: 0;
-        top: 0;
-        bottom: 0;
+        animation: marqueeAnimation 20s linear 0s 1 alternate forwards;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    .bbbug_bullet marquee span {
+
+    @keyframes marqueeAnimation {
+        from {
+            left: 100%;
+        }
+
+        to {
+            left: -100%;
+            display: none;
+        }
+    }
+
+    @-webkit-keyframes mymove {
+        from {
+            left: 100%;
+        }
+
+        to {
+            left: -100%;
+            display: none;
+        }
+    }
+
+    .bbbug_bullet div span {
         background-color: rgba(255, 255, 255, 0.5);
         display: inline-block;
         vertical-align: middle;
@@ -1884,7 +1918,7 @@
         padding: 0px 20px 0px 0px;
     }
 
-    .bbbug_bullet marquee img {
+    .bbbug_bullet div img {
         width: 60px;
         height: 60px;
         border-radius: 100%;
@@ -1897,8 +1931,9 @@
         left: 10px;
         top: 10px;
         color: rgba(255, 255, 255, 0.8);
-        font-size: 24px;
-        max-width: 40%;
+        font-size: 28px;
+        width: 40%;
+        height: 40%;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
@@ -1934,7 +1969,7 @@
         right: 10px;
         top: 10px;
         color: white;
-        font-size: 24px;
+        font-size: 28px;
         max-width: 50%;
         white-space: nowrap;
         text-overflow: ellipsis;
