@@ -387,7 +387,7 @@
                     userInfo: false,
                     roomInfo: false,
                     appLoading: false,
-                    isLocked: true,
+                    isLocked: false,
                     isEnableScroll: true,
                     isEnableNotification: true,
                     isEnableNoticePlayer: true,
