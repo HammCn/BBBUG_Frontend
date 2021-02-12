@@ -1897,6 +1897,11 @@
         font-size: 32px;
         border-radius: 50px;
         padding: 0px 20px 0px 0px;
+        max-width: 600px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        word-break: break-all;
     }
 
     .bbbug_bullet div img {
