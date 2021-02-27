@@ -325,13 +325,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bbbug_locked_player_qrcode">
+                    <div class="bbbug_locked_player_qrcode" v-if="qrcodeEnabled">
                         <img class="bbbug_locked_player_qrcode_img"
                             :src="['https://api.bbbug.com/api/weapp/qrcode?room_id='+roomInfo.room_id]" />
                         <div class="bbbug_locked_player_qrcode_tips">微信扫码参与</div>
                     </div>
                 </div>
-                <div class="bbbug_bullet">
+                <div class="bbbug_bullet" v-if="bulletEnabled">
                     <div v-for="(item,index) in bulletList" :style="{top:item.top+'%'}">
                         <span>
                             <img class="bbbug_bullet_img" :src="getStaticUrl(item.head)" />
@@ -339,6 +339,10 @@
                         </span>
                     </div>
                 </div>
+            </div>
+            <div class="bbbug_link">
+                <a href="javascript:;" @click="qrcodeEnabled=!qrcodeEnabled">{{qrcodeEnabled?'二维码':'二维码'}}</a>
+                <a href="javascript:;" @click="bulletEnabled=!bulletEnabled">{{bulletEnabled?'弹幕开':'弹幕关'}}</a>
             </div>
         </div>
         <div class="bbbug_dark_cover" v-if="isDarkModel"></div>
@@ -378,6 +382,8 @@
             data() {
                 return {
                     bulletList: [],
+                    bulletEnabled:true,
+                    qrcodeEnabled:true,
                     dialog: false,
                     audioUrl: "",
                     audioImage: "new/images/loading.png",
@@ -1942,7 +1948,6 @@
 
     .bbbug_locked_player_qrcode_img {
         width: 100%;
-        border-radius: 100%;
     }
 
     .bbbug_locked_player_qrcode {
@@ -1952,16 +1957,18 @@
         text-align: left;
         color: white;
         width: 15%;
-        background-color: rgba(255, 255, 255, 0.2);
-        padding: 20px;
-        padding-bottom: 15px;
+        background-color: rgba(255, 255, 255, 0.3);
         border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0px 0px 20px 5px rgba(0,0,0,0.3);
     }
 
     .bbbug_locked_player_qrcode_tips {
         width: 100%;
         text-align: center;
-        margin-top: 20px;
+        padding:5px 0px;
+        font-size:20px;
+        margin-bottom: 5px;
     }
 
     .bbbug_locked_player_lrc {
@@ -2336,16 +2343,15 @@
     }
 
     .bbbug_link a {
-        font-size: 12px;
+        font-size: 14px;
         text-decoration: none;
-        color: rgba(255, 255, 255, 0.5);
-        text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
+        color: rgba(255, 255, 255, 1);
+        text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
     }
 
     .bbbug_link a:hover {
         color: #fff;
-        font-size: 12px;
-        text-decoration: none;
+        text-decoration: underline;
     }
 
     .bbbug_main_chat_jump_id {
