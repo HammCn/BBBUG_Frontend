@@ -107,10 +107,10 @@
                                 class="bbbug_main_chat_item bbbug_main_chat_text"
                                 :class="item.user.user_id==userInfo.user_id?'bbbug_main_chat_mine':''">
                                 <div class="bbbug_main_chat_head">
-                                    <el-dropdown trigger="hover" @command="commandUserHead" :index="index">
+                                    <el-dropdown trigger="click" @command="commandUserHead" :index="index">
                                         <img class="bbbug_main_chat_head_image" :src="getStaticUrl(item.user.user_head)"
                                             :onerror="getStaticUrl('new/images/nohead.jpg')"
-                                            @dblclick="doTouch(item.user.user_id)" />
+                                            @dblclick.stop="doTouch(item.user.user_id)" />
                                         <el-dropdown-menu slot="dropdown">
                                             <el-dropdown-item :command="beforeHandleUserCommand(item.user, 'at')"
                                                 v-if="item.user.user_id!=userInfo.user_id">
