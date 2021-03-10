@@ -2102,6 +2102,9 @@
         bottom: 0;
         right: 0;
         background-color: rgba(255, 255, 255, 0.95);
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        overflow: hidden;
     }
 
     .bbbug_main_chat_input {

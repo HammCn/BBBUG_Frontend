@@ -164,11 +164,8 @@
  }
  
  .bbbug_main_box {
-     -moz-border-radius: 10px;
-     -webkit-border-radius: 10px;
      border-radius: 10px;
      box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
-     overflow: hidden;
      position: absolute;
      right: 0;
      top: 0;
@@ -177,14 +174,11 @@
  }
  
  .bbbug_frame {
-     -moz-border-radius: 10px;
-     -webkit-border-radius: 10px;
      border-radius: 10px;
      background-color: white;
      -moz-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
      -webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
      box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
-     overflow: hidden;
  }
  
  .bbbug_main_menu {
@@ -195,6 +189,9 @@
      width: 80px;
      background-color: #333;
      text-align: center;
+     border-top-left-radius: 10px;
+     border-bottom-left-radius: 10px;
+     overflow: hidden;
  }
  
  .bbbug_main_menu_head {
@@ -826,6 +823,10 @@
      color: orangered;
      margin-right: 3px;
  }
+ 
+ .bbbug_phone_message_back {
+     display: none;
+ }
  /* 右边歌单列表结束 */
  
  @media screen and (max-width: 1200px) {
@@ -841,6 +842,12 @@
      .bbbug_main_box {
          border-radius: 0!important;
      }
+     .bbbug_main_chat{
+        border-radius: 0!important;
+     }
+     .bbbug_main_menu{
+        border-radius: 0!important;
+     }
 }
  @media screen and (max-height: 700px) {
      .bbbug_main {
@@ -855,13 +862,24 @@
      .bbbug_main_box {
          border-radius: 0!important;
      }
- }
- 
- .bbbug_phone_message_back {
-     display: none;
+     .bbbug_main_chat{
+        border-radius: 0!important;
+     }
+     .bbbug_main_menu{
+        border-radius: 0!important;
+     }
  }
  
  @media screen and (max-width: 480px) {
+    .bbbug_main_box {
+        border-radius: 0!important;
+    }
+    .bbbug_main_chat{
+       border-radius: 0!important;
+    }
+    .bbbug_main_menu{
+       border-radius: 0!important;
+    }
      .bbbug_main_right {
          left: 80px;
          right: 0;
