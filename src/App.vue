@@ -87,8 +87,8 @@
 
                         </div>
                         <div class="bbbug_main_chat_online">
-                            <span title="打开你的年报" class="bbbug_main_chat_invate" @click="showMy2020"
-                                v-if="userInfo" style="display:none;">2020&2021</span>
+                            <span title="打开你的年报" class="bbbug_main_chat_invate" @click="showMy2020" v-if="userInfo"
+                                style="display:none;">2020&2021</span>
                             <span title="复制邀请链接" class="bbbug_main_chat_invate"
                                 :data-clipboard-text="copyData">邀请</span>
                             <span title="无缝穿梭到手机" class="bbbug_main_chat_invate hideWhenPhone" @click="showQrCode"
@@ -382,8 +382,8 @@
             data() {
                 return {
                     bulletList: [],
-                    bulletEnabled:true,
-                    qrcodeEnabled:true,
+                    bulletEnabled: true,
+                    qrcodeEnabled: true,
                     dialog: false,
                     audioUrl: "",
                     audioImage: "new/images/loading.png",
@@ -484,7 +484,7 @@
                             that.$nextTick(function () {
                                 that.$refs.audio.volume = parseFloat(that.audioVolume / 100);
                                 if (that.audioUrl) {
-                                    that.$refs.audio.play();
+                                    that.audioStartPlay();
                                 }
                             });
                         }).catch(function () {
@@ -494,7 +494,7 @@
                             that.$nextTick(function () {
                                 that.$refs.audio.volume = parseFloat(that.audioVolume / 100);
                                 if (that.audioUrl) {
-                                    that.$refs.audio.play();
+                                    that.audioStartPlay();
                                 }
                             });
                         });
@@ -507,7 +507,7 @@
                                 that.$nextTick(function () {
                                     that.$refs.audio.volume = parseFloat(that.audioVolume / 100);
                                     if (that.audioUrl) {
-                                        that.$refs.audio.play();
+                                        that.audioStartPlay();
                                     }
                                 });
                             }
@@ -927,11 +927,16 @@
                     that.getMusicLrc();
                     that.$nextTick(function () {
                         // that.$refs.audio.load();
-                        that.$refs.audio.play();
+                        that.audioStartPlay();
                     });
                 },
                 playSystemAudio() {
                     this.$refs.noticePlayer.play();
+                },
+                audioStartPlay() {
+                    try {
+                        this.$refs.audio.play();
+                    } catch (e) { }
                 },
                 messageChanged(e) {
                     let that = this;
@@ -1132,7 +1137,6 @@
                     window.open('https://api.bbbug.com/api/activity/?user_id=' + this.userInfo.user_id);
                 },
                 AppController(data) {
-                    console.log(data);
                     eval("this." + data + "()");
                 },
                 hideLoading() {
@@ -1804,10 +1808,10 @@
                 },
                 connectWebsocket() {
                     let that = this;
-                    console.log("connection...");
+                    // console.log("connection...");
                     that.websocket.connection = new WebSocket(that.websocket.url);
                     that.websocket.connection.onopen = function (evt) {
-                        console.log("链接成功");
+                        // console.log("链接成功");
                         that.websocket.isConnected = true;
                         that.websocket.isForceStop = false;
                         that.doWebsocketHeartBeat();
@@ -1838,7 +1842,9 @@
                     }
                     clearTimeout(that.websocket.heartBeatTimer);
                     that.websocket.heartBeatTimer = setTimeout(function () {
-                        that.websocket.connection.send('heartBeat');
+                        if (that.websocket.connection.readyState == 1) {
+                            that.websocket.connection.send('heartBeat');
+                        }
                         that.doWebsocketHeartBeat();
                     }, 10000);
                 },
@@ -1847,9 +1853,11 @@
                     if (!that.websocket.isConnected) {
                         return true;
                     }
-                    console.log("wating...");
-                    that.websocket.connection.send('bye');
-                    that.websocket.connection.close();
+                    // console.log("wating...");
+                    if (that.websocket.connection.readyState == 1) {
+                        that.websocket.connection.send('bye');
+                        that.websocket.connection.close();
+                    }
                     setTimeout(function () {
                         return that.doForceCloseWebsocket();
                     }, 10);
@@ -1859,7 +1867,7 @@
                     if (that.websocket.isForceStop) {
                         return;
                     }
-                    console.log("连接已断开，10s后将自动重连");
+                    // console.log("连接已断开，10s后将自动重连");
                     clearTimeout(that.websocket.reConnectTimer);
                     that.websocket.reConnectTimer = setTimeout(function () {
                         that.connectWebsocket();
@@ -1965,14 +1973,14 @@
         background-color: rgba(255, 255, 255, 0.3);
         border-radius: 10px;
         overflow: hidden;
-        box-shadow: 0px 0px 20px 5px rgba(0,0,0,0.3);
+        box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.3);
     }
 
     .bbbug_locked_player_qrcode_tips {
         width: 100%;
         text-align: center;
-        padding:5px 0px;
-        font-size:20px;
+        padding: 5px 0px;
+        font-size: 20px;
         margin-bottom: 5px;
     }
 
