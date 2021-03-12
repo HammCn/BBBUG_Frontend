@@ -8,6 +8,11 @@
                 <div class="bbbug_main_right_song_list" v-loading="bbbug_loading">
                     <div class="bbbug_scroll" v-if="list.length>0">
                         <div class="bbbug_main_right_song_item" v-for="(item,index) in list" v-loading="item.loading">
+                            <div class="bbug_main_right_song_pic">
+                                <img :data="getStaticUrl(item.song.pic)" :src="getStaticUrl('new/images/loading.gif')"
+                                    onload="this.src=this.attributes['data'].value;this.attributes['onload']=null;"
+                                    :onerror="getStaticUrl('new/images/nohead.jpg')" />
+                            </div>
                             <div class="bbbug_main_right_song_name">{{item.song.name}}
                             </div>
                             <div class="bbbug_main_right_song_singer" v-if="item.at">

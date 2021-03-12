@@ -13,13 +13,19 @@
                 <div class="bbbug_main_right_song_list_search" v-loading="bbbug_loading">
                     <div class="bbbug_scroll">
                         <div class="bbbug_main_right_song_item" v-for="(item, index) in list" v-loading="item.loading">
+                            <div class="bbug_main_right_song_pic">
+                                <img :data="getStaticUrl(item.pic)" :src="getStaticUrl('new/images/loading.gif')"
+                                    onload="this.src=this.attributes['data'].value;this.attributes['onload']=null;"
+                                    :onerror="getStaticUrl('new/images/nohead.jpg')" />
+                            </div>
                             <div class="bbbug_main_right_song_name">
                                 <span class="bbbug_singer_hover" @click="searchSongByKeyword(item.name)"
                                     :title="'搜索 '+item.name+' 的歌曲'">{{item.name}}</span>
                             </div>
                             <div class="bbbug_main_right_song_singer">
-                                歌手: <span class="bbbug_singer_hover" @click="searchSongByKeyword(item.singer)"
-                                    :title="'搜索 '+item.singer+' 的歌曲'">{{item.singer}}</span>
+                                <span class="bbbug_singer_hover" @click="searchSongByKeyword(item.singer)"
+                                    :title="'搜索 '+item.singer+' 的歌曲'">{{item.singer}}</span> <span
+                                    v-if="item.album">({{item.album}})</span>
                             </div>
                             <div class="bbbug_main_right_song_controll">
                                 <button
@@ -118,9 +124,9 @@
             },
             querySearch(queryString, cb) {
                 //设置历史
-                if(this.keyword){
+                if (this.keyword) {
                     cb([]);
-                }else{
+                } else {
                     cb(JSON.parse(JSON.stringify(this.historyList)));
                 }
             },
