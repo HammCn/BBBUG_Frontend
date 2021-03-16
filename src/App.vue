@@ -3,7 +3,7 @@
         <div class="bbbug_bg" @click.stop="isLocked=!isLocked;"
             :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
         </div>
-        <div class="snow"></div>
+        <!-- <div class="snow"></div> -->
         <div class="bbbug_link">
             <a href="https://doc.bbbug.com" target="_blank">开发文档</a>
             <a href="https://gitee.com/bbbug_com" target="_blank">Gitee</a>
@@ -2439,7 +2439,7 @@
         margin-bottom: 10px;
     }
 
-    @keyframes snow {
+    /* @keyframes snow {
         0% {
             background-position: 0 0, 0 0;
         }
@@ -2459,5 +2459,5 @@
         animation: 10s snow linear infinite;
         pointer-events: none;
         z-index: 999;
-    }
+    } */
 </style>
