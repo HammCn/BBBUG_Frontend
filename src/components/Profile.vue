@@ -33,7 +33,7 @@
                                 title="Android 在线"></i>
                         </div>
                         <div class="bbbug_main_profile_user_name" :style="{color:userInfo.user_id<10000?'orangered':''}"
-                            :title="userInfo.user_id<10000?'赞助BBBUG项目即可获得靓号':''"><i :title="userInfo.user_vip"
+                            :title="userInfo.user_id<10000?'骨灰级赞助用户':''"><i :title="userInfo.user_vip"
                                 v-if="userInfo.user_vip" class="iconfont icon-icon_certification_f user_icon"
                                 style="font-size: 18px; color: rgb(9, 122, 216);"></i>
                             {{urldecode(userInfo.user_name)}}</div>

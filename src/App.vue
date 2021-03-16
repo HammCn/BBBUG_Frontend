@@ -147,13 +147,13 @@
                                 </div>
                                 <div class="bbbug_main_chat_name"
                                     :style="{color:item.user.user_id<10000?'orangered':''}"
-                                    :title="item.user.user_id<10000?'赞助BBBUG项目即可获得靓号':''">
+                                    :title="item.user.user_id<10000?'骨灰级赞助用户':''">
                                     {{urldecode(item.user.user_name)}}
                                     <i class="iconfont icon-icon_certification_f user_icon"
                                         style="font-size:18px;color:#097AD8;" v-if="item.user.user_vip"
                                         :title="item.user.user_vip"></i>
                                     <span class="bbbug_main_chat_name_icon" v-if="item.user.user_icon==1"
-                                        title="2020&2021福蛋">福</span>
+                                        title="曾经的元老级管理员">元老</span>
                                 </div>
                                 <div class="bbbug_main_chat_context_menu"
                                     @contextmenu.prevent.stop="openMenu($event,item)">
