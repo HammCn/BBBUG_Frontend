@@ -103,7 +103,7 @@
                     <div class="bbbug_main_chat_history" id="bbbug_main_chat_history" @scroll="onMessageScroll"
                         @click="hideAll" @contextmenu.prevent="hideAll">
                         <div v-for="(item,index) in messageList">
-                            <div v-if="item.type=='text' || item.type=='img' || item.type=='link' || item.type=='jump'"
+                            <div v-if="item.type=='text' || item.type=='img' || item.type=='link' || item.type=='jump' || item.type=='notice'"
                                 class="bbbug_main_chat_item bbbug_main_chat_text"
                                 :class="item.user.user_id==userInfo.user_id?'bbbug_main_chat_mine':''">
                                 <div class="bbbug_main_chat_head">
@@ -190,6 +190,15 @@
                                         </div>
                                         <div class="bbbug_main_chat_jump_desc">{{item.desc||"没有读取到网站简介..."}}</div>
                                         <div class="bbbug_main_chat_jump_tips">{{item.link}}
+                                        </div>
+                                    </div>
+                                    <!--房间公告-->
+                                    <div class="bbbug_main_chat_content bbbug_main_chat_notice"
+                                        v-if="item.type=='notice'" title="快捷机票 点击进入"
+                                        @click="enterRoom(item.jump.room_id)" style="border-radius:10px">
+                                        <div class="bbbug_main_chat_notice_title">房间公告</div>
+                                        <div class="bbbug_main_chat_notice_content">
+                                            {{urldecode(item.content)}}
                                         </div>
                                     </div>
                                     <!--文字消息-->
@@ -1204,14 +1213,11 @@
                                 that.messageList.shift();
                             }
                             let roomAdminInfo = Object.assign({}, that.global.roomInfo.admin);
-                            roomAdminInfo.message = {
-                                content: "来自房间公告"
-                            };
                             that.messageList.push({
-                                type: "text",
+                                type: "notice",
                                 content: encodeURIComponent(that.global.roomInfo.room_notice ? that.global.roomInfo.room_notice : ('欢迎来到' + that.global.roomInfo.room_name + '!')),
                                 where: "channel",
-                                at: roomAdminInfo,
+                                at: null,
                                 message_id: 0,
                                 time: parseInt(new Date().valueOf() / 1000),
                                 user: roomAdminInfo
@@ -2063,20 +2069,59 @@
     .bbbug_main_chat_content {
         background-color: #e5e5e5;
         padding: 8px 16px;
-        border-radius: 20px;
-        border-top-left-radius: 0px;
+        border-radius: 10px;
         font-size: 14px;
         color: #666;
         max-width: 300px;
-        margin-left: 50px;
+        margin-left: 60px;
         display: inline-block;
         word-break: break-all;
         word-wrap: break-word;
+        position: relative;
     }
 
-    .bbbug_main_chat_mine .bbbug_main_chat_content {
-        border-top-left-radius: 20px;
-        border-top-right-radius: 0px;
+    .bbbug_main_chat_content::before {
+        content: '';
+        position: absolute;
+        top: -6px;
+        left: -13px;
+        width: 15px;
+        height: 15px;
+        border-width: 0;
+        border-style: solid;
+        border-color: transparent;
+        border-bottom-width: 12px;
+        border-bottom-color: currentColor;
+        border-radius: 0 0 0 15px;
+        color: #E5E5E5;
+    }
+
+    .content_boy::before {
+        color: #66CBFF;
+    }
+
+    .content_girl::before {
+        color: #FE9898;
+    }
+
+    .content_at::before {
+        color: #666;
+    }
+
+    .bbbug_main_chat_mine .bbbug_main_chat_content::before {
+        content: '';
+        position: absolute;
+        right: -15px;
+        top: -6px;
+        left: calc(100% - 2px);
+        width: 15px;
+        height: 15px;
+        border-width: 0;
+        border-style: solid;
+        border-color: transparent;
+        border-bottom-width: 12px;
+        border-bottom-color: currentColor;
+        border-radius: 0 0 15px 0;
     }
 
     .bbbug_main_chat_content:active {
@@ -2094,8 +2139,29 @@
 
     .bbbug_main_chat_mine .bbbug_main_chat_content {
         margin-left: auto;
-        margin-right: 50px;
+        margin-right: 60px;
         text-align: left;
+    }
+
+
+    .bbbug_main_chat_notice .bbbug_main_chat_notice_title {
+        background-color: #666;
+        color: white;
+        margin: -8px -16px;
+        padding: 2px 10px;
+        font-size: 12px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    .bbbug_main_chat_notice .bbbug_main_chat_notice_content {
+        font-size: 14px;
+        margin-top: 15px;
+        padding: 5px 10px;
+    }
+
+    .bbbug_main_chat_notice::before {
+        color: #666;
     }
 
     .bbbug_main_chat_img {
