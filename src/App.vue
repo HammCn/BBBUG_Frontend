@@ -194,8 +194,7 @@
                                     </div>
                                     <!--房间公告-->
                                     <div class="bbbug_main_chat_content bbbug_main_chat_notice"
-                                        v-if="item.type=='notice'" title="快捷机票 点击进入"
-                                        @click="enterRoom(item.jump.room_id)" style="border-radius:10px">
+                                        v-if="item.type=='notice'" title="快捷机票 点击进入" style="border-radius:10px">
                                         <div class="bbbug_main_chat_notice_title">房间公告</div>
                                         <div class="bbbug_main_chat_notice_content">
                                             {{urldecode(item.content)}}
@@ -2148,7 +2147,7 @@
         background-color: #666;
         color: white;
         margin: -8px -16px;
-        padding: 2px 10px;
+        padding: 5px 10px;
         font-size: 12px;
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
@@ -2157,7 +2156,6 @@
     .bbbug_main_chat_notice .bbbug_main_chat_notice_content {
         font-size: 14px;
         margin-top: 15px;
-        padding: 5px 10px;
     }
 
     .bbbug_main_chat_notice::before {
