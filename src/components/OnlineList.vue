@@ -4,8 +4,8 @@
             <div class="bbbug_main_right_online">
                 <div class="bbbug_main_right_online_title">房间在线用户
                 </div>
-                <div class="bbbug_main_right_online_list" v-loading="bbbug_loading" v-if="list.length>0">
-                    <div class="bbbug_scroll">
+                <div class="bbbug_main_right_online_list" v-loading="bbbug_loading">
+                    <div class="bbbug_scroll" v-if="list.length>0">
                         <div class="bbbug_main_right_online_item" v-for="(item,index) in list"
                             :style="{filter:item.user_shutdown?'grayscale(1)':'none'}" :title="getStatus(item)">
                             <div class="bbbug_main_right_online_info">
@@ -29,7 +29,8 @@
                                                 v-if="item.user_id!=userInfo.user_id">
                                                 送歌给Ta
                                             </el-dropdown-item>
-                                            <el-dropdown-item divided :command="beforeHandleUserCommand(item, 'removeBan')"
+                                            <el-dropdown-item divided
+                                                :command="beforeHandleUserCommand(item, 'removeBan')"
                                                 v-if="(userInfo.user_admin||userInfo.user_id==roomInfo.room_user) && (item.user_shutdown || item.user_songdown)">
                                                 解除所有限制
                                             </el-dropdown-item>
@@ -46,7 +47,8 @@
                                                 <span v-if="item.user_guest">取消嘉宾身份</span>
                                                 <span v-if="!item.user_guest">设置为嘉宾</span>
                                             </el-dropdown-item>
-                                            <el-dropdown-item divided :command="beforeHandleUserCommand(item, 'profile')">
+                                            <el-dropdown-item divided
+                                                :command="beforeHandleUserCommand(item, 'profile')">
                                                 查看主页
                                             </el-dropdown-item>
                                         </el-dropdown-menu>
@@ -59,7 +61,8 @@
                                         <i class="iconfont icon-icon_certification_f user_icon"
                                             style="font-size:18px;color:#097AD8;" v-if="item.user_vip"
                                             :title="item.user_vip"></i>
-                                        {{urldecode(item.user_name)}}</div>
+                                        {{urldecode(item.user_name)}}
+                                    </div>
                                     <div class="bbbug_main_right_online_desc">
                                         <i class="iconfont user_icon user_female icon-xingbie-nv" title="女生"
                                             v-if="item.user_sex==0"></i>
@@ -85,169 +88,169 @@
 </template>
 <script>
     export
-    default {
-        data() {
-            return {
-                bbbug_loading: false,
-                list: [],
-                userInfo: null,
-                room_id: "",
-                roomInfo: false
-            }
-        },
-        created() {
-            if (this.global.userInfo && this.global.roomInfo) {
-                this.userInfo = this.global.userInfo;
-                this.roomInfo = this.global.roomInfo;
-                this.getList();
-            } else {
-                this.$parent.hideAll();
-            }
-        },
-        methods: {
-            getStatus(item) {
-                if (item.user_shutdown && item.user_songdown) {
-                    return '禁言&禁歌';
-                } else if (item.user_shutdown) {
-                    return '禁言';
-                } else if (item.user_songdown) {
-                    return '禁歌';
-                } else {
-                    return '';
-                }
-            },
-            beforeHandleUserCommand(row, command) {
+        default {
+            data() {
                 return {
-                    "row": row,
-                    "command": command
+                    bbbug_loading: false,
+                    list: [],
+                    userInfo: null,
+                    room_id: "",
+                    roomInfo: false
                 }
             },
-            doTouch(user_id) {
-                let that = this;
-                that.request({
-                    url: "message/touch",
-                    data: {
-                        at: user_id,
-                        room_id: that.global.room_id
-                    },
-                    success(res) {
-                        that.$message.success(res.msg);
-                    }
-                });
+            created() {
+                if (this.global.userInfo && this.global.roomInfo) {
+                    this.userInfo = this.global.userInfo;
+                    this.roomInfo = this.global.roomInfo;
+                    this.getList();
+                } else {
+                    this.$parent.hideAll();
+                }
             },
-            commandUserHead(cmd) {
-                let that = this;
-                switch (cmd.command) {
-                    case 'at':
-                        that.global.atUserInfo = {
-                            user_id: cmd.row.user_id,
-                            user_name: cmd.row.user_name
-                        };
-                        that.$parent.atUser();
-                        that.$parent.hideAll();
-                        break;
-                    case 'touch':
-                        that.doTouch(cmd.row.user_id);
-                        break;
-                    case 'pullback':
-                        that.request({
-                            url: "message/back",
-                            data: {
-                                message_id: cmd.row.message_id,
-                                room_id: that.global.room_id
-                            }
-                        });
-                        break;
-                    case 'shutdown':
-                        that.request({
-                            url: "user/shutdown",
-                            data: {
+            methods: {
+                getStatus(item) {
+                    if (item.user_shutdown && item.user_songdown) {
+                        return '禁言&禁歌';
+                    } else if (item.user_shutdown) {
+                        return '禁言';
+                    } else if (item.user_songdown) {
+                        return '禁歌';
+                    } else {
+                        return '';
+                    }
+                },
+                beforeHandleUserCommand(row, command) {
+                    return {
+                        "row": row,
+                        "command": command
+                    }
+                },
+                doTouch(user_id) {
+                    let that = this;
+                    that.request({
+                        url: "message/touch",
+                        data: {
+                            at: user_id,
+                            room_id: that.global.room_id
+                        },
+                        success(res) {
+                            that.$message.success(res.msg);
+                        }
+                    });
+                },
+                commandUserHead(cmd) {
+                    let that = this;
+                    switch (cmd.command) {
+                        case 'at':
+                            that.global.atUserInfo = {
                                 user_id: cmd.row.user_id,
-                                room_id: that.global.room_id
-                            },
-                            success(res){
-                                that.$message.success(res.msg);
-                                that.getList();
-                            }
-                        });
-                        break;
-                    case 'guestctrl':
-                        that.request({
-                            url: "user/guestctrl",
-                            data: {
-                                user_id: cmd.row.user_id,
-                                room_id: that.global.room_id
-                            },
-                            success(res){
-                                that.$message.success(res.msg);
-                                that.getList();
-                            }
-                        });
-                        break;
-                    case 'songdown':
-                        that.request({
-                            url: "user/songdown",
-                            data: {
-                                user_id: cmd.row.user_id,
-                                room_id: that.global.room_id
-                            },
-                            success(res){
-                                that.$message.success(res.msg);
-                                that.getList();
-                            }
-                        });
-                        break;
-                    case 'removeBan':
-                        that.request({
-                            url: "user/removeban",
-                            data: {
-                                user_id: cmd.row.user_id,
-                                room_id: that.global.room_id
-                            },
-                            success(res){
-                                that.$message.success(res.msg);
-                                that.getList();
-                            }
-                        });
-                        break;
-                    case 'profile':
-                        that.global.profileUserId = cmd.row.user_id;
-                        that.$nextTick(function() {
+                                user_name: cmd.row.user_name
+                            };
+                            that.$parent.atUser();
                             that.$parent.hideAll();
-                            that.$parent.dialog.Profile = true;
-                        });
-                        break;
-                    case 'sendSong':
-                        that.global.atSongUserInfo = cmd.row;
-                        that.$parent.hideAll();
-                        that.$parent.dialog.SearchSongs = true;
-                        break;
-                    default:
-                        that.$message.error('即将上线，敬请期待');
+                            break;
+                        case 'touch':
+                            that.doTouch(cmd.row.user_id);
+                            break;
+                        case 'pullback':
+                            that.request({
+                                url: "message/back",
+                                data: {
+                                    message_id: cmd.row.message_id,
+                                    room_id: that.global.room_id
+                                }
+                            });
+                            break;
+                        case 'shutdown':
+                            that.request({
+                                url: "user/shutdown",
+                                data: {
+                                    user_id: cmd.row.user_id,
+                                    room_id: that.global.room_id
+                                },
+                                success(res) {
+                                    that.$message.success(res.msg);
+                                    that.getList();
+                                }
+                            });
+                            break;
+                        case 'guestctrl':
+                            that.request({
+                                url: "user/guestctrl",
+                                data: {
+                                    user_id: cmd.row.user_id,
+                                    room_id: that.global.room_id
+                                },
+                                success(res) {
+                                    that.$message.success(res.msg);
+                                    that.getList();
+                                }
+                            });
+                            break;
+                        case 'songdown':
+                            that.request({
+                                url: "user/songdown",
+                                data: {
+                                    user_id: cmd.row.user_id,
+                                    room_id: that.global.room_id
+                                },
+                                success(res) {
+                                    that.$message.success(res.msg);
+                                    that.getList();
+                                }
+                            });
+                            break;
+                        case 'removeBan':
+                            that.request({
+                                url: "user/removeban",
+                                data: {
+                                    user_id: cmd.row.user_id,
+                                    room_id: that.global.room_id
+                                },
+                                success(res) {
+                                    that.$message.success(res.msg);
+                                    that.getList();
+                                }
+                            });
+                            break;
+                        case 'profile':
+                            that.global.profileUserId = cmd.row.user_id;
+                            that.$nextTick(function () {
+                                that.$parent.hideAll();
+                                that.$parent.dialog.Profile = true;
+                            });
+                            break;
+                        case 'sendSong':
+                            that.global.atSongUserInfo = cmd.row;
+                            that.$parent.hideAll();
+                            that.$parent.dialog.SearchSongs = true;
+                            break;
+                        default:
+                            that.$message.error('即将上线，敬请期待');
+                    }
+                },
+                getList() {
+                    let that = this;
+                    if (that.bbbug_loading) {
+                        return;
+                    }
+                    that.bbbug_loading = true;
+                    that.request({
+                        url: "user/online",
+                        data: {
+                            room_id: that.global.room_id
+                        },
+                        success(res) {
+                            that.bbbug_loading = false;
+                            that.list = res.data;
+                        },
+                        error(res) {
+                            that.bbbug_loading = false;
+                        }
+                    });
                 }
             },
-            getList() {
-                let that = this;
-                if (that.bbbug_loading) {
-                    return;
-                }
-                that.bbbug_loading = true;
-                that.request({
-                    url: "user/online",
-                    data: {
-                        room_id: that.global.room_id
-                    },
-                    success(res) {
-                        that.bbbug_loading = false;
-                        that.list = res.data;
-                    },
-                    error(res) {
-                        that.bbbug_loading = false;
-                    }
-                });
-            }
-        },
-    }
+        }
 </script>
 <style>
 

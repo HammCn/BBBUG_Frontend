@@ -630,9 +630,6 @@
                         }
                     });
                 },
-                uploadMusic() {
-
-                },
                 getQueryString(name) {
                     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
                     var r = window.location.search.substr(1).match(reg);
@@ -709,9 +706,11 @@
 
                     if (!isJPG) {
                         this.$message.error('发送图片只能是 JPG/PNG/GIF 格式!');
+                        return false;
                     }
                     if (!isLt2M) {
                         this.$message.error('发送图片大小不能超过 2MB!');
+                        return false;
                     }
                     return isJPG && isLt2M;
                 },
@@ -721,9 +720,11 @@
 
                     if (!isMp3) {
                         this.$message.error('音乐只允许上传mp3格式!');
+                        return false;
                     }
                     if (!isLt5M) {
                         this.$message.error('上传音乐MP3不允许超过5MB!');
+                        return false;
                     }
                     return isMp3 && isLt5M;
                 },
@@ -1276,15 +1277,17 @@
                                 time: parseInt(new Date().valueOf() / 1000),
                                 user: roomAdminInfo
                             });
-                            // that.messageList.push({
-                            //     type: "text",
-                            //     content: encodeURIComponent('小程序码扫描直达房间上线啦,快微信扫码体验一下吧~'),
-                            //     where: "channel",
-                            //     at: roomAdminInfo,
-                            //     message_id: 0,
-                            //     time: parseInt(new Date().valueOf() / 1000),
-                            //     user: roomAdminInfo
-                            // });
+                            if (that.roomInfo.room_id == 888 && that.userInfo.user_id < 0) {
+                                that.messageList.push({
+                                    type: "text",
+                                    content: encodeURIComponent('临时用户你好，我们强烈建议你登录进来跟我们一起划水听歌聊天呀~'),
+                                    where: "channel",
+                                    at: roomAdminInfo,
+                                    message_id: 0,
+                                    time: parseInt(new Date().valueOf() / 1000),
+                                    user: roomAdminInfo
+                                });
+                            }
                             // that.messageList.push({
                             //     type: "img",
                             //     content: 'https://api.bbbug.com/api/weapp/qrcode?room_id=' + that.global.room_id,

@@ -12,8 +12,8 @@
                         <el-button slot="append" @click="joinRoom(room_id)">进入</el-button>
                     </el-autocomplete>
                 </div>
-                <div class="bbbug_main_right_room_list" v-loading="bbbug_loading" v-if="list.length>0">
-                    <div class="bbbug_scroll">
+                <div class="bbbug_main_right_room_list" v-loading="bbbug_loading">
+                    <div class="bbbug_scroll" v-if="list.length>0">
                         <div class="bbbug_main_right_room_item" v-for="(item,index) in list"
                             @click="joinRoom(item.room_id)">
                             <div class="bbbug_main_right_room_name">
@@ -47,74 +47,74 @@
 </template>
 <script>
     export
-    default {
-        data() {
-            return {
-                bbbug_loading: false,
-                list: [],
-                userInfo: null,
-                room_id: "",
-                roomHistory: []
-            }
-        },
-        created() {
-            this.userInfo = this.global.userInfo;
-            this.getList();
-            this.roomHistory = localStorage.getItem("room_history") || [];
-            if (this.roomHistory) {
-                this.roomHistory = JSON.parse(this.roomHistory);
-            }
+        default {
+            data() {
+                return {
+                    bbbug_loading: false,
+                    list: [],
+                    userInfo: null,
+                    room_id: "",
+                    roomHistory: []
+                }
+            },
+            created() {
+                this.userInfo = this.global.userInfo;
+                this.getList();
+                this.roomHistory = localStorage.getItem("room_history") || [];
+                if (this.roomHistory) {
+                    this.roomHistory = JSON.parse(this.roomHistory);
+                }
 
-        },
-        methods: {
-            querySearch(queryString, cb) {
-                //设置历史
-                cb(JSON.parse(JSON.stringify(this.roomHistory)));
             },
-            handleSelect(item) {
-                console.log(item)
-                this.room_id = item.room_id;
-                this.joinRoom(item.room_id);
-            },
-            urldecode(str) {
-                return decodeURIComponent(str);
-            },
-            createNewRoom() {
-                this.$parent.hideAll();
-                this.$parent.dialog.RoomCreate = true;
-            },
-            joinRoom(room_id) {
-                if (room_id) {
+            methods: {
+                querySearch(queryString, cb) {
+                    //设置历史
+                    cb(JSON.parse(JSON.stringify(this.roomHistory)));
+                },
+                handleSelect(item) {
+                    console.log(item)
+                    this.room_id = item.room_id;
+                    this.joinRoom(item.room_id);
+                },
+                urldecode(str) {
+                    return decodeURIComponent(str);
+                },
+                createNewRoom() {
+                    this.$parent.hideAll();
+                    this.$parent.dialog.RoomCreate = true;
+                },
+                joinRoom(room_id) {
+                    if (room_id) {
+                        localStorage.setItem('room_change_id', room_id);
+                        this.$parent.hideAll();
+                        this.$parent.changeRoom();
+                    }
+                },
+                joinMyRoom() {
+                    let room_id = this.userInfo.myRoom.room_id;
                     localStorage.setItem('room_change_id', room_id);
                     this.$parent.hideAll();
                     this.$parent.changeRoom();
-                }
-            },
-            joinMyRoom() {
-                let room_id = this.userInfo.myRoom.room_id;
-                localStorage.setItem('room_change_id', room_id);
-                this.$parent.hideAll();
-                this.$parent.changeRoom();
-            },
-            getList() {
-                let that = this;
-                if (that.bbbug_loading) {
-                    return;
-                }
-                that.bbbug_loading = true;
-                that.request({
-                    url: "room/hotRooms",
-                    success(res) {
-                        that.bbbug_loading = false;
-                        that.list = res.data;
-                    },
-                    error(res) {
-                        that.bbbug_loading = false;
+                },
+                getList() {
+                    let that = this;
+                    if (that.bbbug_loading) {
+                        return;
                     }
-                });
-            }
-        },
-    }
+                    that.bbbug_loading = true;
+                    that.request({
+                        url: "room/hotRooms",
+                        success(res) {
+                            that.bbbug_loading = false;
+                            that.list = res.data;
+                        },
+                        error(res) {
+                            that.bbbug_loading = false;
+                        }
+                    });
+                }
+            },
+        }
 </script>
 <style>
     .room_lock {
