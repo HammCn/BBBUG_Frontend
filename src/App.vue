@@ -53,7 +53,7 @@
                         :action="uploadMusicUrl" :show-file-list="false" :on-success="handleMusicUploadSuccess"
                         :before-upload="doUploadMusicBefore" :data="baseData">
                         <div class="bbbug_main_menu_icon">
-                            <div @click="uploadMusic">
+                            <div>
                                 <img :src="getStaticUrl('new/images/menubar_upload.png')" title="上传搜索不到的歌曲" />
                                 <div>上传</div>
                             </div>
