@@ -162,6 +162,9 @@
      top: 8%;
      bottom: 8%;
  }
+ .bbbug_main .el-loading-mask{
+     border-radius: 10px;
+ }
  
  .bbbug_main_box {
      border-radius: 10px;

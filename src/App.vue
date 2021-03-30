@@ -28,14 +28,14 @@
                             </div>
                         </div>
                         <div class="bbbug_main_menu_icon"
-                            v-if="roomInfo.room_type==1 || (roomInfo.room_type==4 &&  roomInfo.room_addsong==0)">
+                            v-if="roomInfo.room_addsong==0 || roomInfo.room_user==userInfo.user_id || userInfo.user_admin">
                             <div @click="showPlaySongList">
                                 <img :src="getStaticUrl('new/images/menubar_pickedsong.png')" title="已点歌曲列表" />
                                 <div>已点</div>
                             </div>
                         </div>
                         <div class="bbbug_main_menu_icon"
-                            v-if="roomInfo.room_type==1 || (roomInfo.room_type==4 && (roomInfo.room_addsong==0 || roomInfo.room_user==userInfo.user_id))">
+                            v-if="roomInfo.room_addsong==0 || roomInfo.room_user==userInfo.user_id || userInfo.user_admin">
                             <div @click="showMySongList">
                                 <img :src="getStaticUrl('new/images/menubar_mysong.png')" title="我点过的歌单" />
                                 <div>歌单</div>
@@ -49,6 +49,16 @@
                         </div>
 
                     </div>
+                    <el-upload v-if="(roomInfo.room_type==1 || roomInfo.room_type==4) && userInfo.user_id>0"
+                        :action="uploadMusicUrl" :show-file-list="false" :on-success="handleMusicUploadSuccess"
+                        :before-upload="doUploadMusicBefore" :data="baseData">
+                        <div class="bbbug_main_menu_icon">
+                            <div @click="uploadMusic">
+                                <img :src="getStaticUrl('new/images/menubar_upload.png')" title="上传搜索不到的歌曲" />
+                                <div>上传</div>
+                            </div>
+                        </div>
+                    </el-upload>
                     <div class="bbbug_main_menu_song_ctrl">
                         <i @click.stop="passTheSong" title="切歌/不喜欢" class="iconfont icon-xiayige"></i>
                         <i title="音量" @click="setEnableOrDisableVolume" @mouseover="showAudioVolumeBar"
@@ -231,6 +241,16 @@
                             <div v-if="item.type=='system'" class="bbbug_main_chat_system">
                                 <span class="bbbug_main_chat_system_text">{{item.content}}</span>
                             </div>
+                            <div v-if="item.type=='join'" class="bbbug_main_chat_system">
+                                <span class="bbbug_main_chat_system_text">
+                                    欢迎<span v-if="item.where">{{item.where}}的</span><span v-if="item.user">
+                                        <font color=orangered style="cursor: pointer;" title="点击查看资料"
+                                            @click.stop="showUserPage(item.user.user_id)">
+                                            {{urldecode(item.name)}} </font>
+                                    </span><span v-if="!item.user"><span v-if="item.plat">{{item.plat}}用户</span><span
+                                            v-if="!item.plat">临时用户</span></span>{{item.user?'回来!':''}}
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <div v-show="menuVisible" :style="{left:menuLeft+'px',top:menuTop+'px'}" class="contextmenu">
@@ -275,7 +295,7 @@
                         <div class="bbbug_main_chat_input_toolbar"></div>
                         <div class="bbbug_main_chat_input_form">
                             <textarea @click="hideAll" class="bbug_main_chat_input_message"
-                                :placeholder="(roomInfo && roomInfo.room_sendmsg==1 && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?'全员禁言中,你暂时无法发言...':'Wish you fuck your bugs...'"
+                                :placeholder="(roomInfo && roomInfo.room_sendmsg==1 && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?'全员禁言中,你暂时无法发言...':'Wish you enjoy your bugs...'"
                                 @keydown.13="sendMessage" @input="messageChanged" v-model="message"
                                 :disabled="(roomInfo && roomInfo.room_sendmsg==1 && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?true:false"></textarea>
                             <button class="bbbug_main_chat_input_send" id="qqLoginBtn" @click.stop="sendMessage"
@@ -320,6 +340,7 @@
                 </div>
             </div>
         </div>
+        <UploadMusic v-if="uploadSongForm"></UploadMusic>
         <div v-if="isLocked">
             <div class="bbbug_locked bbbug_bg" @click.stop="isLocked=!isLocked;"
                 :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
@@ -368,12 +389,14 @@
     import RoomSetting from './components/RoomSetting.vue';
     import SearchSongs from './components/SearchSongs.vue';
     import SystemSetting from './components/SystemSetting.vue';
+    import UploadMusic from './components/UploadMusic.vue';
 
     import Login from './components/Login.vue';
 
     export
         default {
             components: {
+                UploadMusic,
                 MySetting,
                 MySongList,
                 OnlineList,
@@ -389,6 +412,7 @@
             },
             data() {
                 return {
+                    uploadSongForm: false,
                     bulletList: [],
                     bulletEnabled: true,
                     qrcodeEnabled: true,
@@ -396,6 +420,7 @@
                     audioUrl: "",
                     audioImage: "new/images/loading.png",
                     uploadImageUrl: "",
+                    uploadMusicUrl: "",
                     atUserInfo: false,
                     copyData: "",
                     userInfo: false,
@@ -476,6 +501,7 @@
                     }
                     that.baseData = that.global.baseData;
                     that.uploadImageUrl = that.global.apiUrl + "/api/attach/uploadimage";
+                    that.uploadMusicUrl = that.global.apiUrl + "/api/attach/uploadMusic";
 
                     let room_change_id = localStorage.getItem('room_change_id') || that.global.room_id;
                     if (!localStorage.getItem('isDarkModel') && localStorage.getItem('isDarkModel') != 0) {
@@ -539,6 +565,9 @@
                 });
             },
             methods: {
+                hideUploadMusicWindow() {
+                    this.uploadSongForm = false;
+                },
                 checkInitUrl(callback) {
                     let that = this;
                     let code = '';
@@ -600,6 +629,9 @@
                             }, 3000);
                         }
                     });
+                },
+                uploadMusic() {
+
                 },
                 getQueryString(name) {
                     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
@@ -682,6 +714,18 @@
                         this.$message.error('发送图片大小不能超过 2MB!');
                     }
                     return isJPG && isLt2M;
+                },
+                doUploadMusicBefore(file) {
+                    const isMp3 = file.type === 'audio/mpeg';
+                    const isLt5M = file.size / 1024 / 1024 < 5;
+
+                    if (!isMp3) {
+                        this.$message.error('音乐只允许上传mp3格式!');
+                    }
+                    if (!isLt5M) {
+                        this.$message.error('上传音乐MP3不允许超过5MB!');
+                    }
+                    return isMp3 && isLt5M;
                 },
                 searchImage() {
                     let that = this;
@@ -770,6 +814,17 @@
                             },
                             success(res) { }
                         });
+                    } else {
+                        that.$message.error(res.msg);
+                    }
+                },
+                handleMusicUploadSuccess(res, file) {
+                    let that = this;
+                    if (res.code == 200) {
+                        let musicPath = res.data.attach_path;
+                        that.global.uploadMusicUrl = that.global.staticUrl + 'uploads/' + musicPath;
+                        that.global.uploadMusicMid = res.data.attach_id;
+                        that.uploadSongForm = true;
                     } else {
                         that.$message.error(res.msg);
                     }
@@ -864,7 +919,7 @@
                     that.audioResetImage();
                     if (that.audioUrl) {
                         setTimeout(function () {
-                            that.$refs.audio.src = that.getStaticUrl("music/" + that.songInfo.song.mid + ".mp3");
+                            that.$refs.audio.src = that.getStaticUrl("music/" + that.songInfo.song.mid + ".jpg");
                         }, 500);
                     }
                 },
@@ -1369,6 +1424,15 @@
                             that.$message.error('即将上线，敬请期待');
                     }
                 },
+                showUserPage(user_id) {
+                    let that = this;
+                    that.global.profileUserId = user_id;
+                    that.hideAll();
+                    that.$nextTick(function () {
+                        that.hideAll();
+                        that.dialog.Profile = true;
+                    });
+                },
                 showOnlineList() {
                     if (this.dialog.OnlineList) {
                         this.hideAll();
@@ -1497,6 +1561,7 @@
                         url: "room/getWebsocketUrl",
                         data: {
                             channel: that.global.room_id,
+                            referer: document.referrer || false
                         },
                         success(res) {
                             that.appLoading = false;
@@ -1672,13 +1737,14 @@
                                 that.messageList.push(obj);
                                 break;
                             case 'system':
+                            case 'join':
                                 if (that.messageList.length > that.messageList.historyMax) {
                                     that.messageList.shift();
                                 }
                                 that.messageList.push(obj);
                                 break;
-                            case 'join':
-                                that.addSystemMessage(obj.content);
+                                // case 'join':
+                                //     that.addSystemMessage(obj.content);
                                 break;
                             case 'addSong':
                                 if (obj.at) {
@@ -1764,7 +1830,9 @@
                                     that.audioUrl = that.global.apiUrl + "/api/song/playurl?mid=" + obj.song.mid;
                                     that.updateCopyData();
                                     that.playMusic();
-
+                                    if (obj.song.mid < 0) {
+                                        that.addSystemMessage('正在播放 ' + decodeURIComponent(obj.user.user_name) + ' 上传的歌曲《' + obj.song.name + '》(' + obj.song.singer + ')');
+                                    }
                                     if (obj.user.user_id == that.userInfo.user_id) {
                                         let notifyTitle = "正在播放你点的歌";
                                         let notifyContent = "《" + obj.song.name + "》(" + obj.song.singer + ")";
@@ -2077,6 +2145,7 @@
         word-break: break-all;
         word-wrap: break-word;
         position: relative;
+        overflow: hidden;
     }
 
     .bbbug_main_chat_content::before {
@@ -2245,6 +2314,7 @@
         text-align: center;
         margin: 5px 10%;
         margin-top: 10px;
+        overflow: hidden;
     }
 
     .bbbug_main_chat_system_text {

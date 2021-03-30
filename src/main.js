@@ -40,6 +40,8 @@ Vue.prototype.global = {
     staticUrl: "https://bbbug.hamm.cn/",
     wssUrl: "wss://websocket.bbbug.com",
     songKeyword: "",
+    uploadMusicUrl: '',
+    uploadMusicMid: 0,
     appIdList: {
         qq: "101904044",
         gitee: "d2c3e3c6f5890837a69c65585cc14488e4075709db1e89d4cb4c64ef1712bdbb",
@@ -68,9 +70,9 @@ Vue.prototype.getStaticUrl = function (url) {
         return url;
     } else {
         if (url.indexOf("new/images") > -1 || url.indexOf("new/mp3") > -1 || url.indexOf("music/") > -1) {
-            return this.global.staticUrl + "/" + url;
+            return this.global.staticUrl + url;
         } else {
-            return this.global.staticUrl + "/uploads/" + url;
+            return this.global.staticUrl + "uploads/" + url;
         }
     }
 };
