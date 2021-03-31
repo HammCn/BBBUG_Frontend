@@ -684,21 +684,40 @@
                 },
                 friendlyTime: function (time) {
                     var now = parseInt(Date.parse(new Date()) / 1000);
-                    if (now - time <= 60) {
-                        return '刚刚';
-                    } else if (now - time > 60 && now - time <= 3600) {
-                        return parseInt((now - time) / 60) + '分钟前'
-                    } else if (now - time > 3600 && now - time <= 86400) {
-                        return parseInt((now - time) / 3600) + '小时前'
-                    } else if (now - time > 86400 && now - time <= 86400 * 7) {
-                        return parseInt((now - time) / 86400) + '天前'
-                    } else if (now - time > 86400 * 7 && now - time <= 86400 * 30) {
-                        return parseInt((now - time) / 86400 / 7) + '周前'
-                    } else if (now - time > 86400 * 30 && now - time <= 86400 * 30 * 12) {
-                        return parseInt((now - time) / 86400 / 30) + '月前'
+
+                    var date = new Date(time * 1000);
+                    var y = date.getFullYear(),
+                        m = date.getMonth() + 1,
+                        d = date.getDate(),
+                        h = date.getHours(),
+                        i = date.getMinutes(),
+                        s = date.getSeconds();
+                    if (m < 10) { m = '0' + m; }
+                    if (d < 10) { d = '0' + d; }
+                    if (h < 10) { h = '0' + h; }
+                    if (i < 10) { i = '0' + i; }
+                    if (now - time < 86400) {
+                        return h + ":" + i;
+                    } else if (now - time < 86400 * 365) {
+                        return m + "-" + d + " " + h + ":" + i;
                     } else {
-                        return parseInt((now - time) / 86400 / 365) + '年前'
+                        return y + "-" + m + "-" + d;
                     }
+                    // if (now - time <= 60) {
+                    //     return '刚刚';
+                    // } else if (now - time > 60 && now - time <= 3600) {
+                    //     return parseInt((now - time) / 60) + '分钟前'
+                    // } else if (now - time > 3600 && now - time <= 86400) {
+                    //     return parseInt((now - time) / 3600) + '小时前'
+                    // } else if (now - time > 86400 && now - time <= 86400 * 7) {
+                    //     return parseInt((now - time) / 86400) + '天前'
+                    // } else if (now - time > 86400 * 7 && now - time <= 86400 * 30) {
+                    //     return parseInt((now - time) / 86400 / 7) + '周前'
+                    // } else if (now - time > 86400 * 30 && now - time <= 86400 * 30 * 12) {
+                    //     return parseInt((now - time) / 86400 / 30) + '月前'
+                    // } else {
+                    //     return parseInt((now - time) / 86400 / 365) + '年前'
+                    // }
                 },
                 doUploadBefore(file) {
                     const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif';
@@ -760,38 +779,49 @@
                     }
                     if (file) {
                         if (that.doUploadBefore(file)) {
-                            let param = new FormData();
-                            param.append('file', file);
-                            param.append('access_token', that.global.baseData.access_token);
-                            param.append('plat', that.global.baseData.plat);
-                            param.append('version', that.global.baseData.version);
-                            let config = {
-                                headers: {
-                                    'Content-Type': 'multipart/form-data'
-                                }
-                            }
-                            // 添加请求头
-                            that.$axios.post(that.uploadImageUrl, param, config)
-                                .then(function (res) {
-                                    if (res.data.code == 200) {
-                                        that.request({
-                                            url: "message/send",
-                                            data: {
-                                                where: 'channel',
-                                                to: that.global.room_id,
-                                                type: 'img',
-                                                msg: res.data.data.attach_thumb,
-                                                resource: res.data.data.attach_path,
-                                            },
-                                            success(res) { }
-                                        });
-                                    } else {
-                                        that.$message.error(res.data.msg);
+                            let reader = new FileReader();
+                            reader.readAsDataURL(file);
+                            reader.onload = function () {
+                                //给img的src设置图片url
+                                that.$alert('<img src="' + this.result + '" width="100%" height="100%"/>', '是否确认发送这张图片？', {
+                                    confirmButtonText: '确认发送',
+                                    dangerouslyUseHTMLString: true,
+                                }).then(function () {
+                                    let param = new FormData();
+                                    param.append('file', file);
+                                    param.append('access_token', that.global.baseData.access_token);
+                                    param.append('plat', that.global.baseData.plat);
+                                    param.append('version', that.global.baseData.version);
+                                    let config = {
+                                        headers: {
+                                            'Content-Type': 'multipart/form-data'
+                                        }
                                     }
-                                })
-                                .catch(function (error) {
-                                    that.$message.error("上传图片发生错误");
-                                });
+                                    // 添加请求头
+                                    that.$axios.post(that.uploadImageUrl, param, config)
+                                        .then(function (res) {
+                                            if (res.data.code == 200) {
+                                                that.request({
+                                                    url: "message/send",
+                                                    data: {
+                                                        where: 'channel',
+                                                        to: that.global.room_id,
+                                                        type: 'img',
+                                                        msg: res.data.data.attach_thumb,
+                                                        resource: res.data.data.attach_path,
+                                                    },
+                                                    success(res) { }
+                                                });
+                                            } else {
+                                                that.$message.error(res.data.msg);
+                                            }
+                                        })
+                                        .catch(function (error) {
+                                            that.$message.error("上传图片发生错误");
+                                        });
+                                }).catch(function () { });
+                            }
+
                         }
                     }
                     return;
