@@ -2164,6 +2164,7 @@
 
     .bbbug_main_chat_context_menu {
         display: inline-block;
+        overflow: hidden;
     }
 
     .bbbug_main_chat_content {
@@ -2178,7 +2179,6 @@
         word-break: break-all;
         word-wrap: break-word;
         position: relative;
-        overflow: hidden;
     }
 
     .bbbug_main_chat_content::before {
