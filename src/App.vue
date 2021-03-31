@@ -204,7 +204,7 @@
                                     </div>
                                     <!--房间公告-->
                                     <div class="bbbug_main_chat_content bbbug_main_chat_notice"
-                                        v-if="item.type=='notice'" title="快捷机票 点击进入" style="border-radius:10px">
+                                        v-if="item.type=='notice'" style="border-radius:10px">
                                         <div class="bbbug_main_chat_notice_title">房间公告</div>
                                         <div class="bbbug_main_chat_notice_content">
                                             {{urldecode(item.content)}}
@@ -1271,7 +1271,7 @@
                         url: "message/getMessageList",
                         data: {
                             room_id: that.global.room_id,
-                            per_page: that.historyMax,
+                            per_page: 20,
                         },
                         success(res) {
                             that.messageList = [];
