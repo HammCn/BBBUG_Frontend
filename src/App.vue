@@ -684,7 +684,8 @@
                 },
                 friendlyTime: function (time) {
                     var now = parseInt(Date.parse(new Date()) / 1000);
-
+                    var todayDate = new Date();
+                    var todayTimeStamp = parseInt(Date.parse(new Date(todayDate.getFullYear() + "-" + (todayDate.getMonth() + 1) + '-' + todayDate.getDate() + " 00:00:00")) / 1000);
                     var date = new Date(time * 1000);
                     var y = date.getFullYear(),
                         m = date.getMonth() + 1,
@@ -696,7 +697,7 @@
                     if (d < 10) { d = '0' + d; }
                     if (h < 10) { h = '0' + h; }
                     if (i < 10) { i = '0' + i; }
-                    if (now - time < 86400) {
+                    if (time > todayTimeStamp) {
                         return h + ":" + i;
                     } else if (now - time < 86400 * 365) {
                         return m + "-" + d + " " + h + ":" + i;
@@ -1216,7 +1217,7 @@
 
                         success(res) {
                             that.atUserInfo = false;
-                            that.isEnableScroll=true;
+                            that.isEnableScroll = true;
                             that.autoScroll();
                         },
                         error(res) {
