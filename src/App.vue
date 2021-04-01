@@ -1216,6 +1216,8 @@
 
                         success(res) {
                             that.atUserInfo = false;
+                            that.isEnableScroll=true;
+                            that.autoScroll();
                         },
                         error(res) {
                             for (let i = that.messageList.length - 1; i >= 0; i--) {
