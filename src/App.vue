@@ -1644,10 +1644,15 @@
                     let that = this;
                     try {
                         let obj = {};
+                        //这里有点尴尬
                         try {
-                            obj = JSON.parse(decodeURIComponent(data));
+                            obj = JSON.parse(decodeURIComponent(decodeURIComponent(data)));
                         } catch (e) {
-                            obj = JSON.parse(data);
+                            try {
+                                obj = JSON.parse(decodeURIComponent(data));
+                            } catch (e) {
+                                obj = JSON.parse(data);
+                            }
                         }
                         if (that.messageList.length > that.historyMax) {
                             that.messageList.shift();
