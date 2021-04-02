@@ -1,6 +1,6 @@
 <template>
     <div id="UploadMusic">
-        <div class="bbbug_upload_music_bg" @click="closeWindow"></div>
+        <div class="bbbug_upload_music_bg"></div>
         <div class="bbbug_upload_music" v-loading="loading">
             <div class="bbbug_upload_music_title">请输入歌曲信息</div>
             <el-form label-width="90px">
@@ -15,6 +15,7 @@
                         control1></audio>
                     <div style="font-size:12px;color:orangered;margin-right:10px;">请勿上传违规违法音频,否则你将有可能被封号！</div>
                     <div @click="doUploadMusic" class="bbbug_upload_music_button">添加歌曲</div>
+                    <div @click="closeWindow" class="bbbug_upload_music_button bbbug_upload_music_cancel">取消</div>
                 </el-form-item>
             </el-form>
         </div>
@@ -119,10 +120,24 @@
         border-radius: 5px;
         cursor: pointer;
         display: inline-block;
+        line-height: 36px;
+        margin: 0px 5px;
     }
+
 
     .bbbug_upload_music_button:active,
     .bbbug_upload_music_button:hover {
         background-color: #555;
+    }
+
+    .bbbug_upload_music_cancel {
+        background-color: #ccc;
+        z-index: 2001;
+        position: relative;
+    }
+
+    .bbbug_upload_music_cancel:active,
+    .bbbug_upload_music_cancel:hover {
+        background-color: #ddd;
     }
 </style>
