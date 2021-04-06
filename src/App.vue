@@ -1292,9 +1292,9 @@
                                     _obj.time = res.data[i].message_createtime;
                                     _obj.isAtAll = false;
                                     if (_obj.type == 'text') {
-                                        try{
+                                        try {
                                             _obj.content = decodeURIComponent(decodeURIComponent(_obj.content));
-                                        }catch(e){
+                                        } catch (e) {
                                             _obj.content = decodeURIComponent(_obj.content);
                                         }
                                         _obj.isAtAll = _obj.content.indexOf('@全体') == 0 && (_obj.user.user_id == that.roomInfo.room_user || _obj.user.user_admin) ? true : false;
@@ -1491,9 +1491,11 @@
                         }
                     });
                 },
-                getRoomInfo() {
+                getRoomInfo(reConnect = true) {
                     let that = this;
-                    that.appLoading = true;
+                    if (reConnect) {
+                        that.appLoading = true;
+                    }
                     that.request({
                         url: "room/getRoomInfo",
                         data: {
@@ -1508,30 +1510,44 @@
                             that.updateCopyData();
                             that.roomInfo = res.data;
                             that.background = res.data.room_background || "new/images/bg_dark.jpg";
-                            that.audioUrl = '';
-                            that.songInfo = null;
-                            that.getRoomHistory();
-                            that.getWebsocketUrl();
-                            let room_history = localStorage.getItem('room_history') || false;
-                            if (room_history) {
-                                room_history = JSON.parse(room_history);
-                            } else {
-                                room_history = [];
-                            }
-                            if (room_history.length > 2) {
-                                room_history.pop();
-                            }
-
-                            for (let i = 0; i < room_history.length; i++) {
-                                if (room_history[i].room_id == res.data.room_id) {
-                                    room_history.splice(i, 1);
+                            if (reConnect) {
+                                that.audioUrl = '';
+                                that.songInfo = null;
+                                that.getRoomHistory();
+                                that.getWebsocketUrl();
+                                let room_history = localStorage.getItem('room_history') || false;
+                                if (room_history) {
+                                    room_history = JSON.parse(room_history);
+                                } else {
+                                    room_history = [];
                                 }
+                                if (room_history.length > 2) {
+                                    room_history.pop();
+                                }
+
+                                for (let i = 0; i < room_history.length; i++) {
+                                    if (room_history[i].room_id == res.data.room_id) {
+                                        room_history.splice(i, 1);
+                                    }
+                                }
+                                room_history.unshift({
+                                    value: "ID: " + res.data.room_id + " " + res.data.room_name,
+                                    room_id: res.data.room_id
+                                });
+                                localStorage.setItem("room_history", JSON.stringify(room_history));
+                            } else {
+                                let roomAdminInfo = Object.assign({}, that.global.roomInfo.admin);
+                                that.messageList.push({
+                                    type: "notice",
+                                    content: encodeURIComponent(that.global.roomInfo.room_notice ? that.global.roomInfo.room_notice : ('欢迎来到' + that.global.roomInfo.room_name + '!')),
+                                    where: "channel",
+                                    at: null,
+                                    message_id: 0,
+                                    time: parseInt(new Date().valueOf() / 1000),
+                                    user: roomAdminInfo
+                                });
+                                that.autoScroll();
                             }
-                            room_history.unshift({
-                                value: "ID: " + res.data.room_id + " " + res.data.room_name,
-                                room_id: res.data.room_id
-                            });
-                            localStorage.setItem("room_history", JSON.stringify(room_history));
                         },
                         error(res) {
                             that.appLoading = false;
@@ -1688,17 +1704,17 @@
                                 that.addSystemMessage("管理员" + that.urldecode(obj.user.user_name) + "清空了你的聊天记录", '#f00', '#eee');
                                 break;
                             case 'text':
-                                try{
+                                try {
                                     obj.content = decodeURIComponent(decodeURIComponent(obj.content));
-                                }catch(e){
+                                } catch (e) {
                                     obj.content = decodeURIComponent(obj.content);
                                 }
-                                if(obj.at){
-                                try{
-                                    obj.at.content = decodeURIComponent(decodeURIComponent(obj.content));
-                                }catch(e){
-                                    obj.content = decodeURIComponent(obj.content);
-                                }
+                                if (obj.at) {
+                                    try {
+                                        obj.at.content = decodeURIComponent(decodeURIComponent(obj.content));
+                                    } catch (e) {
+                                        obj.content = decodeURIComponent(obj.content);
+                                    }
                                 }
                                 obj.isAtAll = (obj.content).indexOf('@全体') == 0 && (obj.user.user_id == that.roomInfo.room_user || obj.user.user_admin) ? true : false;
                                 if (obj.user.user_id == that.userInfo.user_id) {
@@ -1924,7 +1940,7 @@
                                 that.onlineList = obj.data || [];
                                 break;
                             case 'roomUpdate':
-                                that.getRoomInfo();
+                                that.getRoomInfo(obj.reConnect == 1 ? true : false);
                                 break;
                             default:
                         }
