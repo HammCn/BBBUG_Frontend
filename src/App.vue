@@ -597,7 +597,7 @@
                                     localStorage.setItem('access_token', access_token);
                                 }
                                 localStorage.setItem('room_change_id', room_id);
-                                location.replace("/");
+                                location.replace(location.origin);;
                                 return;
                             }
                             callback();
@@ -608,7 +608,7 @@
                             if ((/(^[1-9]\d*$)/).test(room_id)) {
                                 localStorage.setItem('room_change_id', room_id);
                             }
-                            location.replace("/");
+                            location.replace(location.origin);;
                             return;
                     }
 
@@ -621,11 +621,11 @@
                         success(res) {
                             that.global.baseData.access_token = res.data.access_token;
                             localStorage.setItem('access_token', res.data.access_token);
-                            location.replace("/");
+                            location.replace(location.origin);;
                         },
                         error(res) {
                             setTimeout(function () {
-                                location.replace("/");
+                                location.replace(location.origin);;
                             }, 3000);
                         }
                     });
