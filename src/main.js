@@ -55,7 +55,11 @@ Vue.prototype.changeDarkModel = function (enabled) {
     this.isDarkModel = enabled;
 };
 Vue.prototype.urldecode = function (str) {
-    return decodeURIComponent(str);
+    try {
+        return decodeURIComponent(str);
+    } catch (e) {
+        return str;
+    }
 };
 
 Vue.prototype.http2https = function (str) {

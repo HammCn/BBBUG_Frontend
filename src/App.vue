@@ -1281,9 +1281,9 @@
                             for (let i = 0; i < res.data.length; i++) {
                                 let _obj = false;
                                 try {
-                                    _obj = JSON.parse(decodeURIComponent(res.data[i].message_content));
-                                } catch (error) {
                                     _obj = JSON.parse(res.data[i].message_content);
+                                } catch (error) {
+                                    continue;
                                 }
                                 if (_obj) {
                                     if (_obj.at) {
@@ -1292,7 +1292,12 @@
                                     _obj.time = res.data[i].message_createtime;
                                     _obj.isAtAll = false;
                                     if (_obj.type == 'text') {
-                                        _obj.isAtAll = decodeURIComponent(_obj.content).indexOf('@全体') == 0 && (_obj.user.user_id == that.roomInfo.room_user || _obj.user.user_admin) ? true : false;
+                                        try{
+                                            _obj.content = decodeURIComponent(decodeURIComponent(_obj.content));
+                                        }catch(e){
+                                            _obj.content = decodeURIComponent(_obj.content);
+                                        }
+                                        _obj.isAtAll = _obj.content.indexOf('@全体') == 0 && (_obj.user.user_id == that.roomInfo.room_user || _obj.user.user_admin) ? true : false;
                                     }
                                     that.messageList.unshift(_obj);
                                 }
@@ -1646,13 +1651,9 @@
                         let obj = {};
                         //这里有点尴尬
                         try {
-                            obj = JSON.parse(decodeURIComponent(decodeURIComponent(data)));
+                            obj = JSON.parse(data);
                         } catch (e) {
-                            try {
-                                obj = JSON.parse(decodeURIComponent(data));
-                            } catch (e) {
-                                obj = JSON.parse(data);
-                            }
+                            return;
                         }
                         if (that.messageList.length > that.historyMax) {
                             that.messageList.shift();
@@ -1687,7 +1688,19 @@
                                 that.addSystemMessage("管理员" + that.urldecode(obj.user.user_name) + "清空了你的聊天记录", '#f00', '#eee');
                                 break;
                             case 'text':
-                                obj.isAtAll = decodeURIComponent(obj.content).indexOf('@全体') == 0 && (obj.user.user_id == that.roomInfo.room_user || obj.user.user_admin) ? true : false;
+                                try{
+                                    obj.content = decodeURIComponent(decodeURIComponent(obj.content));
+                                }catch(e){
+                                    obj.content = decodeURIComponent(obj.content);
+                                }
+                                if(obj.at){
+                                try{
+                                    obj.at.content = decodeURIComponent(decodeURIComponent(obj.content));
+                                }catch(e){
+                                    obj.content = decodeURIComponent(obj.content);
+                                }
+                                }
+                                obj.isAtAll = (obj.content).indexOf('@全体') == 0 && (obj.user.user_id == that.roomInfo.room_user || obj.user.user_admin) ? true : false;
                                 if (obj.user.user_id == that.userInfo.user_id) {
                                     for (let i = that.messageList.length - 1; i >= 0; i--) {
                                         if (that.messageList[i].loading == 1) {
