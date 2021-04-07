@@ -12,6 +12,7 @@
                 </div>
                 <div class="bbbug_main_right_song_list_search" v-loading="bbbug_loading">
                     <div class="bbbug_scroll">
+                        <div class="bbbug_main_right_song_item_title" v-if="isHots">本周点歌热门歌曲推荐</div>
                         <div class="bbbug_main_right_song_item" v-for="(item, index) in list" v-loading="item.loading">
                             <div class="bbug_main_right_song_pic">
                                 <img :data="getStaticUrl(item.pic)" :src="getStaticUrl('new/images/loading.gif')"
@@ -19,6 +20,7 @@
                                     :onerror="getStaticUrl('new/images/nohead.jpg')" />
                             </div>
                             <div class="bbbug_main_right_song_name">
+                                <font color=orangered v-if="isHots && item.week">({{item.week}})</font>
                                 <span class="bbbug_singer_hover" @click="searchSongByKeyword(item.name)"
                                     :title="'搜索 '+item.name+' 的歌曲'">{{item.name}}</span>
                             </div>
@@ -60,6 +62,7 @@
             return {
                 bbbug_loading: false,
                 list: [],
+                isHots: true,
                 keyword: "",
                 userInfo: false,
                 roomInfo: false,
@@ -74,6 +77,8 @@
             if (this.global.songKeyword) {
                 this.keyword = this.global.songKeyword;
                 this.getList();
+            } else {
+                this.getHots();
             }
             let historyList = localStorage.getItem('search_history') || false;
             if (historyList) {
@@ -90,8 +95,28 @@
                 this.keyword = keyword;
                 this.getList();
             },
+            getHots() {
+                let that = this;
+                that.isHots = true;
+                that.bbbug_loading = true;
+                that.request({
+                    url: "song/search",
+                    data: {
+                        room_id: that.global.room_id,
+                        isHots: that.isHots ? 1 : 0
+                    },
+                    success(res) {
+                        that.bbbug_loading = false;
+                        that.list = res.data;
+                    },
+                    error(res) {
+                        that.bbbug_loading = false;
+                    }
+                });
+            },
             getList() {
                 let that = this;
+                that.isHots = false;
                 that.bbbug_loading = true;
                 if (that.keyword) {
                     if (that.historyList.length > 10) {
@@ -112,6 +137,7 @@
                     data: {
                         room_id: that.global.room_id,
                         keyword: that.keyword,
+                        isHots: that.isHots ? 1 : 0
                     },
                     success(res) {
                         that.bbbug_loading = false;
@@ -190,5 +216,12 @@
 <style>
     .bbbug_singer_hover:hover {
         color: orangered;
+    }
+
+    .bbbug_main_right_song_item_title {
+        text-align: left;
+        padding: 0px 10px 5px 10px;
+        color: #aaa;
+        font-size: 12px;
     }
 </style>
