@@ -194,12 +194,12 @@
                                     </div>
                                     <!--link消息-->
                                     <div class="bbbug_main_chat_content bbbug_main_chat_jump" v-if="item.type=='link'"
-                                        title="打开外部链接" @click="openNewWebPage(item.link)" style="border-radius:10px">
+                                        title="打开外部链接" @click="openNewWebPage(urldecode(item.link))" style="border-radius:10px">
                                         <div class="bbbug_main_chat_jump_name">
-                                            {{item.title}}
+                                            {{urldecode(item.title)}}
                                         </div>
-                                        <div class="bbbug_main_chat_jump_desc">{{item.desc||"没有读取到网站简介..."}}</div>
-                                        <div class="bbbug_main_chat_jump_tips">{{item.link}}
+                                        <div class="bbbug_main_chat_jump_desc">{{urldecode(item.desc)||"没有读取到网站简介..."}}</div>
+                                        <div class="bbbug_main_chat_jump_tips">{{urldecode(item.link)}}
                                         </div>
                                     </div>
                                     <!--房间公告-->
