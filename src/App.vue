@@ -736,17 +736,17 @@
                 },
                 doUploadMusicBefore(file) {
                     const isMp3 = file.type === 'audio/mpeg';
-                    const isLt5M = file.size / 1024 / 1024 < 5;
+                    const isLt8M = file.size / 1024 / 1024 < 8;
 
                     if (!isMp3) {
                         this.$message.error('音乐只允许上传mp3格式!');
                         return false;
                     }
-                    if (!isLt5M) {
-                        this.$message.error('上传音乐MP3不允许超过5MB!');
+                    if (!isLt8M) {
+                        this.$message.error('上传音乐MP3不允许超过8MB!');
                         return false;
                     }
-                    return isMp3 && isLt5M;
+                    return isMp3 && isLt8M;
                 },
                 searchImage() {
                     let that = this;

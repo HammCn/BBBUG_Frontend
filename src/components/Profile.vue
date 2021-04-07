@@ -117,7 +117,6 @@
 <style>
     .user_device {
         color: #666;
-        margin-left: 5px;
         cursor: pointer;
     }
 
@@ -298,7 +297,6 @@
         color: white;
         border-radius: 3px;
         padding: 0px 3px;
-        margin-right: 5px;
     }
 
     .bbbug_main_profile_song_title {
