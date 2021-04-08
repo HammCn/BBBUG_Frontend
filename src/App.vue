@@ -194,11 +194,13 @@
                                     </div>
                                     <!--link消息-->
                                     <div class="bbbug_main_chat_content bbbug_main_chat_jump" v-if="item.type=='link'"
-                                        title="打开外部链接" @click="openNewWebPage(urldecode(item.link))" style="border-radius:10px">
+                                        title="打开外部链接" @click="openNewWebPage(urldecode(item.link))"
+                                        style="border-radius:10px">
                                         <div class="bbbug_main_chat_jump_name">
                                             {{urldecode(item.title)}}
                                         </div>
-                                        <div class="bbbug_main_chat_jump_desc">{{urldecode(item.desc)||"没有读取到网站简介..."}}</div>
+                                        <div class="bbbug_main_chat_jump_desc">{{urldecode(item.desc)||"没有读取到网站简介..."}}
+                                        </div>
                                         <div class="bbbug_main_chat_jump_tips">{{urldecode(item.link)}}
                                         </div>
                                     </div>
@@ -344,34 +346,6 @@
         <div v-if="isLocked">
             <div class="bbbug_locked bbbug_bg" @click.stop="isLocked=!isLocked;"
                 :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
-                <div v-if="songInfo">
-                    <div class="bbbug_locked_player">
-                        <div class="bbbug_locked_player_lrc">{{lrcString}}</div>
-                        <div class="bbbug_locked_player_song">
-                            <div class="bbbug_locked_player_name">
-                                <marquee scrollamount="3">正在播放: {{songInfo.song.name}}
-                                    ({{songInfo.song.singer}})　　点歌人: {{urldecode(songInfo.user.user_name)}}</marquee>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bbbug_locked_player_qrcode" v-if="qrcodeEnabled">
-                        <img class="bbbug_locked_player_qrcode_img"
-                            :src="['https://api.bbbug.com/api/weapp/qrcode?room_id='+roomInfo.room_id]" />
-                        <div class="bbbug_locked_player_qrcode_tips">微信扫码参与</div>
-                    </div>
-                </div>
-                <div class="bbbug_bullet" v-if="bulletEnabled">
-                    <div v-for="(item,index) in bulletList" :style="{top:item.top+'%'}">
-                        <span>
-                            <img class="bbbug_bullet_img" :src="getStaticUrl(item.head)" />
-                            {{urldecode(item.msg)}}
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="bbbug_link">
-                <a href="javascript:;" @click="qrcodeEnabled=!qrcodeEnabled">{{qrcodeEnabled?'二维码':'二维码'}}</a>
-                <a href="javascript:;" @click="bulletEnabled=!bulletEnabled">{{bulletEnabled?'弹幕开':'弹幕关'}}</a>
             </div>
         </div>
         <div class="bbbug_dark_cover" v-if="isDarkModel"></div>
@@ -413,8 +387,6 @@
             data() {
                 return {
                     uploadSongForm: false,
-                    bulletList: [],
-                    bulletEnabled: true,
                     qrcodeEnabled: true,
                     dialog: false,
                     audioUrl: "",
@@ -561,7 +533,6 @@
                     that.audioVolume = parseInt(volume);
                     document.addEventListener('paste', that.getClipboardFiles);
                     that.loadConfig();
-                    that.doDeleteBullet();
                 });
             },
             methods: {
@@ -1776,13 +1747,6 @@
                                     obj.content = '@' + obj.at.user_name + " " + obj.content;
                                 }
                                 that.messageList.push(obj);
-                                that.bulletList.push({
-                                    head: obj.user.user_head,
-                                    user: obj.user.user_name,
-                                    msg: obj.content,
-                                    top: parseInt((Math.random() * 18)) * 5,
-                                    time: new Date().valueOf()
-                                });
                                 document.title = that.urldecode(obj.user.user_name) + "说：" + that.urldecode(obj.content);
                                 clearTimeout(that.timerForWebTitle);
                                 that.callParentFunction('onTextMessage', obj);
@@ -1969,15 +1933,6 @@
                         }
                     };
                 },
-                doDeleteBullet() {
-                    let that = this;
-                    setTimeout(function () {
-                        if (that.bulletList.length > 0 && new Date().valueOf() - that.bulletList[0].time > 20000) {
-                            that.bulletList.shift();
-                        }
-                        that.doDeleteBullet();
-                    }, 3000);
-                },
                 doWebsocketHeartBeat() {
                     let that = this;
                     if (that.websocket.isForceStop) {
@@ -2022,122 +1977,6 @@
 <style>
     .el-dropdown-menu {
         padding: 0;
-    }
-
-    .bbbug_bullet {
-        color: white;
-        position: fixed;
-        left: 0;
-        right: 0;
-        top: 50px;
-        bottom: 0;
-    }
-
-    .bbbug_bullet div {
-        position: absolute;
-        left: 0;
-        right: 0;
-        animation: marqueeAnimation 20s linear 0s 1 alternate forwards;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-
-    @keyframes marqueeAnimation {
-        from {
-            left: 100%;
-        }
-
-        to {
-            left: -100%;
-            display: none;
-        }
-    }
-
-    @-webkit-keyframes mymove {
-        from {
-            left: 100%;
-        }
-
-        to {
-            left: -100%;
-            display: none;
-        }
-    }
-
-    .bbbug_bullet div span {
-        background-color: rgba(255, 255, 255, 0.5);
-        display: inline-block;
-        vertical-align: middle;
-        font-size: 32px;
-        border-radius: 50px;
-        padding: 0px 20px 0px 0px;
-        max-width: 600px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        word-break: break-all;
-    }
-
-    .bbbug_bullet div img {
-        width: 60px;
-        height: 60px;
-        border-radius: 100%;
-        vertical-align: middle;
-        font-size: 2;
-    }
-
-    .bbbug_locked_player_song {
-        position: fixed;
-        left: 10px;
-        top: 10px;
-        color: rgba(255, 255, 255, 0.8);
-        font-size: 28px;
-        width: 40%;
-        height: 40%;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        word-break: break-all;
-    }
-
-    .bbbug_locked_player_qrcode_img {
-        width: 100%;
-    }
-
-    .bbbug_locked_player_qrcode {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        text-align: left;
-        color: white;
-        width: 15%;
-        background-color: rgba(255, 255, 255, 0.3);
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.3);
-    }
-
-    .bbbug_locked_player_qrcode_tips {
-        width: 100%;
-        text-align: center;
-        padding: 5px 0px;
-        font-size: 20px;
-        margin-bottom: 5px;
-    }
-
-    .bbbug_locked_player_lrc {
-        position: fixed;
-        right: 10px;
-        top: 10px;
-        color: white;
-        font-size: 28px;
-        max-width: 50%;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        word-break: break-all;
     }
 
     .bbbug_main_chat_item {
