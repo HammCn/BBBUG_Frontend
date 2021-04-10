@@ -656,7 +656,7 @@
                 friendlyTime: function (time) {
                     var now = parseInt(Date.parse(new Date()) / 1000);
                     var todayDate = new Date();
-                    var todayTimeStamp = parseInt(Date.parse(new Date(todayDate.getFullYear() + "-" + (todayDate.getMonth() + 1) + '-' + todayDate.getDate() + " 00:00:00")) / 1000);
+                    var todayTimeStamp = parseInt(Date.parse(new Date(todayDate.getFullYear() + "/" + (todayDate.getMonth() + 1) + '/' + todayDate.getDate() + " 00:00:00")) / 1000);
                     var date = new Date(time * 1000);
                     var y = date.getFullYear(),
                         m = date.getMonth() + 1,
