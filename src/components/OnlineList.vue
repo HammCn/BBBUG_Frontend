@@ -80,7 +80,7 @@
                             <div class="bbbug_main_right_online_user_badge_guest" v-if="item.user_guest">宾</div>
                         </div>
                     </div>
-                    <div class="bbbug_tips" v-if="list.length==0">没有查到房间</div>
+                    <div class="bbbug_tips" v-if="list.length==0">暂无在线用户</div>
                 </div>
             </div>
         </div>
