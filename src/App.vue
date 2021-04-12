@@ -343,9 +343,39 @@
             </div>
         </div>
         <UploadMusic v-if="uploadSongForm"></UploadMusic>
-        <div v-if="isLocked">
-            <div class="bbbug_locked bbbug_bg" @click.stop="isLocked=!isLocked;"
+        <div v-if="isLocked" class="bbbug_locked">
+            <div class="bbbug_bg" @click.stop="isLocked=!isLocked;"
                 :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
+            </div>
+            <div class="bbbug_locked_body">
+                <div class="bbbug_locked_player" v-if="songInfo && songInfo.song">
+                    <div class="bbbug_locked_player_img"><img :src="getStaticUrl(songInfo.song.pic)" /></div>
+                    <div class="bbbug_locked_player_bg"><img :src="getStaticUrl('new/images/player_bg.png')" /></div>
+                    <div class="bbbug_locked_player_bar"><img :src="getStaticUrl('new/images/player_bar.png')" /></div>
+                    <div class="bbbug_locked_player_song">{{songInfo.song.name}} - ({{songInfo.song.singer}})</div>
+                    <div class="bbbug_locked_player_lrc">{{lrcString}}</div>
+                    <div class="bbbug_locked_player_user">点歌人: <font color="white">
+                            {{urldecode(songInfo.user.user_name)}}</font>
+                    </div>
+                </div>
+                <div class="bbbug_locked_player" v-if="!(songInfo && songInfo.song)">
+                    <div class="bbbug_locked_player_img"><img :src="getStaticUrl('new/images/nohead.jpg')" /></div>
+                    <div class="bbbug_locked_player_bg"><img :src="getStaticUrl('new/images/player_bg.png')" /></div>
+                    <div class="bbbug_locked_player_bar"><img :src="getStaticUrl('new/images/player_bar.png')" /></div>
+                    <div class="bbbug_locked_player_song">歌曲加载中,请稍候</div>
+                    <div class="bbbug_locked_player_lrc">Loading...</div>
+                </div>
+                <div class="bbbug_locked_message">
+                    <div v-for="(item,index) in messageListBullet" class="bbbug_locked_item"
+                        v-if="item.type=='text' || item.type=='notice'">
+                        <div class="bbbug_locked_message_head">
+                            <img :src="getStaticUrl(item.user.user_head)"
+                                :onerror="getStaticUrl('new/images/nohead.jpg')" />
+                        </div>
+                        <div class="bbbug_locked_message_user">{{urldecode(item.user.user_name)}}</div>
+                        <div class="bbbug_locked_message_content">{{urldecode(item.content)}}</div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="bbbug_dark_cover" v-if="isDarkModel"></div>
@@ -407,6 +437,7 @@
                     isEnableSendMessage: false,
                     isEmojiBoxShow: false,
                     messageList: [],
+                    messageListBullet: [],
                     historyMax: 100,
                     isSongPannelShow: false,
                     globalMusicSwitch: false,
@@ -1166,14 +1197,15 @@
                     if (that.messageList.length > that.historyMax) {
                         that.messageList.shift();
                     }
-                    that.messageList.push({
+                    let _tempMessage = {
                         type: "text",
                         user: that.userInfo,
                         at: that.atUserInfo,
                         content: encodeURIComponent(message),
                         time: parseInt(new Date().valueOf() / 1000),
                         loading: 1,
-                    });
+                    };
+                    that.messageList.push(_tempMessage);
                     that.autoScroll();
                     message = message.replace('@' + decodeURIComponent(that.atUserInfo.user_name) + ' ', '').replace('@' + decodeURIComponent(that.atUserInfo.user_name), '');
                     that.request({
@@ -1249,6 +1281,7 @@
                         },
                         success(res) {
                             that.messageList = [];
+                            that.messageListBullet = [];
                             for (let i = 0; i < res.data.length; i++) {
                                 let _obj = false;
                                 try {
@@ -1271,13 +1304,17 @@
                                         _obj.isAtAll = _obj.content.indexOf('@全体') == 0 && (_obj.user.user_id == that.roomInfo.room_user || _obj.user.user_admin) ? true : false;
                                     }
                                     that.messageList.unshift(_obj);
+                                    that.messageListBullet.push(_obj);
                                 }
                             }
                             if (that.messageList.length > that.historyMax) {
                                 that.messageList.shift();
                             }
+                            if (that.messageListBullet.length > 20) {
+                                that.messageListBullet.pop();
+                            }
                             let roomAdminInfo = Object.assign({}, that.global.roomInfo.admin);
-                            that.messageList.push({
+                            let _tempMessage = {
                                 type: "notice",
                                 content: encodeURIComponent(that.global.roomInfo.room_notice ? that.global.roomInfo.room_notice : ('欢迎来到' + that.global.roomInfo.room_name + '!')),
                                 where: "channel",
@@ -1285,7 +1322,9 @@
                                 message_id: 0,
                                 time: parseInt(new Date().valueOf() / 1000),
                                 user: roomAdminInfo
-                            });
+                            };
+                            that.messageList.push(_tempMessage);
+                            that.messageListBullet.push(_tempMessage);
                             if (that.roomInfo.room_id == 888 && that.userInfo.user_id < 0) {
                                 that.messageList.push({
                                     type: "text",
@@ -1455,12 +1494,14 @@
                 },
                 autoScroll() {
                     let that = this;
-                    that.$nextTick(function () {
-                        if (that.isEnableScroll) {
-                            let ele = document.getElementById('bbbug_main_chat_history');
-                            ele.scrollTop = ele.scrollHeight;
-                        }
-                    });
+                    if (!that.isLocked) {
+                        that.$nextTick(function () {
+                            if (that.isEnableScroll) {
+                                let ele = document.getElementById('bbbug_main_chat_history');
+                                ele.scrollTop = ele.scrollHeight;
+                            }
+                        });
+                    }
                 },
                 getRoomInfo(reConnect = true) {
                     let that = this;
@@ -1493,7 +1534,7 @@
                                     room_history = [];
                                 }
                                 if (room_history.length > 2) {
-                                    room_history.pop();
+                                    room_history.unshift();
                                 }
 
                                 for (let i = 0; i < room_history.length; i++) {
@@ -1508,7 +1549,7 @@
                                 localStorage.setItem("room_history", JSON.stringify(room_history));
                             } else {
                                 let roomAdminInfo = Object.assign({}, that.global.roomInfo.admin);
-                                that.messageList.push({
+                                let _tempMessage = {
                                     type: "notice",
                                     content: encodeURIComponent(that.global.roomInfo.room_notice ? that.global.roomInfo.room_notice : ('欢迎来到' + that.global.roomInfo.room_name + '!')),
                                     where: "channel",
@@ -1516,7 +1557,9 @@
                                     message_id: 0,
                                     time: parseInt(new Date().valueOf() / 1000),
                                     user: roomAdminInfo
-                                });
+                                };
+                                that.messageList.push(_tempMessage);
+                                that.messageListBullet.unshift(_tempMessage);
                                 that.autoScroll();
                             }
                         },
@@ -1645,6 +1688,9 @@
                         if (that.messageList.length > that.historyMax) {
                             that.messageList.shift();
                         }
+                        if (that.messageListBullet.length > 20) {
+                            that.messageListBullet.pop();
+                        }
                         obj.time = parseInt(new Date().valueOf() / 1000);
                         switch (obj.type) {
                             case 'touch':
@@ -1687,6 +1733,7 @@
                                         obj.content = decodeURIComponent(obj.content);
                                     }
                                 }
+
                                 obj.isAtAll = (obj.content).indexOf('@全体') == 0 && (obj.user.user_id == that.roomInfo.room_user || obj.user.user_admin) ? true : false;
                                 if (obj.user.user_id == that.userInfo.user_id) {
                                     for (let i = that.messageList.length - 1; i >= 0; i--) {
@@ -1747,6 +1794,7 @@
                                     obj.content = '@' + obj.at.user_name + " " + obj.content;
                                 }
                                 that.messageList.push(obj);
+                                that.messageListBullet.unshift(obj);
                                 document.title = that.urldecode(obj.user.user_name) + "说：" + that.urldecode(obj.content);
                                 clearTimeout(that.timerForWebTitle);
                                 that.callParentFunction('onTextMessage', obj);
@@ -1852,6 +1900,12 @@
                                 for (let i = 0; i < that.messageList.length; i++) {
                                     if (parseInt(that.messageList[i].message_id) == parseInt(obj.message_id)) {
                                         that.messageList.splice(i, 1);
+                                        break;
+                                    }
+                                }
+                                for (let i = 0; i < that.messageListBullet.length; i++) {
+                                    if (parseInt(that.messageListBullet[i].message_id) == parseInt(obj.message_id)) {
+                                        that.messageListBullet.splice(i, 1);
                                         break;
                                     }
                                 }
@@ -2020,6 +2074,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         cursor: pointer;
+        line-height: 20px;
     }
 
     .bbbug_main_chat_name_icon {
@@ -2469,12 +2524,11 @@
         align-items: center;
         -ms-flex-pack: center;
         justify-content: center;
-        position: absolute;
+        position: fixed;
         left: 0;
         right: 0;
         top: 0;
         bottom: 0;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
     }
 
 
@@ -2503,4 +2557,175 @@
         pointer-events: none;
         z-index: 999;
     } */
+
+    .bbbug_locked_body {
+        position: fixed;
+        width: 80%;
+        max-width: 1600px;
+        top: 10%;
+        bottom: 10%;
+        border-radius: 20px;
+        overflow: hidden;
+        backdrop-filter: blur(50px);
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
+        text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .bbbug_locked_message {
+        position: absolute;
+        left: 400px;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px 0px;
+    }
+
+    .bbbug_locked_player_song {
+        font-size: 24px;
+        color: white;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 360px;
+        text-align: center;
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 0px 20px;
+    }
+
+    .bbbug_locked_player_lrc {
+        font-size: 16px;
+        position: absolute;
+        top: 400px;
+        text-align: center;
+        left: 0;
+        right: 0;
+        color: rgba(255, 255, 255, 0.6);
+        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 0px 20px;
+    }
+
+    .bbbug_locked_player_user {
+        position: absolute;
+        left: 20px;
+        right: 20px;
+        text-align: center;
+        bottom: 30px;
+        color: #ccc;
+        font-size: 14px;
+    }
+
+    .bbbug_locked_player {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 400px;
+        padding-top: 20%;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .bbbug_locked_player_img {
+        width: 160px;
+        height: 160px;
+        border-radius: 100%;
+        text-align: center;
+        display: inline-block;
+        overflow: hidden;
+        position: absolute;
+        top: 120px;
+        left: 120px;
+        -webkit-animation: rotate 60s linear infinite;
+        -moz-animation: rotate 60s linear infinite;
+        -o-animation: rotate 60s linear infinite;
+        animation: rotate 60s linear infinite;
+    }
+
+    .bbbug_locked_player_img img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .bbbug_locked_player_bg {
+        position: absolute;
+        left: 75px;
+        right: 75px;
+        top: 75px;
+        text-align: center;
+        -webkit-animation: rotate 60s linear infinite;
+        -moz-animation: rotate 60s linear infinite;
+        -o-animation: rotate 60s linear infinite;
+        animation: rotate 60s linear infinite;
+    }
+
+    .bbbug_locked_player_bg img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .bbbug_locked_player_bar {
+        position: absolute;
+        left: 170px;
+        top: 0px;
+        width: 140px;
+        height: 200px;
+    }
+
+    .bbbug_locked_player_bar img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .bbbug_locked_message_head {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        left: 10px;
+        top: 10px;
+    }
+
+    .bbbug_locked_message_head img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .bbbug_locked_item {
+        position: relative;
+        margin: 10px;
+        padding: 10px;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 5px;
+        transition: opacity 0.5s linear;
+    }
+
+    .bbbug_locked_message_head {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .bbbug_locked_message_content {
+        color: white;
+        margin-left: 60px;
+        margin-top: 5px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .bbbug_locked_message_user {
+        color: #ccc;
+        font-size: 20px;
+        margin-left: 60px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        line-height: 20px;
+        display: inline-block;
+    }
 </style>

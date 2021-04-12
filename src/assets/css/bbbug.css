@@ -549,6 +549,7 @@
      white-space: nowrap;
      vertical-align: middle;
      line-height: 20px;
+     display: inline-block;
  }
  
  .bbbug_main_right_online_user {

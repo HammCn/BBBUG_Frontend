@@ -229,6 +229,7 @@
         margin-top: 10px;
         line-height: 20px;
         cursor: pointer;
+        display: inline-block;
     }
 
     .bbbug_main_profile_song_item {
