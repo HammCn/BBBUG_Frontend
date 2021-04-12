@@ -67,22 +67,47 @@
 
             },
             methods: {
+                /**
+                 * @description: 下拉回调
+                 * @param {string} 搜索词 
+                 * @param {function} 回调方法
+                 * @return {null}
+                 */
                 querySearch(queryString, cb) {
                     //设置历史
                     cb(JSON.parse(JSON.stringify(this.roomHistory)));
                 },
+                /**
+                 * @description: 下拉监听
+                 * @param {obj} 选择的数据 
+                 * @return {null}
+                 */
                 handleSelect(item) {
-                    console.log(item)
                     this.room_id = item.room_id;
                     this.joinRoom(item.room_id);
                 },
+                /**
+                 * @description: urldecode
+                 * @param {string} 解码数据
+                 * @return {string} 解码后的数据
+                 */
                 urldecode(str) {
                     return decodeURIComponent(str);
                 },
+                /**
+                 * @description: 创建房间
+                 * @param {null} 
+                 * @return {null}
+                 */
                 createNewRoom() {
                     this.$parent.hideAll();
                     this.$parent.dialog.RoomCreate = true;
                 },
+                /**
+                 * @description: 进入指定房间
+                 * @param {int} 房间ID
+                 * @return {null}
+                 */
                 joinRoom(room_id) {
                     if (room_id) {
                         localStorage.setItem('room_change_id', room_id);
@@ -90,12 +115,22 @@
                         this.$parent.changeRoom();
                     }
                 },
+                /**
+                 * @description: 进入我的房间
+                 * @param {null} 
+                 * @return {null}
+                 */
                 joinMyRoom() {
                     let room_id = this.userInfo.myRoom.room_id;
                     localStorage.setItem('room_change_id', room_id);
                     this.$parent.hideAll();
                     this.$parent.changeRoom();
                 },
+                /**
+                 * @description: 获取房间列表
+                 * @param {null} 
+                 * @return {null}
+                 */
                 getList() {
                     let that = this;
                     if (that.bbbug_loading) {

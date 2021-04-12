@@ -35,7 +35,7 @@
                     isEnableNoticePlayer: true,
                     isEnableNotification: true,
                     isEnableTouchNotice: true,
-                    isEnableAtNotification:true,
+                    isEnableAtNotification: true,
                     isDarkModelTemp: false
                 }
             },
@@ -49,22 +49,47 @@
                 this.isDarkModelTemp = this.$parent.isDarkModel;
             },
             methods: {
-                isEnableAtNotificationChanged(){
+                /**
+                 * @description: @通知切换事件
+                 * @param {null} 
+                 * @return {null}
+                 */
+                isEnableAtNotificationChanged() {
                     localStorage.setItem('isEnableAtNotification', this.isEnableAtNotification ? 0 : 1);
                     this.$parent.loadConfig();
                 },
+                /**
+                 * @description: 声音切换事件
+                 * @param {null} 
+                 * @return {null}
+                 */
                 isEnableNoticePlayerChanged() {
                     localStorage.setItem('isEnableNoticePlayer', this.isEnableNoticePlayer ? 0 : 1);
                     this.$parent.loadConfig();
                 },
+                /**
+                 * @description: 通知切换事件
+                 * @param {null} 
+                 * @return {null}
+                 */
                 isEnableNotificationChanged() {
                     localStorage.setItem('isEnableNotification', this.isEnableNotification ? 0 : 1);
                     this.$parent.loadConfig();
                 },
+                /**
+                 * @description: 摸一摸通知切换事件
+                 * @param {null} 
+                 * @return {null}
+                 */
                 isEnableTouchNoticeChanged() {
                     localStorage.setItem('isEnableTouchNotice', this.isEnableTouchNotice ? 0 : 1);
                     this.$parent.loadConfig();
                 },
+                /**
+                 * @description: 暗黑模式切换事件
+                 * @param {null} 
+                 * @return {null}
+                 */
                 isDarkModelChanged() {
                     this.$parent.updateDarkModel(this.isDarkModelTemp);
                 }

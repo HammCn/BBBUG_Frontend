@@ -199,6 +199,12 @@
                 this.baseData = this.global.baseData;
             },
             methods: {
+                /**
+                 * @description: 上传结果回调
+                 * @param {obj} 服务器返回数据
+                 * @param {file} 上传的本地文件 
+                 * @return {null}
+                 */
                 handleBackgroudUploadSuccess(res, file) {
                     var that = this;
                     if (res.code == 200) {
@@ -207,6 +213,11 @@
                         that.$message.error(res.msg);
                     }
                 },
+                /**
+                 * @description: 上传前验证
+                 * @param {file} 验证的文件 
+                 * @return {bool} 是否验证通过
+                 */
                 doUploadBefore(file) {
                     const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
                     const isLt2M = file.size / 1024 / 1024 < 2;
@@ -219,6 +230,11 @@
                     }
                     return isJPG && isLt2M;
                 },
+                /**
+                 * @description: 修改房间信息
+                 * @param {null} 
+                 * @return {null}
+                 */
                 updateRoom() {
                     let that = this;
                     that.request({
@@ -232,6 +248,11 @@
                         }
                     });
                 },
+                /**
+                 * @description: 清理房间聊天记录
+                 * @param {null} 
+                 * @return {null}
+                 */
                 clearHistory() {
                     var that = this;
                     that.$confirm('是否确认清空当前房间聊天记录?', '删除聊天记录', {

@@ -86,15 +86,30 @@
             }
         },
         methods: {
+            /**
+             * @description: 取消送歌
+             * @param {null} 
+             * @return {null}
+             */
             clearUser() {
                 let that = this;
                 that.atSongUserInfo = false;
                 that.global.atSongUserInfo = false;
             },
+            /**
+             * @description: 关键词搜索歌曲
+             * @param {string} 关键词 
+             * @return {null}
+             */
             searchSongByKeyword(keyword) {
                 this.keyword = keyword;
                 this.getList();
             },
+            /**
+             * @description: 获取热门歌曲
+             * @param {null} 
+             * @return {null}
+             */
             getHots() {
                 let that = this;
                 that.isHots = true;
@@ -114,6 +129,11 @@
                     }
                 });
             },
+            /**
+             * @description: 获取搜索结果
+             * @param {null} 
+             * @return {null}
+             */
             getList() {
                 let that = this;
                 that.isHots = false;
@@ -148,6 +168,12 @@
                     }
                 });
             },
+            /**
+             * @description: 搜索下拉回调
+             * @param {string} 搜索词 
+             * @param {function} 下拉回调方法
+             * @return {null}
+             */
             querySearch(queryString, cb) {
                 //设置历史
                 if (this.keyword) {
@@ -156,10 +182,20 @@
                     cb(JSON.parse(JSON.stringify(this.historyList)));
                 }
             },
+            /**
+             * @description: 下拉回调
+             * @param {obj} 选择的数据 
+             * @return {null}
+             */
             handleSelect(item) {
                 this.keyword = item.value;
                 this.getList();
             },
+            /**
+             * @description: 点歌
+             * @param {int} 歌曲索引
+             * @return {null}
+             */
             addSong(index) {
                 let that = this;
                 if (that.list[index].loading) {
@@ -186,6 +222,11 @@
                     }
                 });
             },
+            /**
+             * @description: 播放歌曲
+             * @param {int} 歌曲索引 
+             * @return {null}
+             */
             playSong(index) {
                 let that = this;
                 if (that.list[index].loading) {

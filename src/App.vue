@@ -10,7 +10,7 @@
             <a href="https://github.com/HammCn" target="_blank">Github</a>
         </div>
         <audio :src="getStaticUrl('new/mp3/dingdong.mp3')" ref="noticePlayer"></audio>
-        <audio :src="audioUrl" ref="audio" autoplay="autoplay" control1 @playing="audioPlaying" @canplay="audioCanPlay"
+        <audio :src="audioUrl" ref="audio" autoplay="autoplay" control1 @playing="audioPlaying"
             @timeupdate="audioTimeUpdate" @ended="audioEnded" @error="audioError" @loadeddata="audioLoaded"></audio>
         <div class="bbbug_main">
             <div class="bbbug_main_box" v-if="roomInfo && userInfo" v-loading="appLoading">
@@ -97,12 +97,8 @@
 
                         </div>
                         <div class="bbbug_main_chat_online">
-                            <span title="打开你的年报" class="bbbug_main_chat_invate" @click="showMy2020" v-if="userInfo"
-                                style="display:none;">2020&2021</span>
                             <span title="复制邀请链接" class="bbbug_main_chat_invate"
                                 :data-clipboard-text="copyData">邀请</span>
-                            <span title="无缝穿梭到手机" class="bbbug_main_chat_invate hideWhenPhone" @click="showQrCode"
-                                v-if="userInfo && userInfo.user_id>0" style="display:none;">穿梭到手机</span>
                             <span @click.stop="showOnlineList" title="打开在线用户列表">
                                 <i class="iconfont icon-icon_people_fill">
                                 </i>
@@ -420,6 +416,7 @@
                     qrcodeEnabled: true,
                     dialog: false,
                     audioUrl: "",
+                    // 默认音乐loading图
                     audioImage: "new/images/loading.png",
                     uploadImageUrl: "",
                     uploadMusicUrl: "",
@@ -438,6 +435,7 @@
                     isEmojiBoxShow: false,
                     messageList: [],
                     messageListBullet: [],
+                    // 消息最大允许保留
                     historyMax: 100,
                     isSongPannelShow: false,
                     globalMusicSwitch: false,
@@ -448,6 +446,7 @@
                     songInfo: false,
                     message: "",
                     timeDiff: 0,
+                    // 默认音量
                     audioVolume: 50,
                     audioPercent: 0,
                     isVolumeBarShow: false,
@@ -463,6 +462,7 @@
                     _clipboard: false,
                     musicLrcObj: {},
                     lrcString: "",
+                    // 默认背景图
                     background: "new/images/bg_dark.jpg",
                     emojiList: [],
                     imageList: [],
@@ -475,6 +475,11 @@
             },
             mounted() {
                 let that = this;
+                // that.websocket.heartBeatTimer = setInterval(function () {
+                //     if (that.websocket.isConnected && that.websocket.connection.readyState == 1) {
+                //         that.websocket.connection.send('heartBeat');
+                //     }
+                // }, 10000);
                 that.checkInitUrl(function () {
                     that.$on('App', function (data) {
                         that.AppController(data);
@@ -567,9 +572,19 @@
                 });
             },
             methods: {
+                /**
+                 * @description: 隐藏上传音乐窗口
+                 * @param {null}
+                 * @return {null}
+                 */
                 hideUploadMusicWindow() {
                     this.uploadSongForm = false;
                 },
+                /**
+                 * @description: 初始化URL连接参数
+                 * @param {function} 回调方法
+                 * @return {null}
+                 */
                 checkInitUrl(callback) {
                     let that = this;
                     let code = '';
@@ -632,12 +647,22 @@
                         }
                     });
                 },
+                /**
+                 * @description: 获取URL参数
+                 * @param {string} 参数名称
+                 * @return {string|null} 
+                 */
                 getQueryString(name) {
                     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
                     var r = window.location.search.substr(1).match(reg);
                     if (r != null) return unescape(r[2]);
                     return null;
                 },
+                /**
+                 * @description: 游客登录
+                 * @param {null}
+                 * @return {null}
+                 */
                 loginGuest() {
                     localStorage.removeItem('access_token');
                     this.global.baseData.access_token = this.global.guestUserInfo.access_token;
@@ -645,11 +670,21 @@
                     this.hideAll();
                     this.getUserInfo();
                 },
+                /**
+                 * @description: 显示登录窗口
+                 * @param {null}
+                 * @return {null}
+                 */
                 showLoginForm() {
                     this.userInfo = this.global.guestUserInfo;
                     this.hideAll();
                     this.dialog.Login = true;
                 },
+                /**
+                 * @description: 设置暗黑模式
+                 * @param {bool} 是否暗黑模式
+                 * @return {null}
+                 */
                 updateDarkModel(isDarkModel) {
                     this.isDarkModel = isDarkModel;
                     if (this.isDarkModel) {
@@ -661,12 +696,23 @@
                     }
                     this.$forceUpdate();
                 },
+                /**
+                 * @description: 读取本地配置
+                 * @param {null}
+                 * @return {null}
+                 */
                 loadConfig() {
                     this.isEnableNoticePlayer = localStorage.getItem('isEnableNoticePlayer') != 1 ? true : false;
                     this.isEnableNotification = localStorage.getItem('isEnableNotification') != 1 ? true : false;
                     this.isEnableTouchNotice = localStorage.getItem('isEnableTouchNotice') != 1 ? true : false;
                     this.isEnableAtNotification = localStorage.getItem('isEnableAtNotification') != 1 ? true : false;
                 },
+                /**
+                 * @description: 显示右键菜单
+                 * @param {event} 事件
+                 * @param {object} 消息
+                 * @return {null}
+                 */
                 openMenu(e, item) {
                     this.rightClickItem = item;
                     this.selectedMessage = item;
@@ -678,12 +724,22 @@
 
                     this.menuVisible = true;
                 },
+                /**
+                 * @description: 关闭右键菜单
+                 * @param {null}
+                 * @return {null}
+                 */
                 closeMenu() {
                     this.menuVisible = false;
                     this.selectedMessage = {
                         user: {}
                     };
                 },
+                /**
+                 * @description: 格式化时间戳为友好时间
+                 * @param {int} 秒时间戳
+                 * @return {string} 友好时间
+                 */
                 friendlyTime: function (time) {
                     var now = parseInt(Date.parse(new Date()) / 1000);
                     var todayDate = new Date();
@@ -706,22 +762,12 @@
                     } else {
                         return y + "-" + m + "-" + d;
                     }
-                    // if (now - time <= 60) {
-                    //     return '刚刚';
-                    // } else if (now - time > 60 && now - time <= 3600) {
-                    //     return parseInt((now - time) / 60) + '分钟前'
-                    // } else if (now - time > 3600 && now - time <= 86400) {
-                    //     return parseInt((now - time) / 3600) + '小时前'
-                    // } else if (now - time > 86400 && now - time <= 86400 * 7) {
-                    //     return parseInt((now - time) / 86400) + '天前'
-                    // } else if (now - time > 86400 * 7 && now - time <= 86400 * 30) {
-                    //     return parseInt((now - time) / 86400 / 7) + '周前'
-                    // } else if (now - time > 86400 * 30 && now - time <= 86400 * 30 * 12) {
-                    //     return parseInt((now - time) / 86400 / 30) + '月前'
-                    // } else {
-                    //     return parseInt((now - time) / 86400 / 365) + '年前'
-                    // }
                 },
+                /**
+                 * @description: 上传表情图片前校验
+                 * @param {file} file
+                 * @return {bool} 是否校验通过
+                 */
                 doUploadBefore(file) {
                     const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif';
                     const isLt2M = file.size / 1024 / 1024 < 2;
@@ -736,6 +782,11 @@
                     }
                     return isJPG && isLt2M;
                 },
+                /**
+                 * @description: 上传mp3前校验
+                 * @param {file} file
+                 * @return {bool} 是否校验通过
+                 */
                 doUploadMusicBefore(file) {
                     const isMp3 = file.type === 'audio/mpeg';
                     const isLt8M = file.size / 1024 / 1024 < 8;
@@ -750,6 +801,11 @@
                     }
                     return isMp3 && isLt8M;
                 },
+                /**
+                 * @description: 搜索表情
+                 * @param {null}
+                 * @return {null}
+                 */
                 searchImage() {
                     let that = this;
                     that.loadingSearchImage = true;
@@ -768,6 +824,11 @@
                         }
                     });
                 },
+                /**
+                 * @description: 获取剪切板文件
+                 * @param {event} event
+                 * @return {null}
+                 */
                 getClipboardFiles(event) {
                     var that = this;
                     let items = event.clipboardData && event.clipboardData.items;
@@ -829,11 +890,12 @@
                     }
                     return;
                 },
-                showQrCode() {
-                    this.$alert('<center><span class="item" style="color:red;font-size:14px;"><font color=black style="font-size:20px;">手机扫码立即穿梭</font><br><br><img width="200px" src="https://qr.hamm.cn?data=' + encodeURIComponent(location.origin + '/?access_token=' + this.baseData.access_token) + '"/><br>请不要截图发给其他人,避免账号被盗</span></center>', {
-                        dangerouslyUseHTMLString: true
-                    });
-                },
+                /**
+                 * @description: 监听图片上传完成事件
+                 * @param {obj} 服务器返回数据
+                 * @param {file} 上传的文件
+                 * @return {null}
+                 */
                 handleImageUploadSuccess(res, file) {
                     var that = this;
                     if (res.code == 200) {
@@ -852,6 +914,12 @@
                         that.$message.error(res.msg);
                     }
                 },
+                /**
+                 * @description: 监听MP3上传完成事件
+                 * @param {obj} 服务器返回数据
+                 * @param {file} 上传的文件
+                 * @return {null}
+                 */
                 handleMusicUploadSuccess(res, file) {
                     let that = this;
                     if (res.code == 200) {
@@ -863,9 +931,19 @@
                         that.$message.error(res.msg);
                     }
                 },
+                /**
+                 * @description: 新窗口打开URL
+                 * @param {string} url
+                 * @return {null}
+                 */
                 openNewWebPage(url) {
                     window.open(url);
                 },
+                /**
+                 * @description: 与服务器同步时间戳
+                 * @param {null}
+                 * @return {null}
+                 */
                 updateServerTime() {
                     let that = this;
                     that.request({
@@ -877,8 +955,12 @@
                         },
                     });
                 },
+                /**
+                 * @description: 静音和取消静音
+                 * @param {null}
+                 * @return {null}
+                 */
                 setEnableOrDisableVolume() {
-                    //TODO
                     if (this.audioVolume > 0) {
                         //设置静音
                         localStorage.setItem("volume_old", this.audioVolume);
@@ -894,31 +976,52 @@
                         localStorage.setItem('volume', volume);
                     }
                 },
+                /**
+                 * @description: 显示音量操作条
+                 * @param {null}
+                 * @return {null}
+                 */
                 showAudioVolumeBar() {
                     let that = this;
                     that.isVolumeBarShow = true;
-                    clearTimeout(that.timerVolumeBar);
-                    that.timerVolumeBar = setTimeout(function () {
-                        that.isVolumeBarShow = false;
-                    }, 5000);
+                    that.hideVolumeBarAfter5seconds();
                 },
+                /**
+                 * @description: 音量条数据改变
+                 * @param {null}
+                 * @return {null}
+                 */
                 audioVolumeChanged() {
                     let that = this;
-                    let volume = that.audioVolume;
-                    that.$refs.audio.volume = parseFloat(volume / 100);
-                    localStorage.setItem('volume', volume);
+                    that.$refs.audio.volume = parseFloat(that.audioVolume / 100);
+                    localStorage.setItem('volume', that.audioVolume);
+                    that.hideVolumeBarAfter5seconds();
+                },
+                /**
+                 * @description: 5s后隐藏音量条
+                 * @param {null}
+                 * @return {null}
+                 */
+                hideVolumeBarAfter5seconds() {
+                    let that = this;
                     clearTimeout(that.timerVolumeBar);
                     that.timerVolumeBar = setTimeout(function () {
                         that.isVolumeBarShow = false;
                     }, 5000);
                 },
+                /**
+                 * @description: Audio开始播放
+                 * @param {null}
+                 * @return {null}
+                 */
                 audioPlaying() {
-                    //开始播放了
                     this.audioImage = decodeURIComponent(this.songInfo.user.user_head);
                 },
-                audioCanPlay() {
-                    //准备好要播放了
-                },
+                /**
+                 * @description: 播放进度变更事件
+                 * @param {null}
+                 * @return {null}
+                 */
                 audioTimeUpdate() {
                     let that = this;
                     if (that.songInfo && that.$refs.audio.duration > 0 && that.$refs.audio.duration != NaN) {
@@ -941,6 +1044,11 @@
                     }
                     that.lrcString = '歌词读取中...';
                 },
+                /**
+                 * @description: Audio播放完毕
+                 * @param {null}
+                 * @return {null}
+                 */
                 audioEnded() {
                     let that = this;
                     that.audioResetImage();
@@ -948,6 +1056,11 @@
                         that.playMusic();
                     }
                 },
+                /**
+                 * @description: Audio播放失败,可能需要替换为本地播放地址
+                 * @param {null}
+                 * @return {null}
+                 */
                 audioError() {
                     let that = this;
                     that.audioResetImage();
@@ -957,11 +1070,20 @@
                         }, 500);
                     }
                 },
+                /**
+                 * @description: 重置播放器图片为Loading
+                 * @param {null}
+                 * @return {null}
+                 */
                 audioResetImage() {
                     this.audioImage = this.getStaticUrl('new/images/loading.png');
                 },
+                /**
+                 * @description: Audio加载成功
+                 * @param {null}
+                 * @return {null}
+                 */
                 audioLoaded() {
-                    //加载成功
                     let that = this;
                     let nowTimeStamps = parseInt((new Date().valueOf() - that.timeDiff) / 1000);
                     let now = 0;
@@ -978,14 +1100,17 @@
                             if (now < 5) {
                                 now = 0;
                             }
-                            // console.error('当前应播放' + now + 's');
                             that.$refs.audio.currentTime = now < 0 ? 0 : now;
                             that.audioImage = decodeURIComponent(that.songInfo.user.user_head);
                             break;
                         default:
                     }
-                    // that.$refs.audio.play();
                 },
+                /**
+                 * @description: 获取引用消息的标签
+                 * @param {obj} 引用的消息
+                 * @return {string} 显示字符串
+                 */
                 getQuotMessage(itemAt) {
                     if (!itemAt.message) {
                         return false;
@@ -1004,6 +1129,11 @@
                             return this.urldecode(itemAt.message.content);
                     }
                 },
+                /**
+                 * @description: 读取音乐歌词
+                 * @param {null}
+                 * @return {null}
+                 */
                 getMusicLrc() {
                     let that = this;
                     that.musicLrcObj = {};
@@ -1014,27 +1144,45 @@
                             mid: that.songInfo.song.mid
                         },
                         success(res) {
-                            that.musicLrcObj = (res.data);
-                            // that.musicLrcObj = that.createLrcObj(res.data);
+                            that.musicLrcObj = res.data;
                         },
                     });
                 },
+                /**
+                 * @description: 播放音乐
+                 * @param {null}
+                 * @return {null}
+                 */
                 playMusic() {
                     let that = this;
                     that.getMusicLrc();
                     that.$nextTick(function () {
-                        // that.$refs.audio.load();
                         that.audioStartPlay();
                     });
                 },
+                /**
+                 * @description: 播放系统提示音
+                 * @param {null}
+                 * @return {null}
+                 */
                 playSystemAudio() {
                     this.$refs.noticePlayer.play();
                 },
+                /**
+                 * @description: 尝试播放 可能因为没加载完报错
+                 * @param {null}
+                 * @return {null}
+                 */
                 audioStartPlay() {
                     try {
                         this.$refs.audio.play();
                     } catch (e) { }
                 },
+                /**
+                 * @description: 消息输入框输入变更
+                 * @param {event} 输入框事件
+                 * @return {null}
+                 */
                 messageChanged(e) {
                     let that = this;
                     if (that.message == "@" + decodeURIComponent(that.atUserInfo.user_name)) {
@@ -1050,6 +1198,11 @@
                         that.isEnableSendMessage = false;
                     }
                 },
+                /**
+                 * @description: 消息列表滚动事件
+                 * @param {event} 滚动事件
+                 * @return {null}
+                 */
                 onMessageScroll(e) {
                     let that = this;
                     if (e.target.scrollHeight - e.target.scrollTop < e.target.clientHeight + 50 && !that.bbbug_loading) {
@@ -1058,6 +1211,11 @@
                         that.isEnableScroll = false;
                     }
                 },
+                /**
+                 * @description: 显示修改我的资料页面
+                 * @param {null}
+                 * @return {null}
+                 */
                 openMySetting() {
                     if (this.dialog.MySetting) {
                         this.hideAll();
@@ -1066,6 +1224,11 @@
                         this.dialog.MySetting = true;
                     }
                 },
+                /**
+                 * @description: 显示我的歌曲列表
+                 * @param {null}
+                 * @return {null}
+                 */
                 showMySongList() {
                     if (this.dialog.MySongList) {
                         this.hideAll();
@@ -1074,6 +1237,11 @@
                         this.dialog.MySongList = true;
                     }
                 },
+                /**
+                 * @description: 显示搜索歌曲页面
+                 * @param {null}
+                 * @return {null}
+                 */
                 showSearchSongs() {
                     if (this.dialog.SearchSongs) {
                         this.hideAll();
@@ -1082,6 +1250,11 @@
                         this.dialog.SearchSongs = true;
                     }
                 },
+                /**
+                 * @description: 显示正在播放的列表
+                 * @param {null}
+                 * @return {null}
+                 */
                 showPlaySongList() {
                     if (this.dialog.PlayingSongList) {
                         this.hideAll();
@@ -1090,6 +1263,11 @@
                         this.dialog.PlayingSongList = true;
                     }
                 },
+                /**
+                 * @description: 显示房间列表
+                 * @param {null}
+                 * @return {null}
+                 */
                 showRoomList() {
                     if (this.dialog.RoomList) {
                         this.hideAll();
@@ -1098,6 +1276,11 @@
                         this.dialog.RoomList = true;
                     }
                 },
+                /**
+                 * @description: 显示系统设置
+                 * @param {null}
+                 * @return {null}
+                 */
                 showSystemSetting() {
                     if (this.dialog.SystemSetting) {
                         this.hideAll();
@@ -1106,6 +1289,11 @@
                         this.dialog.SystemSetting = true;
                     }
                 },
+                /**
+                 * @description: 显示房间设置
+                 * @param {null}
+                 * @return {null}
+                 */
                 openRoomSetting() {
                     if (this.dialog.RoomSetting) {
                         this.hideAll();
@@ -1114,6 +1302,11 @@
                         this.dialog.RoomSetting = true;
                     }
                 },
+                /**
+                 * @description: 隐藏所有窗口
+                 * @param {null}
+                 * @return {null}
+                 */
                 hideAll() {
                     this.isEmojiBoxShow = false;
                     this.isSongPannelShow = false;
@@ -1134,16 +1327,31 @@
                         Login: false,
                     };
                 },
+                /**
+                 * @description: 隐藏表情和歌曲卡片
+                 * @param {null}
+                 * @return {null}
+                 */
                 hideAllDialog() {
                     this.isEmojiBoxShow = false;
                     this.isSongPannelShow = false;
                     this.closeMenu();
                 },
+                /**
+                 * @description: 显示歌曲卡片
+                 * @param {null}
+                 * @return {null}
+                 */
                 showSongPanel() {
                     this.closeMenu();
                     this.isEmojiBoxShow = false;
                     this.isSongPannelShow = !this.isSongPannelShow;
                 },
+                /**
+                 * @description: 显示表情卡片
+                 * @param {null}
+                 * @return {null}
+                 */
                 showEmojiBox() {
                     this.closeMenu();
                     this.isSongPannelShow = false;
@@ -1153,6 +1361,11 @@
                         this.loadingSearchImage = false;
                     }
                 },
+                /**
+                 * @description: 获取图片宽度
+                 * @param {string} 图片地址
+                 * @return {int} 图片宽度
+                 */
                 getImageWidth(url) {
                     if (url.indexOf('/images/emoji/') > 0) {
                         return 60;
@@ -1160,6 +1373,11 @@
                         return 200;
                     }
                 },
+                /**
+                 * @description: 发送图片
+                 * @param {string} 图片URL
+                 * @return {null}
+                 */
                 sendEmoji(url) {
                     let that = this;
                     that.request({
@@ -1176,6 +1394,11 @@
                         }
                     });
                 },
+                /**
+                 * @description: 发送消息
+                 * @param {event} 输入框事件
+                 * @return {null}
+                 */
                 sendMessage(e) {
                     let that = this;
                     e.preventDefault();
@@ -1233,15 +1456,27 @@
                         }
                     });
                 },
-                showMy2020() {
-                    window.open('https://api.bbbug.com/api/activity/?user_id=' + this.userInfo.user_id);
-                },
+                /**
+                 * @description: 全局监听器
+                 * @param {string} 执行方法名
+                 * @return {null}
+                 */
                 AppController(data) {
                     eval("this." + data + "()");
                 },
+                /**
+                 * @description: 隐藏全局Loading
+                 * @param {null}
+                 * @return {null}
+                 */
                 hideLoading() {
                     this.appLoading = false;
                 },
+                /**
+                 * @description: 获取我的资料
+                 * @param {null}
+                 * @return {null}
+                 */
                 getUserInfo() {
                     let that = this;
                     that.request({
@@ -1253,6 +1488,11 @@
                         }
                     });
                 },
+                /**
+                 * @description: 进入指定房间
+                 * @param {int} 房间ID
+                 * @return {null}
+                 */
                 enterRoom(room_id) {
                     let that = this;
                     that.$confirm('是否确认退出当前房间并进入这个房间?', '换房提醒', {
@@ -1266,11 +1506,21 @@
                         that.getRoomInfo();
                     }).catch(function () { });
                 },
+                /**
+                 * @description: 切换到选择的房间 从缓存读取
+                 * @param {null}
+                 * @return {null}
+                 */
                 changeRoom() {
                     let that = this;
                     that.hideAll();
                     that.getRoomInfo();
                 },
+                /**
+                 * @description: 获取房间聊天记录
+                 * @param {null}
+                 * @return {null}
+                 */
                 getRoomHistory() {
                     let that = this;
                     that.request({
@@ -1336,32 +1586,36 @@
                                     user: roomAdminInfo
                                 });
                             }
-                            // that.messageList.push({
-                            //     type: "img",
-                            //     content: 'https://api.bbbug.com/api/weapp/qrcode?room_id=' + that.global.room_id,
-                            //     source: 'https://api.bbbug.com/api/weapp/qrcode?room_id=' + that.global.room_id,
-                            //     where: "channel",
-                            //     at: roomAdminInfo,
-                            //     message_id: 0,
-                            //     time: parseInt(new Date().valueOf() / 1000),
-                            //     user: roomAdminInfo
-                            // });
-
                             that.autoScroll();
                         }
                     });
                 },
+                /**
+                 * @description: 用户头像下拉点击事件
+                 * @param {obj} 点击行
+                 * @param {obj} 命令
+                 * @return {obj} 返回对象
+                 */
                 beforeHandleUserCommand(row, command) {
                     return {
                         "row": row,
                         "command": command
                     }
                 },
+                /**
+                 * @description: 输入框获取焦点
+                 * @param {null}
+                 * @return {null} 
+                 */
                 focusInput() {
                     const textarea = document.querySelector(".bbug_main_chat_input_message");
-                    // 艾特后自动聚焦
                     textarea.focus();
                 },
+                /**
+                 * @description: at用户
+                 * @param {null}
+                 * @return {null} 
+                 */
                 atUser() {
                     if (this.global.atUserInfo) {
                         this.atUserInfo = this.global.atUserInfo;
@@ -1369,6 +1623,11 @@
                         this.focusInput();
                     }
                 },
+                /**
+                 * @description: 摸一摸指定用户
+                 * @param {int} 用户ID
+                 * @return {null} 
+                 */
                 doTouch(user_id) {
                     let that = this;
                     that.request({
@@ -1382,6 +1641,11 @@
                         }
                     });
                 },
+                /**
+                 * @description: 撤回消息
+                 * @param {obj} 消息体
+                 * @return {null} 
+                 */
                 sendBackMessage(message) {
                     let that = this;
                     that.request({
@@ -1392,6 +1656,11 @@
                         }
                     });
                 },
+                /**
+                 * @description: 引用消息
+                 * @param {obj} 消息体
+                 * @return {null} 
+                 */
                 quotMessage(message) {
                     let that = this;
                     message = Object.assign({}, message);
@@ -1403,6 +1672,11 @@
                     this.message = '@' + decodeURIComponent(this.atUserInfo.user_name) + " " + that.message;
                     this.focusInput();
                 },
+                /**
+                 * @description: 用户头像下拉点击回调
+                 * @param {obj} 命令对象
+                 * @return {null} 
+                 */
                 commandUserHead(cmd) {
                     let that = this;
                     switch (cmd.command) {
@@ -1475,6 +1749,11 @@
                             that.$message.error('即将上线，敬请期待');
                     }
                 },
+                /**
+                 * @description: 显示指定用户主页
+                 * @param {int} 用户ID
+                 * @return {null} 
+                 */
                 showUserPage(user_id) {
                     let that = this;
                     that.global.profileUserId = user_id;
@@ -1484,6 +1763,11 @@
                         that.dialog.Profile = true;
                     });
                 },
+                /**
+                 * @description: 显示在线列表
+                 * @param {null}
+                 * @return {null} 
+                 */
                 showOnlineList() {
                     if (this.dialog.OnlineList) {
                         this.hideAll();
@@ -1492,6 +1776,11 @@
                         this.dialog.OnlineList = true;
                     }
                 },
+                /**
+                 * @description: 自动滚动到底部
+                 * @param {null}
+                 * @return {null} 
+                 */
                 autoScroll() {
                     let that = this;
                     if (!that.isLocked) {
@@ -1503,6 +1792,11 @@
                         });
                     }
                 },
+                /**
+                 * @description: 获取房间信息
+                 * @param {bool} 是否重新连接(默认true)
+                 * @return {null} 
+                 */
                 getRoomInfo(reConnect = true) {
                     let that = this;
                     if (reConnect) {
@@ -1582,6 +1876,11 @@
                         }
                     });
                 },
+                /**
+                 * @description: 更新剪切板数据
+                 * @param {null}
+                 * @return {null} 
+                 */
                 updateCopyData() {
                     let that = this;
                     that.copyData = '快来 ' + that.roomInfo.room_name + " 一起听歌玩耍呀!\n";
@@ -1594,6 +1893,11 @@
                     }
                     that.copyData += location.origin + "/" + that.roomInfo.room_id;
                 },
+                /**
+                 * @description: 切掉当前播放的歌曲
+                 * @param {null}
+                 * @return {null} 
+                 */
                 passTheSong() {
                     let that = this;
                     if (!that.songInfo) {
@@ -1613,6 +1917,11 @@
                         }
                     });
                 },
+                /**
+                 * @description: 收藏当前播放的歌曲
+                 * @param {null}
+                 * @return {null} 
+                 */
                 loveTheSong() {
                     let that = this;
                     if (!that.songInfo) {
@@ -1626,6 +1935,11 @@
                         },
                     });
                 },
+                /**
+                 * @description: 获取当前的websocket连接地址
+                 * @param {null}
+                 * @return {null} 
+                 */
                 getWebsocketUrl() {
                     let that = this;
                     that.request({
@@ -1646,6 +1960,13 @@
                         }
                     });
                 },
+                /**
+                 * @description: 添加系统消息
+                 * @param {string} 消息内容
+                 * @param {string} 消息颜色(#999)
+                 * @param {string} 背景色(transparent)
+                 * @return {null}
+                 */
                 addSystemMessage(msg, color = "#999", bgColor = "transparent") {
                     let that = this;
                     if (that.messageList.length > that.historyMax) {
@@ -1658,6 +1979,12 @@
                         color: color
                     });
                 },
+                /**
+                 * @description: Chrome通知
+                 * @param {string} 标题
+                 * @param {string} 内容
+                 * @return {null}
+                 */
                 chromeNotify(title, content) {
                     if (window.Notification && Notification.permission !== "denied") {
                         Notification.requestPermission(function (status) { // 请求权限
@@ -1675,6 +2002,11 @@
                         });
                     }
                 },
+                /**
+                 * @description: 消息控制器
+                 * @param {string} 收到的JSON数据包
+                 * @return {null}
+                 */
                 messageController(data) {
                     let that = this;
                     try {
@@ -1967,6 +2299,12 @@
                     }
                     that.autoScroll();
                 },
+
+                /**
+                 * @description: 连接websocket
+                 * @param {null}
+                 * @return {null}
+                 */
                 connectWebsocket() {
                     let that = this;
                     // console.log("connection...");
@@ -1975,7 +2313,6 @@
                         // console.log("链接成功");
                         that.websocket.isConnected = true;
                         that.websocket.isForceStop = false;
-                        that.doWebsocketHeartBeat();
                     };
                     that.websocket.connection.onmessage = function (event) {
                         that.messageController(event.data);
@@ -1987,19 +2324,11 @@
                         }
                     };
                 },
-                doWebsocketHeartBeat() {
-                    let that = this;
-                    if (that.websocket.isForceStop) {
-                        return;
-                    }
-                    clearTimeout(that.websocket.heartBeatTimer);
-                    that.websocket.heartBeatTimer = setTimeout(function () {
-                        if (that.websocket.connection.readyState == 1) {
-                            that.websocket.connection.send('heartBeat');
-                        }
-                        that.doWebsocketHeartBeat();
-                    }, 10000);
-                },
+                /**
+                 * @description: 强制断开当前的websocket连接
+                 * @param {null}
+                 * @return {null}
+                 */
                 doForceCloseWebsocket() {
                     let that = this;
                     if (!that.websocket.isConnected) {
@@ -2014,6 +2343,11 @@
                         return that.doForceCloseWebsocket();
                     }, 10);
                 },
+                /**
+                 * @description: Websocket错误断开
+                 * @param {null}
+                 * @return {null}
+                 */
                 doWebsocketError() {
                     let that = this;
                     if (that.websocket.isForceStop) {

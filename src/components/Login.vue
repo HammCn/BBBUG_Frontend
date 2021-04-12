@@ -25,23 +25,26 @@
                 </el-form-item>
                 <el-form-item class="bbbug_login_form_submit" style="margin-left:10px;"> <span style="float:left;">
                         <el-link :underline="false"
-                            :href="'https://graph.qq.com/oauth2.0/authorize?client_id='+global.appIdList.qq+'&redirect_uri='+localhost+'qq&response_type=code&state='+localhost" title="QQ">
+                            :href="'https://graph.qq.com/oauth2.0/authorize?client_id='+global.appIdList.qq+'&redirect_uri='+localhost+'qq&response_type=code&state='+localhost"
+                            title="QQ">
                             <i class="iconfont icon-QQ-circle-fill" style="font-size:24px;margin-right:-1px;"></i>
                         </el-link>
                         <el-link :underline="false"
-                            :href="'https://gitee.com/oauth/authorize?client_id='+global.appIdList.gitee+'&redirect_uri='+localhost+'gitee&response_type=code'" title="Gitee 码云">
+                            :href="'https://gitee.com/oauth/authorize?client_id='+global.appIdList.gitee+'&redirect_uri='+localhost+'gitee&response_type=code'"
+                            title="Gitee 码云">
                             <i class="iconfont icon-gitee"></i>
                         </el-link>
                         <el-link :underline="false"
-                            :href="'https://www.oschina.net/action/oauth2/authorize?client_id='+global.appIdList.oschina+'&redirect_uri='+localhost+'oschina&response_type=code'" title="开源中国">
+                            :href="'https://www.oschina.net/action/oauth2/authorize?client_id='+global.appIdList.oschina+'&redirect_uri='+localhost+'oschina&response_type=code'"
+                            title="开源中国">
                             <i class="iconfont icon-icon-oschina-circle"></i>
                         </el-link>
                         <el-link :underline="false"
-                            :href="'https://oapi.dingtalk.com/connect/qrconnect?appid='+global.appIdList.ding+'&response_type=code&scope=snsapi_login&state=STATE&redirect_uri='+localhost+'ding'" title="钉钉">
+                            :href="'https://oapi.dingtalk.com/connect/qrconnect?appid='+global.appIdList.ding+'&response_type=code&scope=snsapi_login&state=STATE&redirect_uri='+localhost+'ding'"
+                            title="钉钉">
                             <i class="iconfont icon-dingding"></i>
                         </el-link>
-                        <el-link :underline="false"
-                            href="javascript:;" title="Github">
+                        <el-link :underline="false" href="javascript:;" title="Github">
                             <i class="iconfont icon-git"></i>
                         </el-link>
                     </span>
@@ -54,63 +57,78 @@
 </template>
 <script>
     export
-    default {
-        data() {
-            return {
-                background: "new/images/bg_dark.jpg",
-                bbbug_loading: false,
-                localhost: "",
-                form: {
-                    user_account: "",
-                    user_password: "",
+        default {
+            data() {
+                return {
+                    background: "new/images/bg_dark.jpg",
+                    bbbug_loading: false,
+                    localhost: "",
+                    form: {
+                        user_account: "",
+                        user_password: "",
+                    }
+                }
+            },
+            created() {
+                this.localhost = encodeURIComponent(location.href);
+                this.callParentFunction('needLogin', 'please login first!');
+            },
+            methods: {
+                /**
+                 * @description: 游客方式登录
+                 * @param {null}
+                 * @return {null}
+                 */
+                loginGuest() {
+                    this.$parent.loginGuest();
+                },
+                /**
+                 * @description: 登录
+                 * @param {string} 验证表单名称
+                 * @return {null}
+                 */
+                doLogin(formName) {
+                    let that = this;
+                    that.$refs[formName].validate(function (valid) {
+                        if (valid) {
+                            that.bbbug_loading = true;
+                            that.request({
+                                url: "user/login",
+                                data: that.form,
+                                success(res) {
+                                    that.bbbug_loading = false;
+                                    that.global.baseData.access_token = res.data.access_token;
+                                    localStorage.setItem('access_token', res.data.access_token);
+                                    that.$parent.hideAll();
+                                    that.$parent.getUserInfo();
+                                },
+                                error(res) {
+                                    that.bbbug_loading = false;
+                                }
+                            });
+                        }
+                    });
+                },
+                /**
+                 * @description: 发送邮件
+                 * @param {null}
+                 * @return {null}
+                 */
+                sendMail() {
+                    let that = this;
+                    that.request({
+                        url: "sms/email",
+                        loading: true,
+                        data: {
+                            email: that.form.user_account
+                        },
+                        success(res) {
+                            that.$message.success(res.msg);
+                        }
+                    });
                 }
             }
-        },
-        created() {
-            this.localhost = encodeURIComponent(location.href);
-            this.callParentFunction('needLogin', 'please login first!');
-        },
-        methods: {
-            loginGuest() {
-                this.$parent.loginGuest();
-            },
-            doLogin(formName) {
-                let that = this;
-                that.$refs[formName].validate(function(valid) {
-                    if (valid) {
-                        that.bbbug_loading = true;
-                        that.request({
-                            url: "user/login",
-                            data: that.form,
-                            success(res) {
-                                that.bbbug_loading = false;
-                                that.global.baseData.access_token = res.data.access_token;
-                                localStorage.setItem('access_token', res.data.access_token);
-                                that.$parent.hideAll();
-                                that.$parent.getUserInfo();
-                            },
-                            error(res) {
-                                that.bbbug_loading = false;
-                            }
-                        });
-                    }
-                });
-            },
-            sendMail() {
-                let that = this;
-                that.request({
-                    url: "sms/email",
-                    loading: true,
-                    data: {
-                        email: that.form.user_account
-                    },
-                    success(res) {
-                        that.$message.success(res.msg);
-                    }
-                });
-            }
         }
-    }
 </script>
 <style>
     .bbbug_login {
@@ -124,7 +142,7 @@
         top: 0;
         bottom: 0;
     }
-    
+
     .bbbug_login_form {
         width: 400px;
         background-color: white;
@@ -135,31 +153,32 @@
         position: relative;
         box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
     }
-    
+
     .bbbug_login_form_title_guest {
         position: absolute;
         right: 20px;
         top: 20px;
     }
-    
+
     .bbbug_login_form_title {
         margin-bottom: 20px;
         padding: 10px 20px;
         font-size: 18px;
     }
-    
+
     .bbbug_login_form_submit {
         text-align: right;
         margin-bottom: 0px !important;
     }
-    
+
     .bbbug_login_form_submit .el-form-item__content {
         margin-left: 10px !important;
     }
-    .bbbug_login_form_submit .iconfont{
-        font-size:20px;
+
+    .bbbug_login_form_submit .iconfont {
+        font-size: 20px;
     }
-    
+
     .el-loading-mask {
         border-radius: 10px;
     }

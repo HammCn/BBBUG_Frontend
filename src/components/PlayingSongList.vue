@@ -64,10 +64,20 @@
                 this.getList();
             },
             methods: {
+                /**
+                 * @description: 显示本窗体
+                 * @param {null} 
+                 * @return {null}
+                 */
                 searchSong() {
                     this.$parent.hideAll();
                     this.$parent.dialog.SearchSongs = true;
                 },
+                /**
+                 * @description: 搜索歌曲
+                 * @param {null} 
+                 * @return {null}
+                 */
                 getList() {
                     let that = this;
                     if (that.bbbug_loading) {
@@ -88,6 +98,11 @@
                         }
                     });
                 },
+                /**
+                 * @description: 移除播放列表
+                 * @param {int} 歌曲索引
+                 * @return {null}
+                 */
                 removeSong(index) {
                     let that = this;
                     if (that.list[index].loading) {
@@ -113,6 +128,11 @@
                         }
                     });
                 },
+                /**
+                 * @description: 指定歌曲
+                 * @param {int} 歌曲索引
+                 * @return {null}
+                 */
                 pushSong(index) {
                     let that = this;
                     if (that.list[index].loading) {
@@ -138,6 +158,11 @@
                         }
                     });
                 },
+                /**
+                 * @description: 播放指定歌曲
+                 * @param {int} 歌曲索引
+                 * @return {null}
+                 */
                 playSong(index) {
                     let that = this;
                     if (that.list[index].loading) {

@@ -1,3 +1,11 @@
+<!--
+ * @Author: your name
+ * @Date: 2021-04-12 22:44:24
+ * @LastEditTime: 2021-04-12 22:44:25
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: /BBBUG_VUE/src/components/RoomPassword.vue
+-->
 <template>
     <div id="RoomPassword">
         <div class="bbbug_main_right">
@@ -35,6 +43,11 @@
                 this.userInfo = this.global.userInfo;
             },
             methods: {
+                /**
+                 * @description: 进入房间
+                 * @param {null} 
+                 * @return {null}
+                 */
                 enterRoom() {
                     this.global.room_password = this.room_password;
                     this.$parent.hideAll();

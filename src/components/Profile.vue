@@ -72,9 +72,20 @@
                 this.getSongList();
             },
             methods: {
+                /**
+                 * @description: 获取第三方url
+                 * @param {string} URL
+                 * @param {string} 扩展信息 
+                 * @return {string} 完整url
+                 */
                 getThirdUrl(url, ext) {
                     return url.replace('#extra#', ext);
                 },
+                /**
+                 * @description: 获取用户资料
+                 * @param {null} 
+                 * @return {null}
+                 */
                 getUserProfile() {
                     let that = this;
                     that.request({
@@ -87,6 +98,11 @@
                         }
                     });
                 },
+                /**
+                 * @description: 获取已点歌曲信息
+                 * @param {null} 
+                 * @return {null}
+                 */
                 getSongList() {
                     let that = this;
                     that.request({
@@ -100,6 +116,11 @@
                         }
                     });
                 },
+                /**
+                 * @description: 进入该用户的房间
+                 * @param {null} 
+                 * @return {null}
+                 */
                 enterHisRoom() {
                     let that = this;
                     if (that.userInfo.myRoom) {

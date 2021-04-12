@@ -7,7 +7,9 @@
                     <div class="bbbug_scroll" v-if="list.length>0" @scroll="onScroll">
                         <div class="bbbug_main_right_song_item" v-for="(item,index) in list" v-loading="item.loading">
                             <div class="bbug_main_right_song_pic">
-                                <img :data="getStaticUrl(item.pic)" :src="getStaticUrl('new/images/loading.gif')" onload="this.src=this.attributes['data'].value;this.attributes['onload']=null;" :onerror="getStaticUrl('new/images/nohead.jpg')" />
+                                <img :data="getStaticUrl(item.pic)" :src="getStaticUrl('new/images/loading.gif')"
+                                    onload="this.src=this.attributes['data'].value;this.attributes['onload']=null;"
+                                    :onerror="getStaticUrl('new/images/nohead.jpg')" />
                             </div>
                             <div class="bbbug_main_right_song_name">{{item.name}}
                             </div>
@@ -45,145 +47,180 @@
 </template>
 <script>
     export
-    default {
-        data() {
-            return {
-                bbbug_loading: false,
-                page: 1,
-                list: [],
-                userInfo: false,
-                roomInfo: false,
-                atSongUserInfo: false,
-            }
-        },
-        created() {
-            this.userInfo = this.global.userInfo;
-            this.roomInfo = Object.assign({}, this.global.roomInfo);
-            this.atSongUserInfo = this.global.atSongUserInfo;
-            this.getList();
-        },
-        methods: {
-            onScroll(e) {
-                let that = this;
-                if (e.target.scrollHeight - e.target.scrollTop < e.target.clientHeight + 50 && !that.bbbug_loading) {
-                    that.page++;
-                    that.getList();
+        default {
+            data() {
+                return {
+                    bbbug_loading: false,
+                    page: 1,
+                    list: [],
+                    userInfo: false,
+                    roomInfo: false,
+                    atSongUserInfo: false,
                 }
             },
-            clearUser() {
-                let that = this;
-                that.atSongUserInfo = false;
-                that.global.atSongUserInfo = false;
+            created() {
+                this.userInfo = this.global.userInfo;
+                this.roomInfo = Object.assign({}, this.global.roomInfo);
+                this.atSongUserInfo = this.global.atSongUserInfo;
+                this.getList();
             },
-            searchSongBySinger(item) {
-                this.global.songKeyword = item.singer;
-                this.$parent.showSearchSongs();
-            },
-            getList() {
-                let that = this;
-                if (that.bbbug_loading) {
-                    return;
-                }
-                that.bbbug_loading = true;
-                that.request({
-                    url: "song/mySongList",
-                    data: {
-                        order: 'recent',
-                        page: that.page
-                    },
-                    success(res) {
-                        that.bbbug_loading = false;
-                        if (that.page == 1) {
-                            that.list = res.data;
-                        } else {
-                            for (let i = 0; i < res.data.length; i++) {
-                                that.list.push(res.data[i]);
-                            }
-                        }
-                    },
-                    error(res) {
-                        that.bbbug_loading = false;
-                    }
-                });
-            },
-            addSong(index) {
-                let that = this;
-                if (that.list[index].loading) {
-                    return;
-                }
-                that.list[index].loading = true;
-                that.$forceUpdate();
-                that.request({
-                    url: "song/addSong",
-                    data: {
-                        room_id: that.global.room_id,
-                        mid: that.list[index].mid,
-                        at: that.atSongUserInfo ? that.atSongUserInfo.user_id : null
-                    },
-                    success(res) {
-                        that.$message.success(res.msg);
-                        that.list[index].loading = false;
-                        that.clearUser();
-                        that.$forceUpdate();
-                    },
-                    error(res) {
-                        that.list[index].loading = false;
-                        that.$forceUpdate();
-                    }
-                });
-            },
-            playSong(index) {
-                let that = this;
-                if (that.list[index].loading) {
-                    return;
-                }
-                that.list[index].loading = true;
-                that.$forceUpdate();
-                that.request({
-                    url: "song/playSong",
-                    data: {
-                        room_id: that.global.room_id,
-                        mid: that.list[index].mid
-                    },
-                    success(res) {
-                        that.$message.success(res.msg);
-                        that.list[index].loading = false;
-                        that.$forceUpdate();
-                    },
-                    error(res) {
-                        that.list[index].loading = false;
-                        that.$forceUpdate();
-                    }
-                });
-            },
-            removeSong(index) {
-                let that = this;
-                if (that.list[index].loading) {
-                    return;
-                }
-                that.list[index].loading = true;
-                that.$forceUpdate();
-                that.request({
-                    url: "song/deleteMySong",
-                    data: {
-                        room_id: that.global.room_id,
-                        mid: that.list[index].mid
-                    },
-                    success(res) {
-                        that.$message.success(res.msg);
-                        that.list[index].loading = false;
-                        that.$forceUpdate();
-                        that.page = 1;
+            methods: {
+                /**
+                 * @description: 滚动事件
+                 * @param {event} 事件
+                 * @return {null}
+                 */
+                onScroll(e) {
+                    let that = this;
+                    if (e.target.scrollHeight - e.target.scrollTop < e.target.clientHeight + 50 && !that.bbbug_loading) {
+                        that.page++;
                         that.getList();
-                    },
-                    error(res) {
-                        that.list[index].loading = false;
-                        that.$forceUpdate();
                     }
-                });
-            }
-        },
-    }
+                },
+                /**
+                 * @description: 取消送歌
+                 * @param {null}
+                 * @return {null}
+                 */
+                clearUser() {
+                    let that = this;
+                    that.atSongUserInfo = false;
+                    that.global.atSongUserInfo = false;
+                },
+                /**
+                 * @description: 通过歌手名称搜索歌曲
+                 * @param {歌曲信息}
+                 * @return {null}
+                 */
+                searchSongBySinger(item) {
+                    this.global.songKeyword = item.singer;
+                    this.$parent.showSearchSongs();
+                },
+                /**
+                 * @description: 获取数据
+                 * @param {null}
+                 * @return {null}
+                 */
+                getList() {
+                    let that = this;
+                    if (that.bbbug_loading) {
+                        return;
+                    }
+                    that.bbbug_loading = true;
+                    that.request({
+                        url: "song/mySongList",
+                        data: {
+                            order: 'recent',
+                            page: that.page
+                        },
+                        success(res) {
+                            that.bbbug_loading = false;
+                            if (that.page == 1) {
+                                that.list = res.data;
+                            } else {
+                                for (let i = 0; i < res.data.length; i++) {
+                                    that.list.push(res.data[i]);
+                                }
+                            }
+                        },
+                        error(res) {
+                            that.bbbug_loading = false;
+                        }
+                    });
+                },
+                /**
+                 * @description: 点歌
+                 * @param {int} 点歌索引
+                 * @return {null}
+                 */
+                addSong(index) {
+                    let that = this;
+                    if (that.list[index].loading) {
+                        return;
+                    }
+                    that.list[index].loading = true;
+                    that.$forceUpdate();
+                    that.request({
+                        url: "song/addSong",
+                        data: {
+                            room_id: that.global.room_id,
+                            mid: that.list[index].mid,
+                            at: that.atSongUserInfo ? that.atSongUserInfo.user_id : null
+                        },
+                        success(res) {
+                            that.$message.success(res.msg);
+                            that.list[index].loading = false;
+                            that.clearUser();
+                            that.$forceUpdate();
+                        },
+                        error(res) {
+                            that.list[index].loading = false;
+                            that.$forceUpdate();
+                        }
+                    });
+                },
+                /**
+                 * @description: 播放歌曲
+                 * @param {int} 歌曲索引
+                 * @return {null}
+                 */
+                playSong(index) {
+                    let that = this;
+                    if (that.list[index].loading) {
+                        return;
+                    }
+                    that.list[index].loading = true;
+                    that.$forceUpdate();
+                    that.request({
+                        url: "song/playSong",
+                        data: {
+                            room_id: that.global.room_id,
+                            mid: that.list[index].mid
+                        },
+                        success(res) {
+                            that.$message.success(res.msg);
+                            that.list[index].loading = false;
+                            that.$forceUpdate();
+                        },
+                        error(res) {
+                            that.list[index].loading = false;
+                            that.$forceUpdate();
+                        }
+                    });
+                },
+                /**
+                 * @description: 移除收藏
+                 * @param {int} 歌曲索引
+                 * @return {null}
+                 */
+                removeSong(index) {
+                    let that = this;
+                    if (that.list[index].loading) {
+                        return;
+                    }
+                    that.list[index].loading = true;
+                    that.$forceUpdate();
+                    that.request({
+                        url: "song/deleteMySong",
+                        data: {
+                            room_id: that.global.room_id,
+                            mid: that.list[index].mid
+                        },
+                        success(res) {
+                            that.$message.success(res.msg);
+                            that.list[index].loading = false;
+                            that.$forceUpdate();
+                            that.page = 1;
+                            that.getList();
+                        },
+                        error(res) {
+                            that.list[index].loading = false;
+                            that.$forceUpdate();
+                        }
+                    });
+                }
+            },
+        }
 </script>
 
 <style>

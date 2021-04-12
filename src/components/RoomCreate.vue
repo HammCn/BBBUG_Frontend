@@ -48,6 +48,11 @@
                 this.userInfo = this.global.userInfo;
             },
             methods: {
+                /**
+                 * @description: 创建房间
+                 * @param {null} 
+                 * @return {null}
+                 */
                 createRoom() {
                     let that = this;
                     that.request({

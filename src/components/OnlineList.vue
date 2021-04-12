@@ -108,6 +108,11 @@
                 }
             },
             methods: {
+                /**
+                 * @description: 获取用户当前状态
+                 * @param {obj} 用户信息
+                 * @return {string} 状态字符串
+                 */
                 getStatus(item) {
                     if (item.user_shutdown && item.user_songdown) {
                         return '禁言&禁歌';
@@ -119,12 +124,22 @@
                         return '';
                     }
                 },
+                /**
+                 * @description: 头像下拉点击事件
+                 * @param {obj} 点击的行 
+                 * @return {string} 回调命令
+                 */
                 beforeHandleUserCommand(row, command) {
                     return {
                         "row": row,
                         "command": command
                     }
                 },
+                /**
+                 * @description: 摸一摸指定用户
+                 * @param {int} 用户ID
+                 * @return {null}
+                 */
                 doTouch(user_id) {
                     let that = this;
                     that.request({
@@ -138,6 +153,11 @@
                         }
                     });
                 },
+                /**
+                 * @description: 用户下拉点击事件回调
+                 * @param {obj} 回调数据
+                 * @return {null}
+                 */
                 commandUserHead(cmd) {
                     let that = this;
                     switch (cmd.command) {
@@ -229,6 +249,11 @@
                             that.$message.error('即将上线，敬请期待');
                     }
                 },
+                /**
+                 * @description: 获取在线用户列表
+                 * @param {null} 
+                 * @return {null}
+                 */
                 getList() {
                     let that = this;
                     if (that.bbbug_loading) {

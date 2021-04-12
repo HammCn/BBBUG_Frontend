@@ -45,13 +45,28 @@
                 this.songInfo.song_pic = this.userInfo.user_head;
             },
             methods: {
+                /**
+                 * @description: 关闭当前窗口
+                 * @param {null} 
+                 * @return {null}
+                 */
                 closeWindow() {
                     this.$parent.uploadSongForm = false;
                 },
+                /**
+                 * @description: 播放验证
+                 * @param {null} 
+                 * @return {null}
+                 */
                 canplay() {
                     this.songInfo.song_length = parseInt(this.$refs.audio.duration);
                     this.loading = false;
                 },
+                /**
+                 * @description: 添加到我的歌单
+                 * @param {null} 
+                 * @return {null}
+                 */
                 doUploadMusic() {
                     let that = this;
                     if (that.songInfo.song_length == 0 || !that.songInfo.song_url || !that.songInfo.song_mid) {
