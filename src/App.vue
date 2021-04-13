@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <div class="bbbug_bg" @click.stop="isLocked=!isLocked;"
+        <div class="bbbug_bg"
             :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
         </div>
         <!-- <div class="snow"></div> -->
@@ -339,11 +339,11 @@
             </div>
         </div>
         <UploadMusic v-if="uploadSongForm"></UploadMusic>
-        <div v-if="isLocked" class="bbbug_locked">
-            <div class="bbbug_bg" @click.stop="isLocked=!isLocked;"
+        <div v-if="isLocked" class="bbbug_locked" @contextmenu.prevent="isLockedOnlyBg=!isLockedOnlyBg;">
+            <div class="bbbug_bg"
                 :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
             </div>
-            <div class="bbbug_locked_body">
+            <div class="bbbug_locked_body" v-if="!isLockedOnlyBg">
                 <div class="bbbug_locked_player" v-if="songInfo && songInfo.song">
                     <div class="bbbug_locked_player_img"><img :src="getStaticUrl(songInfo.song.pic)" /></div>
                     <div class="bbbug_locked_player_bg"><img :src="getStaticUrl('new/images/player_bg.png')" /></div>
@@ -426,6 +426,7 @@
                     roomInfo: false,
                     appLoading: false,
                     isLocked: false,
+                    isLockedOnlyBg:false,
                     isEnableScroll: true,
                     isEnableNotification: true,
                     isEnableNoticePlayer: true,
@@ -788,7 +789,8 @@
                  * @return {bool} 是否校验通过
                  */
                 doUploadMusicBefore(file) {
-                    const isMp3 = file.type === 'audio/mpeg';
+                    console.log(file.type);
+                    const isMp3 = file.type.toLocaleLowerCase() === 'audio/mpeg';
                     const isLt8M = file.size / 1024 / 1024 < 8;
 
                     if (!isMp3) {
@@ -2050,6 +2052,7 @@
                                 break;
                             case 'clear':
                                 that.messageList = [];
+                                that.messageListBullet = [];
                                 that.addSystemMessage("管理员" + that.urldecode(obj.user.user_name) + "清空了你的聊天记录", '#f00', '#eee');
                                 break;
                             case 'text':
