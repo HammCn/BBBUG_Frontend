@@ -1,7 +1,6 @@
 <template>
     <div id="app">
-        <div class="bbbug_bg"
-            :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
+        <div class="bbbug_bg" :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
         </div>
         <!-- <div class="snow"></div> -->
         <div class="bbbug_link">
@@ -340,8 +339,7 @@
         </div>
         <UploadMusic v-if="uploadSongForm"></UploadMusic>
         <div v-if="isLocked" class="bbbug_locked" @contextmenu.prevent="isLockedOnlyBg=!isLockedOnlyBg;">
-            <div class="bbbug_bg"
-                :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
+            <div class="bbbug_bg" :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
             </div>
             <div class="bbbug_locked_body" v-if="!isLockedOnlyBg">
                 <div class="bbbug_locked_player" v-if="songInfo && songInfo.song">
@@ -350,8 +348,8 @@
                     <div class="bbbug_locked_player_bar"><img :src="getStaticUrl('new/images/player_bar.png')" /></div>
                     <div class="bbbug_locked_player_song">{{songInfo.song.name}} - ({{songInfo.song.singer}})</div>
                     <div class="bbbug_locked_player_lrc">{{lrcString}}</div>
-                    <div class="bbbug_locked_player_user">点歌人: <font color="white">
-                            {{urldecode(songInfo.user.user_name)}}</font>
+                    <div class="bbbug_locked_player_user">点歌人:
+                        {{urldecode(songInfo.user.user_name)}}
                     </div>
                 </div>
                 <div class="bbbug_locked_player" v-if="!(songInfo && songInfo.song)">
@@ -426,7 +424,7 @@
                     roomInfo: false,
                     appLoading: false,
                     isLocked: false,
-                    isLockedOnlyBg:false,
+                    isLockedOnlyBg: false,
                     isEnableScroll: true,
                     isEnableNotification: true,
                     isEnableNoticePlayer: true,
@@ -2903,9 +2901,9 @@
         bottom: 10%;
         border-radius: 20px;
         overflow: hidden;
-        backdrop-filter: blur(50px);
+        background-color: rgba(255, 255, 255, 0.9);
+        color: #111;
         box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
-        text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
     }
 
     .bbbug_locked_message {
@@ -2915,19 +2913,16 @@
         top: 0;
         bottom: 0;
         overflow: hidden;
-        background: rgba(255, 255, 255, 0.1);
         padding: 10px 0px;
     }
 
     .bbbug_locked_player_song {
         font-size: 24px;
-        color: white;
         position: absolute;
         left: 0;
         right: 0;
         top: 360px;
         text-align: center;
-        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -2941,8 +2936,7 @@
         text-align: center;
         left: 0;
         right: 0;
-        color: rgba(255, 255, 255, 0.6);
-        text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+        color: #666;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -2955,7 +2949,7 @@
         right: 20px;
         text-align: center;
         bottom: 30px;
-        color: #ccc;
+        color: #666;
         font-size: 14px;
     }
 
@@ -2967,7 +2961,6 @@
         width: 400px;
         padding-top: 20%;
         text-align: center;
-        background: rgba(255, 255, 255, 0.1);
     }
 
     .bbbug_locked_player_img {
@@ -3038,8 +3031,6 @@
         position: relative;
         margin: 10px;
         padding: 10px;
-        background-color: rgba(255, 255, 255, 0.05);
-        border-radius: 5px;
         transition: opacity 0.5s linear;
     }
 
@@ -3049,16 +3040,16 @@
     }
 
     .bbbug_locked_message_content {
-        color: white;
         margin-left: 60px;
         margin-top: 5px;
         text-overflow: ellipsis;
         overflow: hidden;
+        font-size: 16px;
     }
 
     .bbbug_locked_message_user {
-        color: #ccc;
-        font-size: 20px;
+        color: #999;
+        font-size: 14px;
         margin-left: 60px;
         text-overflow: ellipsis;
         overflow: hidden;

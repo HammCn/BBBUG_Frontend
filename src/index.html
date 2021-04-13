@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="BBBUG">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <base href="https://bbbug.hamm.cn" />
+    <!-- <base href="https://bbbug.hamm.cn" /> -->
     <!-- 上面是CDN地址 如不使用 请注释 -->
     <link rel="icon" href="new/favicon.ico">
     <meta name="viewport"
@@ -65,13 +65,17 @@
 
 
         .bbbug_dark .bbbug_locked_body {
-            text-shadow: 2px 2px 2px rgb(0 0 0 / 30%);
-            box-shadow: 0px 0px 20px rgb(255 255 255 / 30%);
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #fff;
         }
 
         .bbbug_dark .bbbug_locked_player,
         .bbbug_dark .bbbug_locked_message {
             filter: invert(0.85) contrast(2);
+        }
+
+        .bbbug_dark .bbbug_main_room_icon_setting {
+            color: white;
         }
     </style>
 
