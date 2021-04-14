@@ -14,7 +14,7 @@
         <div class="bbbug_main">
             <div class="bbbug_main_box" v-if="roomInfo && userInfo" v-loading="appLoading">
                 <div class="bbbug_main_menu">
-                    <div class="bbbug_main_menu_head" @click="openMySetting" title="我的个人中心"><img
+                    <div class="bbbug_main_menu_head" @click="openMySetting" title="我的个人中心"><img class="xiaomi"
                             :src="userInfo ? getStaticUrl(userInfo.user_head) : getStaticUrl('new/images/nohead.jpg')"
                             :onerror="getStaticUrl('new/images/nohead.jpg')" />
                     </div>
@@ -98,6 +98,7 @@
                         <div class="bbbug_main_chat_online">
                             <span title="复制邀请链接" class="bbbug_main_chat_invate"
                                 :data-clipboard-text="copyData">邀请</span>
+                            <span class="bbbug_main_chat_invate" title="显示当前房间微信小程序码" @click="showQrCode">小程序</span>
                             <span @click.stop="showOnlineList" title="打开在线用户列表">
                                 <i class="iconfont icon-icon_people_fill">
                                 </i>
@@ -113,7 +114,7 @@
                                 :class="item.user.user_id==userInfo.user_id?'bbbug_main_chat_mine':''">
                                 <div class="bbbug_main_chat_head">
                                     <el-dropdown trigger="click" @command="commandUserHead" :index="index">
-                                        <img class="bbbug_main_chat_head_image" :src="getStaticUrl(item.user.user_head)"
+                                        <img class="bbbug_main_chat_head_image xiaomi" :src="getStaticUrl(item.user.user_head)"
                                             :onerror="getStaticUrl('new/images/nohead.jpg')"
                                             @dblclick.stop="doTouch(item.user.user_id)" />
                                         <el-dropdown-menu slot="dropdown">
@@ -411,11 +412,12 @@
             data() {
                 return {
                     uploadSongForm: false,
-                    qrcodeEnabled: true,
                     dialog: false,
                     audioUrl: "",
                     // 默认音乐loading图
                     audioImage: "new/images/loading.png",
+                    // 歌曲加载失败重试
+                    audioRetryTimes: 0,
                     uploadImageUrl: "",
                     uploadMusicUrl: "",
                     atUserInfo: false,
@@ -432,6 +434,7 @@
                     isEnableAtNotification: true,
                     isEnableSendMessage: false,
                     isEmojiBoxShow: false,
+
                     messageList: [],
                     messageListBullet: [],
                     // 消息最大允许保留
@@ -658,6 +661,18 @@
                     return null;
                 },
                 /**
+                 * @description 显示当前房间的小程序码
+                 * @param {null}
+                 * @return {null}
+                 */
+                showQrCode() {
+                    let that = this;
+                    that.$alert('<img src="' + that.global.apiUrl + '/api/weapp/qrcode?room_id=' + that.global.room_id + '" width="200" height="200"/>', '请微信扫码打开', {
+                        confirmButtonText: '确定',
+                        dangerouslyUseHTMLString: true,
+                    });
+                },
+                /**
                  * @description: 游客登录
                  * @param {null}
                  * @return {null}
@@ -843,49 +858,43 @@
                     }
                     if (file) {
                         if (that.doUploadBefore(file)) {
-                            let reader = new FileReader();
-                            reader.readAsDataURL(file);
-                            reader.onload = function () {
-                                //给img的src设置图片url
-                                that.$alert('<img src="' + this.result + '" width="100%" height="100%"/>', '是否确认发送这张图片？', {
-                                    confirmButtonText: '确认发送',
-                                    dangerouslyUseHTMLString: true,
-                                }).then(function () {
-                                    let param = new FormData();
-                                    param.append('file', file);
-                                    param.append('access_token', that.global.baseData.access_token);
-                                    param.append('plat', that.global.baseData.plat);
-                                    param.append('version', that.global.baseData.version);
-                                    let config = {
-                                        headers: {
-                                            'Content-Type': 'multipart/form-data'
-                                        }
-                                    }
-                                    // 添加请求头
-                                    that.$axios.post(that.uploadImageUrl, param, config)
-                                        .then(function (res) {
-                                            if (res.data.code == 200) {
-                                                that.request({
-                                                    url: "message/send",
-                                                    data: {
-                                                        where: 'channel',
-                                                        to: that.global.room_id,
-                                                        type: 'img',
-                                                        msg: res.data.data.attach_thumb,
-                                                        resource: res.data.data.attach_path,
-                                                    },
-                                                    success(res) { }
-                                                });
-                                            } else {
-                                                that.$message.error(res.data.msg);
-                                            }
-                                        })
-                                        .catch(function (error) {
-                                            that.$message.error("上传图片发生错误");
-                                        });
-                                }).catch(function () { });
+                            let param = new FormData();
+                            param.append('file', file);
+                            param.append('access_token', that.global.baseData.access_token);
+                            param.append('plat', that.global.baseData.plat);
+                            param.append('version', that.global.baseData.version);
+                            let config = {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data'
+                                }
                             }
-
+                            // 添加请求头
+                            that.$axios.post(that.uploadImageUrl, param, config)
+                                .then(function (res) {
+                                    if (res.data.code == 200) {
+                                        that.$alert('<img src="' + that.getStaticUrl(res.data.data.attach_path) + '" width="100%" height="100%"/><img src="' + that.getStaticUrl(res.data.data.attach_thumb) + '" width="0" height="0"/>', '是否确认发送这张图片？', {
+                                            confirmButtonText: '确认发送',
+                                            dangerouslyUseHTMLString: true,
+                                        }).then(function () {
+                                            that.request({
+                                                url: "message/send",
+                                                data: {
+                                                    where: 'channel',
+                                                    to: that.global.room_id,
+                                                    type: 'img',
+                                                    msg: res.data.data.attach_thumb,
+                                                    resource: res.data.data.attach_path,
+                                                },
+                                                success(res) { }
+                                            });
+                                        }).catch(function () { });
+                                    } else {
+                                        that.$message.error(res.data.msg);
+                                    }
+                                })
+                                .catch(function (error) {
+                                    that.$message.error("上传图片发生错误");
+                                });
                         }
                     }
                     return;
@@ -899,17 +908,23 @@
                 handleImageUploadSuccess(res, file) {
                     var that = this;
                     if (res.code == 200) {
-                        that.request({
-                            url: "message/send",
-                            data: {
-                                where: 'channel',
-                                to: that.global.room_id,
-                                type: 'img',
-                                msg: res.data.attach_thumb,
-                                resource: res.data.attach_path,
-                            },
-                            success(res) { }
-                        });
+
+                        that.$alert('<img src="' + that.getStaticUrl(res.data.attach_path) + '" width="100%" height="100%"/><img src="' + that.getStaticUrl(res.data.attach_thumb) + '" width="0" height="0"/>', '是否确认发送这张图片？', {
+                            confirmButtonText: '确认发送',
+                            dangerouslyUseHTMLString: true,
+                        }).then(function () {
+                            that.request({
+                                url: "message/send",
+                                data: {
+                                    where: 'channel',
+                                    to: that.global.room_id,
+                                    type: 'img',
+                                    msg: res.data.attach_thumb,
+                                    resource: res.data.attach_path,
+                                },
+                                success(res) { }
+                            });
+                        }).catch(function () { });
                     } else {
                         that.$message.error(res.msg);
                     }
@@ -1064,10 +1079,16 @@
                 audioError() {
                     let that = this;
                     that.audioResetImage();
-                    if (that.audioUrl) {
-                        setTimeout(function () {
-                            that.$refs.audio.src = that.getStaticUrl("music/" + that.songInfo.song.mid + ".jpg");
-                        }, 500);
+                    if (that.audioRetryTimes < 5) {
+                        if (that.audioUrl) {
+                            console.log("歌曲加载失败,正在准备重试");
+                            setTimeout(function () {
+                                that.$refs.audio.src = that.getStaticUrl("music/" + that.songInfo.song.mid + ".jpg");
+                                that.audioRetryTimes++;
+                            }, 500);
+                        }
+                    } else {
+                        console.error("尝试了5次,还是加载不出来了...");
                     }
                 },
                 /**
@@ -1156,6 +1177,7 @@
                 playMusic() {
                     let that = this;
                     that.getMusicLrc();
+                    that.audioRetryTimes = 0;
                     that.$nextTick(function () {
                         that.audioStartPlay();
                     });
@@ -2391,7 +2413,6 @@
         width: 40px;
         height: 40px;
         border-radius: 10px;
-        border: 1px solid #eee;
     }
 
     .bbbug_main_chat_mine .bbbug_main_chat_head {

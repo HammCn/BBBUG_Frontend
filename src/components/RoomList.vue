@@ -26,7 +26,7 @@
                             <div class="bbbug_main_right_room_id"><i v-if="item.room_public"
                                     class="room_lock iconfont icon-lock_fill"></i>ID:{{item.room_id}}</div>
                             <div class="bbbug_main_right_room_info">
-                                <img class="bbbug_main_right_room_user_head"
+                                <img class="bbbug_main_right_room_user_head xiaomi"
                                     :src="item ? getStaticUrl(item.user_head) : getStaticUrl('new/images/nohead.jpg')"
                                     :onerror="getStaticUrl('new/images/nohead.jpg')" />
                                 <div class="bbbug_main_right_room_user">

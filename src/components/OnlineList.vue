@@ -11,7 +11,7 @@
                             <div class="bbbug_main_right_online_info">
                                 <div class="bbbug_main_right_online_user_head">
                                     <el-dropdown trigger="click" @command="commandUserHead" :index="index">
-                                        <img class="bbbug_main_right_online_user_head_image"
+                                        <img class="bbbug_main_right_online_user_head_image xiaomi"
                                             :src="getStaticUrl(item.user_head)"
                                             :onerror="getStaticUrl('new/images/nohead.jpg')"
                                             @dblclick="doTouch(item.user_id)" />
