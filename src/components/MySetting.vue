@@ -10,9 +10,9 @@
                         <el-upload :action="uploadHeadUrl" :show-file-list="false"
                             :on-success="handleProfileHeadUploadSuccess" :before-upload="doUploadBefore"
                             :data="baseData">
-                            <img :src="getStaticUrl(userInfo.user_head)"
+                            <img :src="getStaticUrl(userInfo.user_head)" class="xiaomi"
                                 :onerror="getStaticUrl('new/images/nohead.jpg')"
-                                style="border-radius: 100%;width:80px;height:80px;" />
+                                style="border-radius: 10px;width:80px;height:80px;" />
                         </el-upload>
                         <div>ID:
                             <font color=orangered style="margin-left:5px;font-weight: bolder;">
