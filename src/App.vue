@@ -11,8 +11,8 @@
         <audio :src="getStaticUrl('new/mp3/dingdong.mp3')" ref="noticePlayer"></audio>
         <audio :src="nextAudioUrl" ref="preloadAudio" control1>
         </audio>
-        <audio :src="audioUrl" ref="audio" control1 @timeupdate="audioTimeUpdate"
-            @ended="audioEnded" @error="audioError" @loadedmetadata="audioLoaded" @canplay="canplay">
+        <audio :src="audioUrl" ref="audio" control1 @timeupdate="audioTimeUpdate" @ended="audioEnded"
+            @error="audioError" @loadedmetadata="audioLoaded" @canplay="canplay">
         </audio>
         <div class="bbbug_main">
             <div class="bbbug_main_box" v-if="roomInfo && userInfo" v-loading="appLoading">
@@ -3088,5 +3088,4 @@
         line-height: 20px;
         display: inline-block;
     }
-
 </style>
