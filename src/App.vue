@@ -9,8 +9,11 @@
             <a href="https://github.com/HammCn" target="_blank">Github</a>
         </div>
         <audio :src="getStaticUrl('new/mp3/dingdong.mp3')" ref="noticePlayer"></audio>
-        <audio :src="audioUrl" ref="audio" autoplay="autoplay" control1 @playing="audioPlaying"
-            @timeupdate="audioTimeUpdate" @ended="audioEnded" @error="audioError" @loadeddata="audioLoaded"></audio>
+        <audio :src="nextAudioUrl" ref="preloadAudio" control1>
+        </audio>
+        <audio :src="audioUrl" ref="audio" control1 @timeupdate="audioTimeUpdate"
+            @ended="audioEnded" @error="audioError" @loadedmetadata="audioLoaded" @canplay="canplay">
+        </audio>
         <div class="bbbug_main">
             <div class="bbbug_main_box" v-if="roomInfo && userInfo" v-loading="appLoading">
                 <div class="bbbug_main_menu">
@@ -114,7 +117,8 @@
                                 :class="item.user.user_id==userInfo.user_id?'bbbug_main_chat_mine':''">
                                 <div class="bbbug_main_chat_head">
                                     <el-dropdown trigger="click" @command="commandUserHead" :index="index">
-                                        <img class="bbbug_main_chat_head_image xiaomi" :src="getStaticUrl(item.user.user_head)"
+                                        <img class="bbbug_main_chat_head_image xiaomi"
+                                            :src="getStaticUrl(item.user.user_head)"
                                             :onerror="getStaticUrl('new/images/nohead.jpg')"
                                             @dblclick.stop="doTouch(item.user.user_id)" />
                                         <el-dropdown-menu slot="dropdown">
@@ -414,6 +418,7 @@
                     uploadSongForm: false,
                     dialog: false,
                     audioUrl: "",
+                    nextAudioUrl: "",
                     // 默认音乐loading图
                     audioImage: "new/images/loading.png",
                     // 歌曲加载失败重试
@@ -1025,14 +1030,6 @@
                     }, 5000);
                 },
                 /**
-                 * @description: Audio开始播放
-                 * @param {null}
-                 * @return {null}
-                 */
-                audioPlaying() {
-                    this.audioImage = decodeURIComponent(this.songInfo.user.user_head);
-                },
-                /**
                  * @description: 播放进度变更事件
                  * @param {null}
                  * @return {null}
@@ -1128,6 +1125,14 @@
                     }
                 },
                 /**
+                 * @description: 可以播放事件 开始播放
+                 * @param {null} 
+                 * @return {null} 
+                 */
+                canplay() {
+                    this.$refs.audio.play();
+                },
+                /**
                  * @description: 获取引用消息的标签
                  * @param {obj} 引用的消息
                  * @return {string} 显示字符串
@@ -1197,7 +1202,7 @@
                  */
                 audioStartPlay() {
                     try {
-                        this.$refs.audio.play();
+                        this.$refs.audio.load();
                     } catch (e) { }
                 },
                 /**
@@ -2047,6 +2052,12 @@
                         }
                         obj.time = parseInt(new Date().valueOf() / 1000);
                         switch (obj.type) {
+                            case 'preload':
+                                that.nextAudioUrl = obj.url;
+                                that.$nextTick(function () {
+                                    that.$refs.noticePlayer.load();
+                                });
+                                break;
                             case 'touch':
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 摸了摸 " + that.urldecode(obj.at.user_name) + obj.at.user_touchtip, '#999', '#eee');
                                 if (obj.at) {
@@ -3077,4 +3088,5 @@
         line-height: 20px;
         display: inline-block;
     }
+
 </style>

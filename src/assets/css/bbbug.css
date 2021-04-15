@@ -8,9 +8,8 @@
  }
  
  audio {
-     position: fixed;
-     right: 10px;
-     top: 10px;
+     position: relative;
+     z-index:99999;
  }
  
  [v-cloak] {
