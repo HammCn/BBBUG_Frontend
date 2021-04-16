@@ -871,6 +871,9 @@
      .bbbug_main_menu{
         border-radius: 0!important;
      }
+     .bbbug_link{
+         display: none!important;
+     }
 }
  @media screen and (max-height: 700px) {
      .bbbug_main {
@@ -890,6 +893,9 @@
      }
      .bbbug_main_menu{
         border-radius: 0!important;
+     }
+     .bbbug_link{
+         display: none!important;
      }
  }
  
@@ -936,6 +942,9 @@
      .el-message {
          width: 90%;
          min-width: auto;
+     }
+     .bbbug_link{
+         display: none!important;
      }
  }
 

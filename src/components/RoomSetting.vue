@@ -25,7 +25,8 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="房间密码" v-if="roomInfo.room_public==1">
-                        <el-input size="small" autocomplete="off" placeholder="请输入房间密码,不修改请留空" v-model="roomInfo.room_password">
+                        <el-input size="small" autocomplete="off" placeholder="请输入房间密码,不修改请留空"
+                            v-model="roomInfo.room_password">
                         </el-input>
                     </el-form-item>
                     <el-form-item label="房间背景">
@@ -56,20 +57,30 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="点歌间隔" v-if="roomInfo.room_type==1 || roomInfo.room_type==4">
-                        <el-input size="small" autocomplete="off" placeholder="点歌时间间隔(单位秒)" v-model="roomInfo.room_addsongcd">
+                        <el-input size="small" autocomplete="off" placeholder="点歌时间间隔(单位秒)"
+                            v-model="roomInfo.room_addsongcd">
                         </el-input>
                     </el-form-item>
                     <el-form-item label="顶歌间隔" v-if="roomInfo.room_type==1 || roomInfo.room_type==4">
-                        <el-input size="small" autocomplete="off" placeholder="顶歌时间间隔(单位秒)" v-model="roomInfo.room_pushsongcd">
+                        <el-input size="small" autocomplete="off" placeholder="顶歌时间间隔(单位秒)"
+                            v-model="roomInfo.room_pushsongcd">
                         </el-input>
                     </el-form-item>
                     <el-form-item label="日顶次数" v-if="roomInfo.room_type==1 || roomInfo.room_type==4">
-                        <el-input size="small" autocomplete="off" placeholder="每天允许顶歌次数" v-model="roomInfo.room_pushdaycount">
+                        <el-input size="small" autocomplete="off" placeholder="每天允许顶歌次数"
+                            v-model="roomInfo.room_pushdaycount">
                         </el-input>
                     </el-form-item>
                     <el-form-item label="点歌数量" v-if="roomInfo.room_type==1 || roomInfo.room_type==4">
-                        <el-input size="small" autocomplete="off" placeholder="播放列表允许点歌数量" v-model="roomInfo.room_addcount">
+                        <el-input size="small" autocomplete="off" placeholder="播放列表允许点歌数量"
+                            v-model="roomInfo.room_addcount">
                         </el-input>
+                    </el-form-item>
+                    <el-form-item label="切歌权限" v-if="roomInfo.room_type==1 || roomInfo.room_type==4">
+                        <el-select size="small" v-model="roomInfo.room_pass" placeholder="请选择谁可以切歌">
+                            <el-option v-for="(item,index) in room_pass" :label="item.title" :value="item.value">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="投票切歌" v-if="roomInfo.room_type==1">
                         <el-select size="small" v-model="roomInfo.room_votepass" placeholder="请选择是否开启投票切歌">
@@ -163,6 +174,13 @@
                     }, {
                         value: 1,
                         title: "打开投票切歌"
+                    }],
+                    room_pass: [{
+                        value: 0,
+                        title: "管理房主可切歌"
+                    }, {
+                        value: 1,
+                        title: "所有成员可切歌"
                     }],
                     room_votepercent: [{
                         value: 20,
