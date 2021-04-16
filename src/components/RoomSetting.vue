@@ -76,12 +76,6 @@
                             v-model="roomInfo.room_addcount">
                         </el-input>
                     </el-form-item>
-                    <el-form-item label="切歌权限" v-if="roomInfo.room_type==1 || roomInfo.room_type==4">
-                        <el-select size="small" v-model="roomInfo.room_pass" placeholder="请选择谁可以切歌">
-                            <el-option v-for="(item,index) in room_pass" :label="item.title" :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
                     <el-form-item label="投票切歌" v-if="roomInfo.room_type==1">
                         <el-select size="small" v-model="roomInfo.room_votepass" placeholder="请选择是否开启投票切歌">
                             <el-option v-for="(item,index) in room_votepass" :label="item.title" :value="item.value">
@@ -174,13 +168,6 @@
                     }, {
                         value: 1,
                         title: "打开投票切歌"
-                    }],
-                    room_pass: [{
-                        value: 0,
-                        title: "管理房主可切歌"
-                    }, {
-                        value: 1,
-                        title: "所有成员可切歌"
                     }],
                     room_votepercent: [{
                         value: 20,

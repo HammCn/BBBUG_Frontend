@@ -22,22 +22,19 @@
                             :onerror="getStaticUrl('new/images/nohead.jpg')" />
                     </div>
                     <div v-if="roomInfo.room_type==1 || roomInfo.room_type==4">
-                        <div class="bbbug_main_menu_icon"
-                            v-if="roomInfo.room_addsong==0 || roomInfo.room_user==userInfo.user_id || userInfo.user_admin">
+                        <div class="bbbug_main_menu_icon">
                             <div @click="showSearchSongs">
                                 <img :src="getStaticUrl('new/images/menubar_picksong.png')" title="点歌" />
                                 <div>点歌</div>
                             </div>
                         </div>
-                        <div class="bbbug_main_menu_icon"
-                            v-if="roomInfo.room_addsong==0 || roomInfo.room_user==userInfo.user_id || userInfo.user_admin">
+                        <div class="bbbug_main_menu_icon">
                             <div @click="showPlaySongList">
                                 <img :src="getStaticUrl('new/images/menubar_pickedsong.png')" title="已点歌曲列表" />
                                 <div>已点</div>
                             </div>
                         </div>
-                        <div class="bbbug_main_menu_icon"
-                            v-if="roomInfo.room_addsong==0 || roomInfo.room_user==userInfo.user_id || userInfo.user_admin">
+                        <div class="bbbug_main_menu_icon">
                             <div @click="showMySongList">
                                 <img :src="getStaticUrl('new/images/menubar_mysong.png')" title="我点过的歌单" />
                                 <div>歌单</div>
