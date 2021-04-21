@@ -10,8 +10,8 @@
                         <el-button slot="append" icon="el-icon-search" @click="getList">搜索</el-button>
                     </el-autocomplete>
                 </div>
-                <div ref="searchBox" class="bbbug_main_right_song_list_search" v-loading="bbbug_loading">
-                    <div class="bbbug_scroll">
+                <div class="bbbug_main_right_song_list_search" v-loading="bbbug_loading">
+                    <div class="bbbug_scroll" ref="searchBox">
                         <div class="bbbug_main_right_song_item_title" v-if="isHots">本周点歌热门歌曲推荐</div>
                         <div class="bbbug_main_right_song_item" v-for="(item, index) in list" v-loading="item.loading">
                             <div class="bbug_main_right_song_pic">
