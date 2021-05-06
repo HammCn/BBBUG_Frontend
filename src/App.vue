@@ -805,7 +805,7 @@
                  */
                 doUploadMusicBefore(file) {
                     console.log(file.type);
-                    const isMp3 = file.type.toLocaleLowerCase() === 'audio/mpeg';
+                    const isMp3 = file.type.toLocaleLowerCase() === 'audio/mpeg' || file.type.toLocaleLowerCase() === 'audio/mp3';
                     const isLt8M = file.size / 1024 / 1024 < 8;
 
                     if (!isMp3) {
