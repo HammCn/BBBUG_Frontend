@@ -8,12 +8,6 @@
             <a href="https://gitee.com/bbbug_com" target="_blank">Gitee</a>
             <a href="https://github.com/HammCn" target="_blank">Github</a>
         </div>
-        <audio :src="getStaticUrl('new/mp3/dingdong.mp3')" ref="noticePlayer"></audio>
-        <audio :src="nextAudioUrl" ref="preloadAudio" control1>
-        </audio>
-        <audio :src="audioUrl" ref="audio" control1 @timeupdate="audioTimeUpdate" @ended="audioEnded"
-            @error="audioError" @loadedmetadata="audioLoaded" @canplay="canplay">
-        </audio>
         <div class="bbbug_main">
             <div class="bbbug_main_box" v-if="roomInfo && userInfo" v-loading="appLoading">
                 <div class="bbbug_main_menu">
@@ -340,40 +334,50 @@
             </div>
         </div>
         <UploadMusic v-if="uploadSongForm"></UploadMusic>
-        <div v-if="isLocked" class="bbbug_locked" @contextmenu.prevent="isLockedOnlyBg=!isLockedOnlyBg;">
-            <div class="bbbug_bg" :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
+        <div class="bbbug_locked" v-if="isLocked">
+            <div class="bg_back" :style="{backgroundImage:'url('+getStaticUrl(background)+')'}"></div>
+            <div class="bg" v-if="songInfo" :style="{backgroundImage:'url('+getStaticUrl(songInfo.song.pic)+')'}"></div>
+            <div class="bg" v-if="!songInfo" :style="{backgroundImage:'url('+getStaticUrl(background)+')'}"></div>
+            <div class="logo xiaomi">
+                <img :src="getStaticUrl('new/images/logo.png')" />
             </div>
-            <div class="bbbug_locked_body" v-if="!isLockedOnlyBg">
-                <div class="bbbug_locked_player" v-if="songInfo && songInfo.song">
-                    <div class="bbbug_locked_player_img"><img :src="getStaticUrl(songInfo.song.pic)" /></div>
-                    <div class="bbbug_locked_player_bg"><img :src="getStaticUrl('new/images/player_bg.png')" /></div>
-                    <div class="bbbug_locked_player_bar"><img :src="getStaticUrl('new/images/player_bar.png')" /></div>
-                    <div class="bbbug_locked_player_song">{{songInfo.song.name}} - ({{songInfo.song.singer}})</div>
-                    <div class="bbbug_locked_player_lrc">{{lrcString}}</div>
-                    <div class="bbbug_locked_player_user">点歌人:
-                        {{urldecode(songInfo.user.user_name)}}
-                    </div>
+            <div class="copyright">所有音乐资源来源于第三方,请勿用于商业非法用途!</div>
+            <div class="main">
+                <div class="pic xiaomi"><img :src="getStaticUrl('new/images/logo.png')" /></div>
+                <div class="pic xiaomi"><img
+                        :src="songInfo ? getStaticUrl(songInfo.song.pic) : getStaticUrl('new/images/logo.png')" /></div>
+                <div class="info" v-if="songInfo">
+                    <div class="name">{{songInfo.song.name}} - {{songInfo.song.singer}}</div>
+                    <div class="desc">[{{roomInfo.room_id}}]{{urldecode(roomInfo.room_name)}}
+                        点歌人:{{urldecode(songInfo.user.user_name)}}</div>
                 </div>
-                <div class="bbbug_locked_player" v-if="!(songInfo && songInfo.song)">
-                    <div class="bbbug_locked_player_img"><img :src="getStaticUrl('new/images/nohead.jpg')" /></div>
-                    <div class="bbbug_locked_player_bg"><img :src="getStaticUrl('new/images/player_bg.png')" /></div>
-                    <div class="bbbug_locked_player_bar"><img :src="getStaticUrl('new/images/player_bar.png')" /></div>
-                    <div class="bbbug_locked_player_song">歌曲加载中,请稍候</div>
-                    <div class="bbbug_locked_player_lrc">Loading...</div>
+                <div class="info" v-if="!songInfo">
+                    <div class="name">读碟中,请稍后...</div>
+                    <div class="desc">[{{roomInfo.room_id}}]{{urldecode(roomInfo.room_name)}}</div>
                 </div>
-                <div class="bbbug_locked_message">
-                    <div v-for="(item,index) in messageListBullet" class="bbbug_locked_item"
-                        v-if="item.type=='text' || item.type=='notice'">
-                        <div class="bbbug_locked_message_head">
-                            <img :src="getStaticUrl(item.user.user_head)"
-                                :onerror="getStaticUrl('new/images/nohead.jpg')" />
-                        </div>
-                        <div class="bbbug_locked_message_user">{{urldecode(item.user.user_name)}}</div>
-                        <div class="bbbug_locked_message_content">{{urldecode(item.content)}}</div>
-                    </div>
+                <div class="controls" v-if="songInfo">
+                    <i title="音量" @click="setEnableOrDisableVolume" class="iconfont volume_bar"
+                        :class="audioVolume>0?'icon-changyongtubiao-xianxingdaochu-zhuanqu-39':'icon-changyongtubiao-xianxingdaochu-zhuanqu-40'"></i>
+                    <i @click.stop="loveTheSong" title="收藏"
+                        class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-15" style="margin: 0px 180px;"></i>
+                    <i @click.stop="passTheSong" title="切歌/不喜欢" class="iconfont icon-xiayige"></i>
                 </div>
+                <div class="progress">
+                    <div :style="{width: audioPercent +'%'}"></div>
+                </div>
+                <div class="time">
+                    <span class="now">{{audioTimeNow}}</span>
+                    <span class="total">{{audioTimeTotal}}</span>
+                </div>
+                <div class="lrc">{{lrcString}}</div>
             </div>
         </div>
+        <audio :src="getStaticUrl('new/mp3/dingdong.mp3')" ref="noticePlayer"></audio>
+        <audio :src="nextAudioUrl" ref="preloadAudio" control1>
+        </audio>
+        <audio :src="audioUrl" ref="audio" control1 @timeupdate="audioTimeUpdate" @ended="audioEnded"
+            @error="audioError" @loadedmetadata="audioLoaded" @canplay="canplay">
+        </audio>
         <div class="bbbug_dark_cover" v-if="isDarkModel"></div>
     </div>
 </template>
@@ -428,7 +432,6 @@
                     roomInfo: false,
                     appLoading: false,
                     isLocked: false,
-                    isLockedOnlyBg: false,
                     isEnableScroll: true,
                     isEnableNotification: true,
                     isEnableNoticePlayer: true,
@@ -438,7 +441,6 @@
                     isEmojiBoxShow: false,
 
                     messageList: [],
-                    messageListBullet: [],
                     // 消息最大允许保留
                     historyMax: 100,
                     isSongPannelShow: false,
@@ -453,6 +455,8 @@
                     // 默认音量
                     audioVolume: 50,
                     audioPercent: 0,
+                    audioTimeNow: "",
+                    audioTimeTotal: "",
                     isVolumeBarShow: false,
                     timerVolumeBar: null,
                     baseData: false,
@@ -751,6 +755,18 @@
                         user: {}
                     };
                 },
+                getSongTime(long) {
+                    long = parseInt(long);
+                    if (long == 0 || long == NaN) {
+                        return "00:00";
+                    }
+                    let string = "";
+                    string += parseInt((long / 60)) < 10 ? ("0" + parseInt(long / 60)) : parseInt(long / 60);
+
+                    string += ":";
+                    string += (long % 60) < 10 ? (("0") + (long % 60)) : (long % 60)
+                    return string;
+                },
                 /**
                  * @description: 格式化时间戳为友好时间
                  * @param {int} 秒时间戳
@@ -1034,7 +1050,9 @@
                 audioTimeUpdate() {
                     let that = this;
                     if (that.songInfo && that.$refs.audio.duration > 0 && that.$refs.audio.duration != NaN) {
-                        that.audioPercent = parseInt(that.$refs.audio.currentTime / that.$refs.audio.duration * 100);
+                        that.audioTimeNow = that.getSongTime(that.$refs.audio.currentTime);
+                        that.audioTimeTotal = that.getSongTime(that.$refs.audio.duration);
+                        that.audioPercent = parseInt(that.$refs.audio.currentTime / that.$refs.audio.duration * 10000) / 100;
                         if (that.$refs.audio.duration > 0 && that.$refs.audio.duration != NaN) {
                             if (that.musicLrcObj) {
                                 for (let i = 0; i < that.musicLrcObj.length; i++) {
@@ -1120,6 +1138,8 @@
                             break;
                         default:
                     }
+                    that.audioTimeNow = that.getSongTime(that.$refs.audio.currentTime);
+                    that.audioTimeTotal = that.getSongTime(that.$refs.audio.duration);
                 },
                 /**
                  * @description: 可以播放事件 开始播放
@@ -1555,7 +1575,6 @@
                         },
                         success(res) {
                             that.messageList = [];
-                            that.messageListBullet = [];
                             for (let i = 0; i < res.data.length; i++) {
                                 let _obj = false;
                                 try {
@@ -1578,14 +1597,10 @@
                                         _obj.isAtAll = _obj.content.indexOf('@全体') == 0 && (_obj.user.user_id == that.roomInfo.room_user || _obj.user.user_admin) ? true : false;
                                     }
                                     that.messageList.unshift(_obj);
-                                    that.messageListBullet.push(_obj);
                                 }
                             }
                             if (that.messageList.length > that.historyMax) {
                                 that.messageList.shift();
-                            }
-                            if (that.messageListBullet.length > 20) {
-                                that.messageListBullet.pop();
                             }
                             let roomAdminInfo = Object.assign({}, that.global.roomInfo.admin);
                             let _tempMessage = {
@@ -1598,7 +1613,6 @@
                                 user: roomAdminInfo
                             };
                             that.messageList.push(_tempMessage);
-                            that.messageListBullet.push(_tempMessage);
                             if (that.roomInfo.room_id == 888 && that.userInfo.user_id < 0) {
                                 that.messageList.push({
                                     type: "text",
@@ -1877,7 +1891,6 @@
                                     user: roomAdminInfo
                                 };
                                 that.messageList.push(_tempMessage);
-                                that.messageListBullet.unshift(_tempMessage);
                                 that.autoScroll();
                             }
                         },
@@ -2044,9 +2057,6 @@
                         if (that.messageList.length > that.historyMax) {
                             that.messageList.shift();
                         }
-                        if (that.messageListBullet.length > 20) {
-                            that.messageListBullet.pop();
-                        }
                         obj.time = parseInt(new Date().valueOf() / 1000);
                         switch (obj.type) {
                             case 'preload':
@@ -2080,7 +2090,6 @@
                                 break;
                             case 'clear':
                                 that.messageList = [];
-                                that.messageListBullet = [];
                                 that.addSystemMessage("管理员" + that.urldecode(obj.user.user_name) + "清空了你的聊天记录", '#f00', '#eee');
                                 break;
                             case 'text':
@@ -2157,7 +2166,6 @@
                                     obj.content = '@' + obj.at.user_name + " " + obj.content;
                                 }
                                 that.messageList.push(obj);
-                                that.messageListBullet.unshift(obj);
                                 document.title = that.urldecode(obj.user.user_name) + "说：" + that.urldecode(obj.content);
                                 clearTimeout(that.timerForWebTitle);
                                 that.callParentFunction('onTextMessage', obj);
@@ -2263,12 +2271,6 @@
                                 for (let i = 0; i < that.messageList.length; i++) {
                                     if (parseInt(that.messageList[i].message_id) == parseInt(obj.message_id)) {
                                         that.messageList.splice(i, 1);
-                                        break;
-                                    }
-                                }
-                                for (let i = 0; i < that.messageListBullet.length; i++) {
-                                    if (parseInt(that.messageListBullet[i].message_id) == parseInt(obj.message_id)) {
-                                        that.messageListBullet.splice(i, 1);
                                         break;
                                     }
                                 }
@@ -2881,6 +2883,11 @@
         color: #aaa;
     }
 
+
+    .bbbug_main_chat_emojis_input {
+        margin-bottom: 10px;
+    }
+
     .bbbug_locked {
         display: -ms-flexbox;
         display: flex;
@@ -2895,194 +2902,163 @@
         bottom: 0;
     }
 
-
-    .bbbug_main_chat_emojis_input {
-        margin-bottom: 10px;
+    .bbbug_locked .main {
+        width: 1000px;
+        height: 500px;
+        backdrop-filter: blur(0px);
+        text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
     }
 
-    /* @keyframes snow {
-        0% {
-            background-position: 0 0, 0 0;
-        }
-
-        100% {
-            background-position: 500px 500px, 1000px 500px;
-        }
+    .bbbug_locked .bg_back {
+        filter: blur(50px);
+        position: fixed;
+        left: -100px;
+        right: -100px;
+        top: -100px;
+        bottom: -100px;
+        background: #000 url(https://bbbug.hamm.cn/new/images/bg_dark.jpg) center no-repeat;
+        background-size: cover;
     }
 
-    .snow {
+    .bbbug_locked .bg {
+        filter: blur(50px);
         position: fixed;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background: url('https://api.bbbug.com/new/images/snow1.png'), url('https://api.bbbug.com/new/images/snow2.png');
-        animation: 10s snow linear infinite;
-        pointer-events: none;
-        z-index: 999;
-    } */
+        left: -100px;
+        right: -100px;
+        top: -100px;
+        bottom: -100px;
+        background: transparent url(https://bbbug.hamm.cn/new/images/bg_dark.jpg) center no-repeat;
+        background-size: cover;
+    }
 
-    .bbbug_locked_body {
-        position: fixed;
-        width: 80%;
-        max-width: 1600px;
-        top: 10%;
-        bottom: 10%;
+    .bbbug_locked {
+        color: white;
+        z-index: 100;
+    }
+
+    .bbbug_locked .pic {
+        width: 360px;
+        height: 360px;
+        position: absolute;
+        left: 0px;
+        top: 50px;
         border-radius: 20px;
         overflow: hidden;
-        background-color: rgba(255, 255, 255, 0.9);
-        color: #111;
-        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.3);
     }
 
-    .bbbug_locked_message {
+    .bbbug_locked .pic img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .bbbug_locked .info {
         position: absolute;
         left: 400px;
-        right: 0;
+        top: 50px;
+        width: 560px;
+    }
+
+    .bbbug_locked .name {
+        font-size: 36px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .bbbug_locked .desc {
+        font-size: 20px;
+        margin-top: 10px;
+        color: rgba(255, 255, 255, 0.5);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .bbbug_locked .controls {
+        position: absolute;
+        left: 400px;
+        top: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .bbbug_locked .controls .iconfont {
+        display: inline-block;
+        font-size: 64px;
+        cursor: pointer;
+    }
+
+    .bbbug_locked .progress {
+        background-color: rgba(255, 255, 255, 0.1);
+        position: absolute;
+        left: 400px;
+        top: 330px;
+        height: 5px;
+        border-radius: 20px;
+        width: 560px;
+    }
+
+    .bbbug_locked .progress div {
+        background: rgba(255, 255, 255, 0.5);
+        width: 20%;
+        position: absolute;
+        left: 0;
         top: 0;
         bottom: 0;
-        overflow: hidden;
-        padding: 10px 0px;
+        border-radius: 20px;
     }
 
-    .bbbug_locked_player_song {
-        font-size: 24px;
+    .bbbug_locked .time {
+        position: absolute;
+        left: 400px;
+        top: 340px;
+        color: rgba(255, 255, 255, 0.8);
+        width: 560px;
+    }
+
+    .bbbug_locked .time .now {
         position: absolute;
         left: 0;
-        right: 0;
-        top: 360px;
-        text-align: center;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        padding: 0px 20px;
+        top: 0;
     }
 
-    .bbbug_locked_player_lrc {
-        font-size: 16px;
+    .bbbug_locked .time .total {
         position: absolute;
-        top: 400px;
-        text-align: center;
-        left: 0;
         right: 0;
-        color: #666;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        padding: 0px 20px;
+        top: 0;
     }
 
-    .bbbug_locked_player_user {
+    .bbbug_locked .logo {
         position: absolute;
         left: 20px;
-        right: 20px;
-        text-align: center;
-        bottom: 30px;
-        color: #666;
-        font-size: 14px;
+        top: 20px;
     }
 
-    .bbbug_locked_player {
-        position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        width: 400px;
-        padding-top: 20%;
-        text-align: center;
-    }
-
-    .bbbug_locked_player_img {
-        width: 160px;
-        height: 160px;
-        border-radius: 100%;
-        text-align: center;
-        display: inline-block;
-        overflow: hidden;
-        position: absolute;
-        top: 120px;
-        left: 120px;
-        -webkit-animation: rotate 60s linear infinite;
-        -moz-animation: rotate 60s linear infinite;
-        -o-animation: rotate 60s linear infinite;
-        animation: rotate 60s linear infinite;
-    }
-
-    .bbbug_locked_player_img img {
-        width: 100%;
-        height: 100%;
-    }
-
-    .bbbug_locked_player_bg {
-        position: absolute;
-        left: 75px;
-        right: 75px;
-        top: 75px;
-        text-align: center;
-        -webkit-animation: rotate 60s linear infinite;
-        -moz-animation: rotate 60s linear infinite;
-        -o-animation: rotate 60s linear infinite;
-        animation: rotate 60s linear infinite;
-    }
-
-    .bbbug_locked_player_bg img {
-        width: 100%;
-        height: 100%;
-    }
-
-    .bbbug_locked_player_bar {
-        position: absolute;
-        left: 170px;
-        top: 0px;
-        width: 140px;
-        height: 200px;
-    }
-
-    .bbbug_locked_player_bar img {
-        width: 100%;
-        height: 100%;
-    }
-
-    .bbbug_locked_message_head {
-        width: 50px;
-        height: 50px;
-        position: absolute;
-        left: 10px;
-        top: 10px;
-    }
-
-    .bbbug_locked_message_head img {
-        width: 100%;
-        height: 100%;
-    }
-
-    .bbbug_locked_item {
-        position: relative;
-        margin: 10px;
-        padding: 10px;
-        transition: opacity 0.5s linear;
-    }
-
-    .bbbug_locked_message_head {
+    .bbbug_locked .logo img {
+        width: 40px;
+        height: 40px;
+        vertical-align: middle;
         border-radius: 10px;
-        overflow: hidden;
     }
 
-    .bbbug_locked_message_content {
-        margin-left: 60px;
-        margin-top: 5px;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        font-size: 16px;
+    .bbbug_locked .copyright {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.8);
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
     }
-
-    .bbbug_locked_message_user {
-        color: #999;
-        font-size: 14px;
-        margin-left: 60px;
-        text-overflow: ellipsis;
+    .bbbug_locked .lrc {
+        font-size: 20px;
+        color: rgba(255,255,255,0.8);
+        position: absolute;
+        left: 400px;
+        top: 380px;
+        width: 560px;
+        white-space: nowrap;
         overflow: hidden;
-        line-height: 20px;
-        display: inline-block;
+        text-overflow: ellipsis;
     }
 </style>

@@ -10,9 +10,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="BBBUG">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <base href="https://bbbug.hamm.cn" />
+    <link type="application/opensearchdescription+xml" rel="search" href="chrome.xml"/>
+    <!-- <base href="https://bbbug.hamm.cn" /> -->
     <!-- 上面是CDN地址 如不使用 请注释 -->
-    <link rel="icon" href="new/favicon.ico">
+    <link rel="icon" href="https://bbbug.hamm.cn/new/favicon.ico">
     <meta name="viewport"
         content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
     <link rel="stylesheet" href="//at.alicdn.com/t/font_666204_9eir79vdjt4.css">
@@ -82,6 +83,10 @@
 </head>
 
 <body>
+    <form action="/" method="GET" style="position:fixed;left:-10000px;top:-10000px;z-index:-10000;">
+        <input type="text" name="keyword" placeholder="type something to search"/>
+        <input type="submit" value="search">
+    </form>
     <div id="app"></div>
     <script>
         // 这部分是统计代码 请执行替换
