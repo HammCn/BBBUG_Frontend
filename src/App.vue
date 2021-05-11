@@ -90,7 +90,8 @@
 
                         </div>
                         <div class="bbbug_main_chat_online">
-                            <span class="bbbug_main_chat_invate" onclick="window.open('https://qm.qq.com/cgi-bin/qm/qr?k=3yei1QB3MehVQoBWiDEMU0NmdMIdPwPD&jump_from=webapi');">QQ群</span>
+                            <span class="bbbug_main_chat_invate"
+                                onclick="window.open('https://qm.qq.com/cgi-bin/qm/qr?k=3yei1QB3MehVQoBWiDEMU0NmdMIdPwPD&jump_from=webapi');">QQ群</span>
                             <span title="复制邀请链接" class="bbbug_main_chat_invate"
                                 :data-clipboard-text="copyData">邀请</span>
                             <span class="bbbug_main_chat_invate" title="显示当前房间微信小程序码" @click="showQrCode">小程序</span>
@@ -335,42 +336,47 @@
             </div>
         </div>
         <UploadMusic v-if="uploadSongForm"></UploadMusic>
-        <div class="bbbug_locked" v-if="isLocked">
+        <div class="bbbug_locked" v-if="isLocked"
+            @contextmenu.prevent="isLockedOnlyBg=!isLockedOnlyBg;saveLockBgConfig()">
             <div class="bg_back" :style="{backgroundImage:'url('+getStaticUrl(background)+')'}"></div>
             <div class="bg" v-if="songInfo" :style="{backgroundImage:'url('+getStaticUrl(songInfo.song.pic)+')'}"></div>
-            <div class="bg" v-if="!songInfo" :style="{backgroundImage:'url('+getStaticUrl(background)+')'}"></div>
-            <div class="logo xiaomi">
-                <img :src="getStaticUrl('new/images/logo.png')" />
-            </div>
-            <div class="copyright">所有音乐资源来源于第三方,请勿用于商业非法用途!</div>
-            <div class="main">
-                <div class="pic"><img :src="getStaticUrl('new/images/logo.png')" /></div>
-                <div class="pic"><img
-                        :src="songInfo ? getStaticUrl(songInfo.song.pic) : getStaticUrl('new/images/logo.png')" /></div>
-                <div class="info" v-if="songInfo">
-                    <div class="name">{{songInfo.song.name}} - {{songInfo.song.singer}}</div>
-                    <div class="desc">[{{roomInfo.room_id}}]{{urldecode(roomInfo.room_name)}}
-                        点歌人:{{urldecode(songInfo.user.user_name)}}</div>
+            <div v-show="!isLockedOnlyBg">
+                <div class="logo xiaomi">
+                    <img :src="getStaticUrl('new/images/logo.png')" />
                 </div>
-                <div class="info" v-if="!songInfo">
-                    <div class="name">读碟中,请稍后...</div>
-                    <div class="desc">[{{roomInfo.room_id}}]{{urldecode(roomInfo.room_name)}}</div>
+
+                <div class="copyright">所有音乐资源来源于第三方,请勿用于商业非法用途!</div>
+                <div class="main">
+                    <div class="pic"><img :src="getStaticUrl('new/images/logo.png')" /></div>
+                    <div class="pic"><img
+                            :src="songInfo ? getStaticUrl(songInfo.song.pic) : getStaticUrl('new/images/logo.png')" />
+                    </div>
+                    <div class="info" v-if="songInfo">
+                        <div class="name">{{songInfo.song.name}} - {{songInfo.song.singer}}</div>
+                        <div class="desc">[{{roomInfo.room_id}}]{{urldecode(roomInfo.room_name)}}
+                            点歌人:{{urldecode(songInfo.user.user_name)}}</div>
+                    </div>
+                    <div class="info" v-if="!songInfo">
+                        <div class="name">读碟中,请稍后...</div>
+                        <div class="desc">[{{roomInfo.room_id}}]{{urldecode(roomInfo.room_name)}}</div>
+                    </div>
+                    <div class="controls" v-if="songInfo">
+                        <i title="音量" @click="setEnableOrDisableVolume" class="iconfont volume_bar"
+                            :class="audioVolume>0?'icon-changyongtubiao-xianxingdaochu-zhuanqu-39':'icon-changyongtubiao-xianxingdaochu-zhuanqu-40'"></i>
+                        <i @click.stop="loveTheSong" title="收藏"
+                            class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-15"
+                            style="margin: 0px 180px;"></i>
+                        <i @click.stop="passTheSong" title="切歌/不喜欢" class="iconfont icon-xiayige"></i>
+                    </div>
+                    <div class="progress">
+                        <div :style="{width: audioPercent +'%'}"></div>
+                    </div>
+                    <div class="time">
+                        <span class="now">{{audioTimeNow}}</span>
+                        <span class="total">{{audioTimeTotal}}</span>
+                    </div>
+                    <div class="lrc">{{lrcString}}</div>
                 </div>
-                <div class="controls" v-if="songInfo">
-                    <i title="音量" @click="setEnableOrDisableVolume" class="iconfont volume_bar"
-                        :class="audioVolume>0?'icon-changyongtubiao-xianxingdaochu-zhuanqu-39':'icon-changyongtubiao-xianxingdaochu-zhuanqu-40'"></i>
-                    <i @click.stop="loveTheSong" title="收藏"
-                        class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-15" style="margin: 0px 180px;"></i>
-                    <i @click.stop="passTheSong" title="切歌/不喜欢" class="iconfont icon-xiayige"></i>
-                </div>
-                <div class="progress">
-                    <div :style="{width: audioPercent +'%'}"></div>
-                </div>
-                <div class="time">
-                    <span class="now">{{audioTimeNow}}</span>
-                    <span class="total">{{audioTimeTotal}}</span>
-                </div>
-                <div class="lrc">{{lrcString}}</div>
             </div>
         </div>
         <audio :src="getStaticUrl('new/mp3/dingdong.mp3')" ref="noticePlayer"></audio>
@@ -433,6 +439,7 @@
                     roomInfo: false,
                     appLoading: false,
                     isLocked: false,
+                    isLockedOnlyBg: false,
                     isEnableScroll: true,
                     isEnableNotification: true,
                     isEnableNoticePlayer: true,
@@ -481,6 +488,7 @@
             created() {
                 let that = this;
                 this.global.guestUserInfo.user_head = this.getStaticUrl(this.global.guestUserInfo.user_head);
+                this.isLockedOnlyBg = localStorage.getItem('isLockedOnlyBg') == 1 ? true : false;
             },
             mounted() {
                 let that = this;
@@ -581,6 +589,14 @@
                 });
             },
             methods: {
+                /**
+                 * @description: 保存播放器部分配置
+                 * @param {null}
+                 * @return {null}
+                 */
+                saveLockBgConfig() {
+                    localStorage.setItem("isLockedOnlyBg", this.isLockedOnlyBg ? 1 : 0);
+                },
                 /**
                  * @description: 隐藏上传音乐窗口
                  * @param {null}
@@ -3056,9 +3072,10 @@
         color: rgba(255, 255, 255, 0.8);
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
     }
+
     .bbbug_locked .lrc {
         font-size: 20px;
-        color: rgba(255,255,255,0.8);
+        color: rgba(255, 255, 255, 0.8);
         position: absolute;
         left: 400px;
         top: 380px;
