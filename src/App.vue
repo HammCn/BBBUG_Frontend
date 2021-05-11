@@ -246,7 +246,6 @@
                             </div>
                         </div>
                     </div>
-                  <div class="bbbug_main_spectrum" id="spectrumCont"></div>
                     <div v-show="menuVisible" :style="{left:menuLeft+'px',top:menuTop+'px'}" class="contextmenu">
                         <div @click="quotMessage(selectedMessage);hideAll()">引用回复</div>
                         <div @click="sendBackMessage(selectedMessage);hideAll()"
@@ -377,7 +376,7 @@
         <audio :src="nextAudioUrl" ref="preloadAudio" control1>
         </audio>
         <audio :src="audioUrl" ref="audio" control1 @timeupdate="audioTimeUpdate" @ended="audioEnded"
-            @error="audioError" @loadedmetadata="audioLoaded" @canplay="canplay" crossOrigin="anonymous">
+            @error="audioError" @loadedmetadata="audioLoaded" @canplay="canplay">
         </audio>
         <div class="bbbug_dark_cover" v-if="isDarkModel"></div>
     </div>
@@ -397,8 +396,6 @@
     import UploadMusic from './components/UploadMusic.vue';
 
     import Login from './components/Login.vue';
-
-    import Spectrum from './assets/Spectrum'
 
     export
         default {
@@ -442,8 +439,6 @@
                     isEnableAtNotification: true,
                     isEnableSendMessage: false,
                     isEmojiBoxShow: false,
-                    isSpectrumSwitch: false,
-                    isSpectrumSwitchType: 0,
 
                     messageList: [],
                     // 消息最大允许保留
@@ -663,7 +658,7 @@
                 /**
                  * @description: 获取URL参数
                  * @param {string} 参数名称
-                 * @return {string|null}
+                 * @return {string|null} 
                  */
                 getQueryString(name) {
                     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
@@ -721,32 +716,6 @@
                     }
                     this.$forceUpdate();
                 },
-              /**
-               * @description: 设置开启频谱
-               * @param {bool} 是否开启频谱
-               * @return {null}
-               */
-                updateSpectrumSwitch(spectrumSwitch) {
-                  this.$nextTick(() => {
-                    if(spectrumSwitch){
-                      Spectrum.on(this.$refs.audio);
-                      this.isSpectrumSwitchType = localStorage.getItem('isSpectrumSwitchType');
-                      this.updateSpectrumSwitchType(this.isSpectrumSwitchType)
-                    }else{
-                      Spectrum.off();
-                    }
-                  })
-                },
-              /**
-               * @description: 设置频谱类型
-               * @param {int} 频谱类型
-               * @return {null}
-               */
-              updateSpectrumSwitchType(spectrumSwitchType) {
-                  this.$nextTick(() => {
-                      Spectrum.changeType(spectrumSwitchType);
-                  })
-                },
                 /**
                  * @description: 读取本地配置
                  * @param {null}
@@ -757,8 +726,6 @@
                     this.isEnableNotification = localStorage.getItem('isEnableNotification') != 1 ? true : false;
                     this.isEnableTouchNotice = localStorage.getItem('isEnableTouchNotice') != 1 ? true : false;
                     this.isEnableAtNotification = localStorage.getItem('isEnableAtNotification') != 1 ? true : false;
-                    this.isSpectrumSwitch = localStorage.getItem('isSpectrumSwitch') != 1 ? true : false;
-                    this.isSpectrumSwitchType = localStorage.getItem('isSpectrumSwitchType');
                 },
                 /**
                  * @description: 显示右键菜单
@@ -1176,13 +1143,11 @@
                 },
                 /**
                  * @description: 可以播放事件 开始播放
-                 * @param {null}
-                 * @return {null}
+                 * @param {null} 
+                 * @return {null} 
                  */
                 canplay() {
                     this.$refs.audio.play();
-                    this.isSpectrumSwitch = localStorage.getItem('isSpectrumSwitch') != 1 ? true : false;
-                    this.updateSpectrumSwitch(this.isSpectrumSwitch)
                 },
                 /**
                  * @description: 获取引用消息的标签
@@ -1678,7 +1643,7 @@
                 /**
                  * @description: 输入框获取焦点
                  * @param {null}
-                 * @return {null}
+                 * @return {null} 
                  */
                 focusInput() {
                     const textarea = document.querySelector(".bbug_main_chat_input_message");
@@ -1687,7 +1652,7 @@
                 /**
                  * @description: at用户
                  * @param {null}
-                 * @return {null}
+                 * @return {null} 
                  */
                 atUser() {
                     if (this.global.atUserInfo) {
@@ -1699,7 +1664,7 @@
                 /**
                  * @description: 摸一摸指定用户
                  * @param {int} 用户ID
-                 * @return {null}
+                 * @return {null} 
                  */
                 doTouch(user_id) {
                     let that = this;
@@ -1717,7 +1682,7 @@
                 /**
                  * @description: 撤回消息
                  * @param {obj} 消息体
-                 * @return {null}
+                 * @return {null} 
                  */
                 sendBackMessage(message) {
                     let that = this;
@@ -1732,7 +1697,7 @@
                 /**
                  * @description: 引用消息
                  * @param {obj} 消息体
-                 * @return {null}
+                 * @return {null} 
                  */
                 quotMessage(message) {
                     let that = this;
@@ -1748,7 +1713,7 @@
                 /**
                  * @description: 用户头像下拉点击回调
                  * @param {obj} 命令对象
-                 * @return {null}
+                 * @return {null} 
                  */
                 commandUserHead(cmd) {
                     let that = this;
@@ -1825,7 +1790,7 @@
                 /**
                  * @description: 显示指定用户主页
                  * @param {int} 用户ID
-                 * @return {null}
+                 * @return {null} 
                  */
                 showUserPage(user_id) {
                     let that = this;
@@ -1839,7 +1804,7 @@
                 /**
                  * @description: 显示在线列表
                  * @param {null}
-                 * @return {null}
+                 * @return {null} 
                  */
                 showOnlineList() {
                     if (this.dialog.OnlineList) {
@@ -1852,7 +1817,7 @@
                 /**
                  * @description: 自动滚动到底部
                  * @param {null}
-                 * @return {null}
+                 * @return {null} 
                  */
                 autoScroll() {
                     let that = this;
@@ -1868,7 +1833,7 @@
                 /**
                  * @description: 获取房间信息
                  * @param {bool} 是否重新连接(默认true)
-                 * @return {null}
+                 * @return {null} 
                  */
                 getRoomInfo(reConnect = true) {
                     let that = this;
@@ -1951,7 +1916,7 @@
                 /**
                  * @description: 更新剪切板数据
                  * @param {null}
-                 * @return {null}
+                 * @return {null} 
                  */
                 updateCopyData() {
                     let that = this;
@@ -1968,7 +1933,7 @@
                 /**
                  * @description: 切掉当前播放的歌曲
                  * @param {null}
-                 * @return {null}
+                 * @return {null} 
                  */
                 passTheSong() {
                     let that = this;
@@ -1992,7 +1957,7 @@
                 /**
                  * @description: 收藏当前播放的歌曲
                  * @param {null}
-                 * @return {null}
+                 * @return {null} 
                  */
                 loveTheSong() {
                     let that = this;
@@ -2010,7 +1975,7 @@
                 /**
                  * @description: 获取当前的websocket连接地址
                  * @param {null}
-                 * @return {null}
+                 * @return {null} 
                  */
                 getWebsocketUrl() {
                     let that = this;
@@ -2672,16 +2637,7 @@
         overflow: hidden;
         overflow-y: scroll;
         padding-bottom: 30px;
-        z-index: 1;
-    }
-
-    .bbbug_main_spectrum {
-      position: absolute;
-      left: 0;
-      right: 0;
-      height: 100px;
-      bottom: 150px;
-      z-index: 0;
+        z-index: 0;
     }
 
     .bbbug_main_chat_system {

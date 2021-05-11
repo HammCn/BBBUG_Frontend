@@ -20,16 +20,6 @@
                     <el-form-item label="暗黑模式">
                         <el-switch v-model="isDarkModelTemp" @change="isDarkModelChanged"></el-switch>
                     </el-form-item>
-                    <el-form-item label="开启频谱">
-                      <el-switch v-model="isSpectrumSwitch" @change="isSpectrumSwitchChanged"></el-switch>
-                    </el-form-item>
-                    <el-form-item v-if="isSpectrumSwitch" label="频谱类型" class="bbbug_my_setting__form_spectrum_switch">
-                      <el-radio-group v-model="isSpectrumSwitchType" @change="isSpectrumSwitchTypeChanged" size="mini">
-                        <el-radio-button label="0">柱</el-radio-button>
-                        <el-radio-button label="1">面</el-radio-button>
-                        <el-radio-button label="2">线</el-radio-button>
-                      </el-radio-group>
-                    </el-form-item>
                 </el-form>
             </div>
         </div>
@@ -46,9 +36,7 @@
                     isEnableNotification: true,
                     isEnableTouchNotice: true,
                     isEnableAtNotification: true,
-                    isDarkModelTemp: false,
-                    isSpectrumSwitch: false,
-                    isSpectrumSwitchType: 0
+                    isDarkModelTemp: false
                 }
             },
             created() {
@@ -59,13 +47,11 @@
                 this.isEnableTouchNotice = localStorage.getItem('isEnableTouchNotice') != 1 ? true : false;
                 this.isEnableAtNotification = localStorage.getItem('isEnableAtNotification') != 1 ? true : false;
                 this.isDarkModelTemp = this.$parent.isDarkModel;
-                this.isSpectrumSwitch = localStorage.getItem('isSpectrumSwitch') != 1 ? true : false;
-                this.isSpectrumSwitchType = localStorage.getItem('isSpectrumSwitchType');
             },
             methods: {
                 /**
                  * @description: @通知切换事件
-                 * @param {null}
+                 * @param {null} 
                  * @return {null}
                  */
                 isEnableAtNotificationChanged() {
@@ -74,7 +60,7 @@
                 },
                 /**
                  * @description: 声音切换事件
-                 * @param {null}
+                 * @param {null} 
                  * @return {null}
                  */
                 isEnableNoticePlayerChanged() {
@@ -83,7 +69,7 @@
                 },
                 /**
                  * @description: 通知切换事件
-                 * @param {null}
+                 * @param {null} 
                  * @return {null}
                  */
                 isEnableNotificationChanged() {
@@ -92,7 +78,7 @@
                 },
                 /**
                  * @description: 摸一摸通知切换事件
-                 * @param {null}
+                 * @param {null} 
                  * @return {null}
                  */
                 isEnableTouchNoticeChanged() {
@@ -101,29 +87,11 @@
                 },
                 /**
                  * @description: 暗黑模式切换事件
-                 * @param {null}
+                 * @param {null} 
                  * @return {null}
                  */
                 isDarkModelChanged() {
                     this.$parent.updateDarkModel(this.isDarkModelTemp);
-                },
-                /**
-                 * @description: 频谱开关切换事件
-                 * @param {null}
-                 * @return {null}
-                 */
-                isSpectrumSwitchChanged() {
-                  localStorage.setItem('isSpectrumSwitch', this.isSpectrumSwitch ? 0 : 1);
-                  this.$parent.updateSpectrumSwitch(this.isSpectrumSwitch);
-                },
-              /**
-               * @description: 频谱类型切换事件
-               * @param {null}
-               * @return {null}
-               */
-                isSpectrumSwitchTypeChanged(){
-                  localStorage.setItem('isSpectrumSwitchType', this.isSpectrumSwitchType);
-                  this.$parent.updateSpectrumSwitchType(this.isSpectrumSwitchType);
                 }
             },
         }
@@ -140,10 +108,6 @@
         top: 55px;
         overflow: hidden;
         overflow-y: auto;
-    }
-
-    .bbbug_my_setting__form_spectrum_switch .el-radio-button__inner{
-        padding: 5px 10px;
     }
 
     .el-select {
