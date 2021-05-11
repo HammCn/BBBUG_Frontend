@@ -209,9 +209,8 @@
                         success(res) {
                             that.$message.success(res.msg);
                             that.list[index].loading = false;
+                            that.list.splice(index,1);
                             that.$forceUpdate();
-                            that.page = 1;
-                            that.getList();
                         },
                         error(res) {
                             that.list[index].loading = false;

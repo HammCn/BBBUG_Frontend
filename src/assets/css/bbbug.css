@@ -955,3 +955,326 @@
       --smooth-corners: 3;
     }
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /* 暗黑模式css */
+
+  .bbbug_dark{
+    background-color:#222;
+}
+
+
+.bbbug_dark .bbbug_main_chat {
+    background-color: rgba(33,33,33,0.9);
+}
+
+.bbbug_dark .bbbug_main_chat_input {
+    border-top: 1px solid #333;
+}
+
+.bbbug_dark .bbbug_main_chat_room_info {
+    border-bottom: 1px solid #333;
+    color: #ccc;
+}
+
+.bbbug_dark .bbbug_main_chat_content {
+    background-color: #333;
+    color: #999;
+}
+
+.bbbug_dark .bbbug_main_chat_content::before {
+    color: #333;
+}
+
+.bbbug_dark .bbbug_main_chat_name {
+    color: #ccc;
+}
+
+.bbbug_dark .bbbug_main_chat_room_id {
+    color: #ccc;
+    background-color: #000;
+    border: 1px solid #ccc;
+}
+
+.bbbug_dark .bbbug_main_chat_emojis {
+    background-color: #333;
+}
+
+.bbbug_dark .el-input__inner {
+    border: 1px solid #333;
+    background-color: #444;
+    color:#ccc;
+}
+
+
+.bbbug_dark .el-input-group__append, .bbbug_dark .el-input-group_prepend {
+    background-color: #444;
+    border: 1px solid #333;
+}
+
+.bbbug_dark .bbbug_main_menu_song_box {
+    background-color: #333;
+}
+
+.bbbug_dark .bbbug_main_menu_song_title {
+    color: #999;
+}
+
+.bbbug_dark .bbbug_main_chat_system_text {
+    color: #666;
+}
+
+.bbbug_dark .bbbug_main_chat_input_lrc {
+    color: #666;
+}
+
+.bbbug_dark .bbbug_main_chat_input_send {
+    color: #666;
+    background-color: #333;
+}
+
+.bbbug_dark .bbbug_main_chat_enable {
+    color: #ccc;
+    background-color: #333;
+}
+
+.bbbug_dark .bbug_main_chat_input_message {
+    color: #ccc;
+}
+
+.bbbug_dark .bbbug_main_chat_system_text font {
+    color: yellow;
+}
+
+.bbbug_dark .bbbug_main_chat_toolbar_tobottom i {
+    background-color: #333;
+    color: #999;
+}
+
+.bbbug_dark .bbbug_main_chat_notice .bbbug_main_chat_notice_title {
+    background-color: #333;
+    border-bottom: 1px solid #393939;
+}
+
+.bbbug_dark .bbbug_main_chat_jump_id {
+    background-color: #444;
+    color: #999;
+}
+
+.bbbug_dark .bbbug_main_chat_jump_tips {
+    color: #999;
+}
+
+.bbbug_dark .bbbug_login_form {
+    background-color: #333;
+}
+
+.bbbug_dark .el-link.el-link--default {
+    color: #999;
+}
+
+.bbbug_dark .el-form-item__label {
+    color: #999;
+}
+
+.bbbug_login_form_title {
+    color: #ccc;
+}
+
+.bbbug_dark .-internal-autofill-select {
+    background-color: #444;
+}
+
+.bbbug_dark .bbbug_my_setting__form {
+    background: #333;
+}
+
+.bbbug_dark .bbbug_main_right_room_title {
+    background: #333;
+}
+
+.bbbug_dark .bbbug_main_right {
+    background: #393939;
+    color: #999;
+}
+
+.bbbug_dark .bbbug_main_right_song_title {
+    background: #333;
+}
+
+.bbbug_dark .bbbug_main_right_song_item {
+    background: #444;
+}
+
+.bbbug_dark .bbbug_main_right_song_name {
+    color: #ccc;
+}
+
+.bbbug_dark .bbbug_main_right_song_button {
+    background: #444;
+}
+
+.bbbug_dark .bbbug_main_right_song_add {
+    color: #999;
+    border: 1px solid #555;
+}
+
+.bbbug_dark .bbbug_main_chat_content_quot {
+    background: #333;
+    color: #555;
+}
+
+.bbbug_dark .contextmenu {
+    background: #333;
+}
+
+.bbbug_dark .contextmenu div {
+    color: #999;
+}
+
+.bbbug_dark .el-dropdown-menu {
+    background: #333;
+    border: 1px solid #393939;
+}
+
+.bbbug_dark .el-popper[x-placement^=bottom] .popper__arrow::after {
+    border-bottom-color: #333;
+}
+
+.bbbug_dark .el-popper[x-placement^=bottom] .popper__arrow {
+    border-bottom-color: #393939;
+}
+
+.bbbug_dark .el-dropdown-menu__item {
+    color: #999;
+}
+
+.bbbug_dark .el-dropdown-menu__item:hover {
+    background: #393939;
+}
+
+.bbbug_dark .bbbut_main_profile_box {
+    background: #333;
+}
+
+.bbbug_dark .bbbug_main_profile_song_title {
+    background: #444;
+}
+
+.bbbug_dark .bbbug_main_profile_song_item {
+    border-bottom: 1px solid #393939;
+}
+
+.bbbug_dark .bbbug_main_profile_song {
+    background: #444;
+    border-bottom: 1px solid #393939;
+}
+
+.bbbug_dark .bbbug_main_profile_song_name {
+    color: #999;
+}
+
+.bbbug_dark .bbbug_main_profile_song_singer {
+    color: #666;
+}
+
+.bbbug_dark .bbbug_main_profile_user_id {
+    background: #666;
+    color: #222;
+}
+
+.bbbug_dark .el-loading-mask {
+    background: rgba(33,33,33,0.9);
+}
+
+
+.bbbug_dark .bbbug_main_right_song_right {
+    background: #444;
+    color: #ccc;
+}
+
+.bbbug_dark .bbbug_main_right_room_item {
+    background: #444;
+}
+
+.bbbug_dark .bbbug_main_right_room_name {
+    color: #ccc;
+}
+
+.bbbug_dark .bbbug_main_right_room_id {
+    background: #333;
+}
+
+.bbbug_dark .bbbug_main_right_room_user_nick {
+    color: #ccc;
+}
+
+.bbbug_dark .bbbug_main_right_room_right {
+    background: #444;
+}
+
+.bbbug_dark .bbbug_room_setting_form {
+    background: #333;
+}
+
+.bbbug_dark .el-message-box {
+    background: #333;
+    border: 1px solid #393939;
+}
+
+.bbbug_dark .el-message-box__title {color: #ccc;}
+
+.bbbug_dark .bbbug_main_right_online_title {
+    background: #333;
+}
+
+.bbbug_dark .bbbug_main_right_online_item {
+    background: #444;
+}
+
+.bbbug_dark .bbbug_main_right_online_user_nick {
+    color: #ccc;
+}
+
+.bbbug_dark .bbbug_main_right_online_desc {
+    color: #999;
+}
+.bbbug_dark .bbbug_upload_music {
+    background-color: #333;
+}
+
+.bbbug_dark .bbbug_upload_music_title {
+    color: #ccc;
+}
+
+.bbbug_dark .bbbug_upload_music_cancel {
+    color: #ccc!important;
+    background: #444!important;
+}
+
+.bbbug_dark .bbbug_upload_music_button {
+    background: #555;
+}
+.bbbug_dark .el-message-box__content {
+    color: #999;
+}
+
+.bbbug_dark .contextmenu div:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+}
+.bbbug_dark .el-dropdown-menu__item--divided:before{
+    background-color: #393939;
+}

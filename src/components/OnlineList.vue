@@ -56,7 +56,7 @@
                                 </div>
                                 <div class="bbbug_main_right_online_user">
                                     <div class="bbbug_main_right_online_user_nick"
-                                        :style="{color:item.user_id<10000?'orangered':item.user_shutdown?'#aaa':'#333'}"
+                                        :style="{color:item.user_id<10000?'orangered':item.user_shutdown?'#aaa':''}"
                                         :title="item.user_id<10000?'骨灰级赞助用户':''">
                                         <i class="iconfont icon-icon_certification_f user_icon"
                                             style="font-size:18px;color:#097AD8;" v-if="item.user_vip"

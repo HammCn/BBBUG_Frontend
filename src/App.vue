@@ -90,6 +90,7 @@
 
                         </div>
                         <div class="bbbug_main_chat_online">
+                            <span class="bbbug_main_chat_invate" onclick="window.open('https://qm.qq.com/cgi-bin/qm/qr?k=3yei1QB3MehVQoBWiDEMU0NmdMIdPwPD&jump_from=webapi');">QQ群</span>
                             <span title="复制邀请链接" class="bbbug_main_chat_invate"
                                 :data-clipboard-text="copyData">邀请</span>
                             <span class="bbbug_main_chat_invate" title="显示当前房间微信小程序码" @click="showQrCode">小程序</span>
@@ -343,8 +344,8 @@
             </div>
             <div class="copyright">所有音乐资源来源于第三方,请勿用于商业非法用途!</div>
             <div class="main">
-                <div class="pic xiaomi"><img :src="getStaticUrl('new/images/logo.png')" /></div>
-                <div class="pic xiaomi"><img
+                <div class="pic"><img :src="getStaticUrl('new/images/logo.png')" /></div>
+                <div class="pic"><img
                         :src="songInfo ? getStaticUrl(songInfo.song.pic) : getStaticUrl('new/images/logo.png')" /></div>
                 <div class="info" v-if="songInfo">
                     <div class="name">{{songInfo.song.name}} - {{songInfo.song.singer}}</div>
@@ -673,10 +674,18 @@
                  */
                 showQrCode() {
                     let that = this;
-                    that.$alert('<img src="' + that.global.apiUrl + '/api/weapp/qrcode?room_id=' + that.global.room_id + '" width="200" height="200"/>', '请微信扫码打开', {
-                        confirmButtonText: '确定',
-                        dangerouslyUseHTMLString: true,
+                    let roomAdminInfo = Object.assign({}, that.global.roomInfo.admin);
+                    that.messageList.push({
+                        type: "img",
+                        content: that.global.apiUrl + '/api/weapp/qrcode?room_id=' + that.global.room_id,
+                        resource: that.global.apiUrl + '/api/weapp/qrcode?room_id=' + that.global.room_id,
+                        where: "channel",
+                        at: roomAdminInfo,
+                        message_id: 0,
+                        time: parseInt(new Date().valueOf() / 1000),
+                        user: roomAdminInfo
                     });
+                    that.autoScroll();
                 },
                 /**
                  * @description: 游客登录
@@ -2115,7 +2124,7 @@
                                         }
                                     }
                                 }
-                                if (obj.user.user_id == 10000) {
+                                if (obj.user.user_id == 110) {
                                     if (obj.content == 'clear') {
                                         that.messageList = [];
                                         that.addSystemMessage("管理员" + that.urldecode(obj.user.user_name) + "清空了你的聊天记录", '#f00', '#eee');
@@ -2257,11 +2266,11 @@
 
                                 break;
                             case 'pass':
-                                that.addSystemMessage(that.urldecode(obj.user.user_name) + " 切掉了当前播放的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ", '#ff4500', '#eee');
+                                that.addSystemMessage(that.urldecode(obj.user.user_name) + " 切掉了当前播放的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ");
 
                                 break;
                             case 'passGame':
-                                that.addSystemMessage(that.urldecode(obj.user.user_name) + " PASS了当前的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ", '#ff4500', '#eee');
+                                that.addSystemMessage(that.urldecode(obj.user.user_name) + " PASS了当前的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ");
 
                                 break;
                             case 'all':
@@ -2522,9 +2531,6 @@
         border-radius: 0 0 15px 0;
     }
 
-    .bbbug_main_chat_content:active {
-        background-color: #ddd;
-    }
 
     .bbbug_main_chat_content_reply {
         color: orangered;
