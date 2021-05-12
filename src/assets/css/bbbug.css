@@ -6,7 +6,11 @@
      padding: 0;
      background-color: #000;
  }
- 
+ .el-tag__close{
+     position: absolute!important;
+     right:3px!important;
+     top:6px!important;
+ }
  audio {
      position: relative;
      z-index:99999;

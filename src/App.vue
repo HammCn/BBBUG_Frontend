@@ -293,14 +293,14 @@
                                 :placeholder="(roomInfo && roomInfo.room_sendmsg==1 && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?'全员禁言中,你暂时无法发言...':'Wish you enjoy your bugs...'"
                                 @keydown.13="sendMessage" @input="messageChanged" v-model="message"
                                 :disabled="(roomInfo && roomInfo.room_sendmsg==1 && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?true:false"></textarea>
-                            <button class="bbbug_main_chat_input_send" id="qqLoginBtn" @click.stop="sendMessage"
-                                :class="isEnableSendMessage?'bbbug_main_chat_enable':''">发送(Enter)</button>
-                            <el-tag class="bbbug_main_chat_input_quot" closable type="info"
-                                v-if="atUserInfo && atUserInfo.message" @close="atUserInfo={user:{}};">
-                                {{getQuotMessage(atUserInfo)}}
-                            </el-tag>
-                            <div class="bbbug_main_chat_input_lrc">{{lrcString}}</div>
                         </div>
+                        <button class="bbbug_main_chat_input_send" id="qqLoginBtn" @click.stop="sendMessage"
+                            :class="isEnableSendMessage?'bbbug_main_chat_enable':''">发送(Enter)</button>
+                        <el-tag class="bbbug_main_chat_input_quot" closable type="info"
+                            v-if="atUserInfo && atUserInfo.message" @close="atUserInfo={user:{}};">
+                            {{getQuotMessage(atUserInfo)}}
+                        </el-tag>
+                        <div class="bbbug_main_chat_input_lrc">{{lrcString}}</div>
                     </div>
                 </div>
                 <div class="bbbug_main_menu_song_box" v-if="songInfo && isSongPannelShow">
@@ -2609,6 +2609,15 @@
         border-top: 1px solid #eee;
     }
 
+    .bbbug_main_chat_input_form {
+        padding: 10px;
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        top: 10px;
+        bottom: 10px;
+    }
+
     .bbug_main_chat_input_message {
         width: 100%;
         height: 50px;
@@ -2616,10 +2625,10 @@
         resize: none;
         background-color: transparent;
         position: absolute;
-        left: 10px;
-        right: 10px;
-        top: 10px;
-        bottom: 10px;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
         border: none;
         font-size: 14px;
         color: #333;
@@ -2786,6 +2795,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        padding-right: 20px;
     }
 
     .bbbug_main_chat_content_quot {
