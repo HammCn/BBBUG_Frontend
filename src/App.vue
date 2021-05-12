@@ -380,6 +380,9 @@
             </div>
         </div>
         <audio :src="getStaticUrl('new/mp3/dingdong.mp3')" ref="noticePlayer"></audio>
+        <audio :src="getStaticUrl('new/mp3/dong.m4a')" ref="audio_dong"></audio>
+        <audio :src="getStaticUrl('new/mp3/ci.m4a')" ref="audio_ci"></audio>
+        <audio :src="getStaticUrl('new/mp3/da.m4a')" ref="audio_da"></audio>
         <audio :src="nextAudioUrl" ref="preloadAudio" control1>
         </audio>
         <audio :src="audioUrl" ref="audio" control1 @timeupdate="audioTimeUpdate" @ended="audioEnded"
@@ -516,6 +519,38 @@
                                 that.isLocked = !that.isLocked;
                                 break;
                             default:
+                                console.log(e.keyCode);
+                                if (that.isLocked) {
+                                    switch (e.keyCode) {
+                                        case 90:
+                                        case 88:
+                                        case 67:
+                                        case 86:
+                                        case 66:
+                                        case 78:
+                                        case 77:
+                                            that.$refs.audio_dong.currentTime = 0;
+                                            that.$refs.audio_dong.play();
+                                            break;
+                                        case 65:
+                                        case 83:
+                                        case 68:
+                                        case 70:
+                                        case 71:
+                                        case 72:
+                                        case 74:
+                                        case 75:
+                                        case 76:
+                                            that.$refs.audio_ci.currentTime = 0;
+                                            that.$refs.audio_ci.play();
+                                            break;
+                                        case 32:
+                                            that.$refs.audio_da.currentTime = 0;
+                                            that.$refs.audio_da.play();
+                                            break;
+                                        default:
+                                    }
+                                }
                         }
                     };
 
