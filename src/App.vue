@@ -149,7 +149,7 @@
                                     </el-dropdown>
                                 </div>
                                 <div class="bbbug_main_chat_name"
-                                    :style="{color:item.user.user_id<10000?'orangered':''}"
+                                    :class="item.user.user_id<10000?'orangered':''"
                                     :title="item.user.user_id<10000?'骨灰级赞助用户':''">
                                     {{urldecode(item.user.user_name)}}
                                     <i class="iconfont icon-icon_certification_f user_icon"
@@ -239,7 +239,7 @@
                             <div v-if="item.type=='join'" class="bbbug_main_chat_system">
                                 <span class="bbbug_main_chat_system_text">
                                     欢迎<span v-if="item.where">{{item.where}}的</span><span v-if="item.user">
-                                        <font color=orangered style="cursor: pointer;" title="点击查看资料"
+                                        <font class="orangered" style="cursor: pointer;" title="点击查看资料"
                                             @click.stop="showUserPage(item.user.user_id)">
                                             {{urldecode(item.name)}} </font>
                                     </span><span v-if="!item.user"><span v-if="item.plat">{{item.plat}}用户</span><span
@@ -313,7 +313,7 @@
                     <div class="bbbug_main_menu_song_user">
                         <i @click.stop="loveTheSong" title="收藏"
                             class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-15"></i>点歌人: <font
-                            color="orangered">
+                            class="orangered">
                             {{urldecode(songInfo.user.user_name)}}</font>
 
                     </div>

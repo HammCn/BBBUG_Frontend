@@ -959,7 +959,9 @@
       --smooth-corners: 3;
     }
   }
-
+.orangered{
+    color:orangered
+}
 
 
 
@@ -979,7 +981,9 @@
     background-color:#222;
 }
 
-
+.bbbug_dark .bbbug_main_chat_invate{
+    color:orange;
+}
 .bbbug_dark .bbbug_main_chat {
     background-color: rgba(33,33,33,0.9);
 }
@@ -992,7 +996,9 @@
     border-bottom: 1px solid #333;
     color: #ccc;
 }
-
+.bbbug_dark .bbbug_main_profile_song_tips{
+    background-color: #333;
+}
 .bbbug_dark .bbbug_main_chat_content {
     background-color: #333;
     color: #999;
@@ -1007,9 +1013,17 @@
 }
 
 .bbbug_dark .bbbug_main_chat_room_id {
-    color: #ccc;
-    background-color: #000;
-    border: 1px solid #ccc;
+    color: orange;
+    background-color: transparent;
+    border: 1px solid orange;
+}
+.bbbug_dark .bbbug_main_chat_input_quot{
+    background-color: #333;
+    border-color: #444;
+}
+.bbbug_dark .content_at{
+    background-color: orange!important;
+    color: #333!important;
 }
 
 .bbbug_dark .bbbug_main_chat_emojis {
@@ -1059,9 +1073,14 @@
 }
 
 .bbbug_dark .bbbug_main_chat_system_text font {
-    color: yellow;
+    color: orange;
 }
-
+.bbbug_dark .bbbug_main_room_icon{
+    color:orange;
+}
+.bbbug_dark .orangered{
+    color:orange;
+}
 .bbbug_dark .bbbug_main_chat_toolbar_tobottom i {
     background-color: #333;
     color: #999;
@@ -1132,7 +1151,12 @@
 
 .bbbug_dark .bbbug_main_right_song_add {
     color: #999;
-    border: 1px solid #555;
+    border: 1px solid #999;
+}
+
+.bbbug_dark .bbbug_main_right_song_add :hover{
+    color: #fff;
+    border: 1px solid #fff;
 }
 
 .bbbug_dark .bbbug_main_chat_content_quot {
@@ -1174,7 +1198,7 @@
 }
 
 .bbbug_dark .bbbug_main_profile_song_title {
-    background: #444;
+    background: #333;
 }
 
 .bbbug_dark .bbbug_main_profile_song_item {
@@ -1185,7 +1209,15 @@
     background: #444;
     border-bottom: 1px solid #393939;
 }
-
+.bbbug_dark .bbbug_main_right_song_singer{
+    color:#666;
+}
+.bbbug_dark .bbbug_main_right_song_singer font{
+    color:#999;
+}
+.el-dropdown-menu__item--divided:before{
+    height: 1px;
+}
 .bbbug_dark .bbbug_main_profile_song_name {
     color: #999;
 }
