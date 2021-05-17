@@ -1148,12 +1148,16 @@
 .bbbug_dark .bbbug_main_right_song_button {
     background: #444;
 }
-
+.bbbug_dark .el-dropdown-menu__item--divided{
+    border-top: 1px solid #444;
+}
 .bbbug_dark .bbbug_main_right_song_add {
     color: #999;
     border: 1px solid #999;
 }
-
+.bbbug_dark .content_at:before {
+    color: orange;
+}
 .bbbug_dark .bbbug_main_right_song_add :hover{
     color: #fff;
     border: 1px solid #fff;

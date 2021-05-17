@@ -25,28 +25,28 @@
                 </el-form-item>
                 <el-form-item class="bbbug_login_form_submit" style="margin-left:10px;"> <span style="float:left;">
                         <el-link :underline="false"
-                            :href="'https://graph.qq.com/oauth2.0/authorize?client_id='+global.appIdList.qq+'&redirect_uri='+localhost+'qq&response_type=code&state='+localhost"
+                            @click="thirdLogin('https://graph.qq.com/oauth2.0/authorize?client_id='+global.appIdList.qq+'&redirect_uri='+localhost+'qq&response_type=code&state='+localhost)"
                             title="QQ">
                             <i class="iconfont icon-QQ-circle-fill" style="font-size:24px;margin-right:-1px;"></i>
                         </el-link>
                         <el-link :underline="false"
-                            :href="'https://gitee.com/oauth/authorize?client_id='+global.appIdList.gitee+'&redirect_uri='+localhost+'gitee&response_type=code'"
+                            @click="thirdLogin('https://gitee.com/oauth/authorize?client_id='+global.appIdList.gitee+'&redirect_uri='+localhost+'gitee&response_type=code')"
                             title="Gitee 码云">
                             <i class="iconfont icon-gitee"></i>
                         </el-link>
                         <el-link :underline="false"
-                            :href="'https://www.oschina.net/action/oauth2/authorize?client_id='+global.appIdList.oschina+'&redirect_uri='+localhost+'oschina&response_type=code'"
+                            @click="thirdLogin('https://www.oschina.net/action/oauth2/authorize?client_id='+global.appIdList.oschina+'&redirect_uri='+localhost+'oschina&response_type=code')"
                             title="开源中国">
                             <i class="iconfont icon-icon-oschina-circle"></i>
                         </el-link>
                         <el-link :underline="false"
-                            :href="'https://oapi.dingtalk.com/connect/qrconnect?appid='+global.appIdList.ding+'&response_type=code&scope=snsapi_login&state=STATE&redirect_uri='+localhost+'ding'"
+                            @click="thirdLogin('https://oapi.dingtalk.com/connect/qrconnect?appid='+global.appIdList.ding+'&response_type=code&scope=snsapi_login&state=STATE&redirect_uri='+localhost+'ding')"
                             title="钉钉">
                             <i class="iconfont icon-dingding"></i>
                         </el-link>
-                        <el-link :underline="false" href="javascript:;" title="Github">
+                        <!-- <el-link :underline="false" href="javascript:;" title="Github">
                             <i class="iconfont icon-git"></i>
-                        </el-link>
+                        </el-link> -->
                     </span>
 
                     <el-button type="primary" @click="doLogin('bbbug_login_form')">立即登录</el-button>
@@ -66,7 +66,8 @@
                     form: {
                         user_account: "",
                         user_password: "",
-                    }
+                    },
+                    timer: null
                 }
             },
             created() {
@@ -74,6 +75,25 @@
                 this.callParentFunction('needLogin', 'please login first!');
             },
             methods: {
+                thirdLogin(url) {
+                    console.log(url);
+                    let that = this;
+                    let newWindow = null;
+                    if (self.frameElement && self.frameElement.tagName == "IFRAME") {
+                        console.log("新窗口打开please");
+                        return;
+                        newWindow = window.parent.open(url, "", "height=600,width=600, Left=300px,Top=20px, menubar=no,titlebar=no,scrollbar=no,toolbar=no, status=no,location=no");
+                    } else {
+                        newWindow = window.open(url, "", "height=600,width=600, Left=300px,Top=20px, menubar=no,titlebar=no,scrollbar=no,toolbar=no, status=no,location=no");
+                    }
+                    that.timer = setInterval(function () {
+                        if (newWindow.location.href == location.href) {
+                            clearInterval(self.timer);
+                            location.replace(location.href);
+                            newWindow.close();
+                        }
+                    }, 100);
+                },
                 /**
                  * @description: 游客方式登录
                  * @param {null}
