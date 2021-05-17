@@ -555,7 +555,6 @@
                                         case 73:
                                         case 79:
                                         case 80:
-                                        case 93:
                                             that.$refs.audio_da.currentTime = 0;
                                             that.$refs.audio_da.play();
                                             break;
