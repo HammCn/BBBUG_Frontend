@@ -519,8 +519,8 @@
                                 that.isLocked = !that.isLocked;
                                 break;
                             default:
-                                console.log(e.keyCode);
-                                if (that.isLocked) {
+                                console.log(e.keyCode)
+                                if (e.target.localName != 'textarea' && e.target.localName!='input') {
                                     switch (e.keyCode) {
                                         case 90:
                                         case 88:
@@ -545,6 +545,17 @@
                                             that.$refs.audio_ci.play();
                                             break;
                                         case 32:
+                                        case 81:
+                                        case 87:
+                                        case 69:
+                                        case 82:
+                                        case 84:
+                                        case 89:
+                                        case 85:
+                                        case 73:
+                                        case 79:
+                                        case 80:
+                                        case 93:
                                             that.$refs.audio_da.currentTime = 0;
                                             that.$refs.audio_da.play();
                                             break;
@@ -2244,14 +2255,14 @@
                                         }
                                     }
                                 }
-                                if (that.messageList.length > that.messageList.historyMax) {
+                                if (that.messageList.length > that.historyMax) {
                                     that.messageList.shift();
                                 }
                                 that.messageList.push(obj);
                                 break;
                             case 'system':
                             case 'join':
-                                if (that.messageList.length > that.messageList.historyMax) {
+                                if (that.messageList.length > that.historyMax) {
                                     that.messageList.shift();
                                 }
                                 that.messageList.push(obj);
