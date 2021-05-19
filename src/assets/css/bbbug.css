@@ -56,7 +56,8 @@
  input,
  textarea,
  .bbbug_main_chat_name,
- .bbbug_main_chat_content {
+ .bbbug_main_chat_content,
+ .bbbug_main_chat_notice_content {
      -moz-user-select: text;
      -webkit-user-select: text;
      -ms-user-select: text;

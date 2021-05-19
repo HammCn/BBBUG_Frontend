@@ -13,7 +13,7 @@
                                     onload="this.src=this.attributes['data'].value;this.attributes['onload']=null;"
                                     :onerror="getStaticUrl('new/images/nohead.jpg')" />
                             </div>
-                            <div class="bbbug_main_right_song_name">{{item.song.name}}
+                            <div class="bbbug_main_right_song_name"><font class="orangered" v-if="item.push_count && item.push_count>0">({{item.push_count}})</font>{{item.song.name}}
                             </div>
                             <div class="bbbug_main_right_song_singer" v-if="item.at">
                                 <font v-if="item.at.user_id == userInfo.user_id" color="orangered">

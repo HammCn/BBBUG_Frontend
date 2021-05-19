@@ -2299,7 +2299,7 @@
 
                                 break;
                             case 'push':
-                                that.addSystemMessage(that.urldecode(obj.user.user_name) + " 将歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") 设为置顶候播放");
+                                that.addSystemMessage(that.urldecode(obj.user.user_name) + " 顶了下《" + obj.song.name + "》(" + obj.song.singer + ")");
 
                                 break;
                             case 'removeSong':
