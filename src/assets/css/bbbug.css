@@ -335,36 +335,14 @@
      right: 0;
  }
  
- .bbbug_main_menu_song_ctrl {
-     text-align: center;
-     vertical-align: middle;
-     position: absolute;
-     left: 0;
-     right: 0;
-     bottom: 130px;
- }
- 
- .bbbug_main_menu_song_ctrl .iconfont {
-     cursor: pointer;
-     vertical-align: middle;
-     font-size: 20px;
-     color: #666;
-     margin: 0px 3px;
- }
- 
- .bbbug_main_menu_song_ctrl .volume_bar {
-     cursor: pointer;
-     font-size: 24px;
- }
- 
- .bbbug_main_menu_song_ctrl .iconfont:hover {
-     color: orangered;
- }
  
  .bbbug_main_menu_song_volume_bar {
      position: absolute!important;
-     right: 5px;
-     bottom: 165px;
+     right: 25px;
+     bottom: 40px;
+ }
+ .bbbug_main_menu_song_volume_bar .el-slider__stop{
+     background-color: #ccc;
  }
  
  .bbbug_main_menu_setting img {
@@ -989,10 +967,12 @@
     background-color: rgba(33,33,33,0.9);
 }
 
-.bbbug_dark .bbbug_main_chat_input {
-    border-top: 1px solid #333;
+.bbbug_dark .bbbug_main_chat_percent {
+    background-color: #333;
 }
-
+.bbbug_dark .bbbug_main_chat_percent div{
+    background-color: #444;
+}
 .bbbug_dark .bbbug_main_chat_room_info {
     border-bottom: 1px solid #333;
     color: #ccc;
@@ -1121,6 +1101,12 @@
     background-color: #444;
 }
 
+.bbbug_dark .bbbug_main_chat_input_song_name{
+    color: #555;
+}
+.bbbug_dark .bbbug_main_chat_toolbar_lrc{
+    color: #555;
+}
 .bbbug_dark .bbbug_my_setting__form {
     background: #333;
 }

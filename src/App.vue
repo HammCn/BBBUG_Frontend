@@ -52,21 +52,6 @@
                             </div>
                         </div>
                     </el-upload>
-                    <div class="bbbug_main_menu_song_ctrl">
-                        <i @click.stop="passTheSong" title="切歌/不喜欢" class="iconfont icon-xiayige"></i>
-                        <i title="音量" @click="setEnableOrDisableVolume" @mouseover="showAudioVolumeBar"
-                            class="iconfont volume_bar"
-                            :class="audioVolume>0?'icon-changyongtubiao-xianxingdaochu-zhuanqu-39':'icon-changyongtubiao-xianxingdaochu-zhuanqu-40'"></i>
-                    </div>
-                    <el-slider class="bbbug_main_menu_song_volume_bar" v-if="isVolumeBarShow" v-model="audioVolume"
-                        vertical show-stops @change="audioVolumeChanged" height="80px">
-                    </el-slider>
-                    <div class="bbbug_main_menu_song love" title="查看歌曲信息" v-if="songInfo" @click.stop="showSongPanel">
-                        <img :src="getStaticUrl(audioImage)" :onerror="getStaticUrl('new/images/nohead.jpg')" />
-                    </div>
-                    <div class="bbbug_main_menu_song love" title="歌曲加载中" v-if="!songInfo">
-                        <img :src="getStaticUrl('new/images/loading.png')" />
-                    </div>
                     <div class="bbbug_main_menu_setting">
                         <div @click="showSystemSetting">
                             <img :src="getStaticUrl('new/images/menubar_setting.png')" title="系统设置" />
@@ -148,8 +133,7 @@
                                         </el-dropdown-menu>
                                     </el-dropdown>
                                 </div>
-                                <div class="bbbug_main_chat_name"
-                                    :class="item.user.user_id<10000?'orangered':''"
+                                <div class="bbbug_main_chat_name" :class="item.user.user_id<10000?'orangered':''"
                                     :title="item.user.user_id<10000?'骨灰级赞助用户':''">
                                     {{urldecode(item.user.user_name)}}
                                     <i class="iconfont icon-icon_certification_f user_icon"
@@ -265,6 +249,33 @@
                                 :before-upload="doUploadBefore" :data="baseData">
                                 <img title="上传图片" class="" :src="getStaticUrl('new/images/button_image.png')" />
                             </el-upload>
+                            <el-slider v-if="isVolumeBarShow" class="bbbug_main_menu_song_volume_bar"
+                                v-model="audioVolume" vertical show-stops @change="audioVolumeChanged" height="80px">
+                            </el-slider>
+                            <div class="bbbug_main_chat_input_song">
+                                <div class="bbbug_main_chat_input_song_name" v-if="songInfo && songInfo.song">
+                                    <span>{{songInfo.song.name}}({{songInfo.song.singer}})</span>
+                                    <i class="iconfont icon-icon_people_fill" style="
+                                        font-weight: bold;
+                                        font-size: 14px;
+                                        vertical-align: middle;
+                                        margin-left: 10px;
+                                        display: inline-block;
+                                    "></i>
+                                    <font
+                                        style="cursor: pointer;" title="点击查看资料"
+                                        @click.stop="showUserPage(songInfo.user.user_id)" class="orangered">
+                                        {{urldecode(songInfo.user.user_name)}}</font>
+                                </div>
+                                <div class="bbbug_main_chat_input_song_ctrl">
+                                    <i v-if="songInfo" @click.stop="loveTheSong" title="收藏"
+                                        class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-15"></i>
+                                    <i title="音量" @click="setEnableOrDisableVolume" @mouseover="showAudioVolumeBar"
+                                        class="iconfont volume_bar"
+                                        :class="audioVolume>0?'icon-changyongtubiao-xianxingdaochu-zhuanqu-39':'icon-changyongtubiao-xianxingdaochu-zhuanqu-40'"></i>
+                                    <i @click.stop="passTheSong" title="切歌/不喜欢" class="iconfont icon-xiayige"></i>
+                                </div>
+                            </div>
                         </div>
                         <div title="跳到最新消息" class="bbbug_main_chat_toolbar_tobottom"
                             @click="isEnableScroll=true;autoScroll();" v-if="!isEnableScroll"><i
@@ -286,6 +297,9 @@
                             </el-popover>
                         </div>
                     </div>
+                    <div class="bbbug_main_chat_percent" v-if="songInfo">
+                        <div :style="{width:audioPercent+'%'}"></div>
+                    </div>
                     <div class="bbbug_main_chat_input">
                         <div class="bbbug_main_chat_input_toolbar"></div>
                         <div class="bbbug_main_chat_input_form">
@@ -300,22 +314,7 @@
                             v-if="atUserInfo && atUserInfo.message" @close="atUserInfo={user:{}};">
                             {{getQuotMessage(atUserInfo)}}
                         </el-tag>
-                        <div class="bbbug_main_chat_input_lrc">{{lrcString}}</div>
-                    </div>
-                </div>
-                <div class="bbbug_main_menu_song_box" v-if="songInfo && isSongPannelShow">
-                    <img class="bbbug_main_menu_song_bg"
-                        :src="songInfo ? songInfo.song.pic : getStaticUrl('new/images/nohead.jpg')" />
-                    <el-progress :stroke-width="2" :percentage="audioPercent" :show-text="false"></el-progress>
-                    <div class="bbbug_main_menu_song_title">
-                        <marquee scrollamount="3">{{songInfo.song.name}} - {{songInfo.song.singer}}</marquee>
-                    </div>
-                    <div class="bbbug_main_menu_song_user">
-                        <i @click.stop="loveTheSong" title="收藏"
-                            class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-15"></i>点歌人: <font
-                            class="orangered">
-                            {{urldecode(songInfo.user.user_name)}}</font>
-
+                        <div class="bbbug_main_chat_toolbar_lrc"><span>{{lrcString}}</span></div>
                     </div>
                 </div>
                 <div class="bbbug_frame">
@@ -454,7 +453,6 @@
                     messageList: [],
                     // 消息最大允许保留
                     historyMax: 100,
-                    isSongPannelShow: false,
                     globalMusicSwitch: false,
                     onlineList: [],
                     timerForWebTitle: null,
@@ -520,7 +518,7 @@
                                 break;
                             default:
                                 console.log(e.keyCode)
-                                if (e.target.localName != 'textarea' && e.target.localName!='input') {
+                                if (e.target.localName != 'textarea' && e.target.localName != 'input') {
                                     switch (e.keyCode) {
                                         case 90:
                                         case 88:
@@ -1087,6 +1085,7 @@
                 showAudioVolumeBar() {
                     let that = this;
                     that.isVolumeBarShow = true;
+                    that.isEnableScroll = true;
                     that.hideVolumeBarAfter5seconds();
                 },
                 /**
@@ -1324,6 +1323,7 @@
                     } else {
                         that.isEnableScroll = false;
                     }
+                    that.isVolumeBarShow = false;
                 },
                 /**
                  * @description: 显示修改我的资料页面
@@ -1423,7 +1423,6 @@
                  */
                 hideAll() {
                     this.isEmojiBoxShow = false;
-                    this.isSongPannelShow = false;
                     this.closeMenu();
                     this.global.songKeyword = '';
                     this.dialog = {
@@ -1448,18 +1447,7 @@
                  */
                 hideAllDialog() {
                     this.isEmojiBoxShow = false;
-                    this.isSongPannelShow = false;
                     this.closeMenu();
-                },
-                /**
-                 * @description: 显示歌曲卡片
-                 * @param {null}
-                 * @return {null}
-                 */
-                showSongPanel() {
-                    this.closeMenu();
-                    this.isEmojiBoxShow = false;
-                    this.isSongPannelShow = !this.isSongPannelShow;
                 },
                 /**
                  * @description: 显示表情卡片
@@ -1468,7 +1456,6 @@
                  */
                 showEmojiBox() {
                     this.closeMenu();
-                    this.isSongPannelShow = false;
                     this.isEmojiBoxShow = !this.isEmojiBoxShow;
                     if (this.isEmojiBoxShow) {
                         this.imageList = this.emojiList;
@@ -2651,7 +2638,28 @@
         right: 0;
         bottom: 0;
         height: 100px;
-        border-top: 1px solid #eee;
+    }
+
+    .bbbug_main_chat_toolbar_lrc {
+        position: absolute;
+        left: 10px;
+        bottom: 5px;
+        color: #999;
+        font-size: 12px;
+    }
+
+    .bbbug_main_chat_percent {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 100px;
+        height: 1px;
+        background-color: #eee;
+    }
+
+    .bbbug_main_chat_percent div {
+        height: 100%;
+        background-color: #ddd;
     }
 
     .bbbug_main_chat_input_form {
@@ -2741,7 +2749,7 @@
     .bbbug_main_chat_toolbar_tobottom {
         position: absolute;
         right: 20px;
-        bottom: 20px;
+        bottom: 40px;
         z-index: 10;
     }
 
@@ -2952,14 +2960,45 @@
         right: 10px;
     }
 
-    .bbbug_main_chat_input_lrc {
-        font-size: 12px;
+    .bbbug_main_chat_input_song {
+        font-size: 14px;
         position: absolute;
-        left: 10px;
-        bottom: 10px;
-        color: #aaa;
+        right: 10px;
+        bottom: 5px;
+        color: rgb(121, 115, 115);
     }
 
+    .bbbug_main_chat_input_song_name {
+        font-size: 12px;
+        display: inline-block;
+        margin-right: 5px;
+        color: #aaa;
+        vertical-align: middle;
+    }
+
+    .bbbug_main_chat_input_song_name * {
+        max-width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .bbbug_main_chat_input_song_ctrl {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .bbbug_main_chat_input_song_ctrl .iconfont {
+        font-size: 20px;
+        color: #666;
+        cursor: pointer;
+    }
+
+    .bbbug_main_chat_input_song_ctrl .iconfont:hover {
+        color: orangered;
+    }
 
     .bbbug_main_chat_emojis_input {
         margin-bottom: 10px;
