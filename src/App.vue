@@ -262,8 +262,7 @@
                                         margin-left: 10px;
                                         display: inline-block;
                                     "></i>
-                                    <font
-                                        style="cursor: pointer;" title="点击查看资料"
+                                    <font style="cursor: pointer;" title="点击查看资料"
                                         @click.stop="showUserPage(songInfo.user.user_id)" class="orangered">
                                         {{urldecode(songInfo.user.user_name)}}</font>
                                 </div>
@@ -2655,6 +2654,22 @@
         bottom: 100px;
         height: 1px;
         background-color: #eee;
+    }
+
+    .bbbug_main_chat_percent div {
+        position: relative;
+    }
+
+    .bbbug_main_chat_percent div::after {
+        content: "";
+        width: 4px;
+        height: 4px;
+        font-size: 0px;
+        background-color: #999;
+        border-radius: 100%;
+        position: absolute;
+        right: 0;
+        top: -2px;
     }
 
     .bbbug_main_chat_percent div {
