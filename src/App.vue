@@ -2659,7 +2659,7 @@
 
     .bbbug_main_chat_percent div {
         height: 100%;
-        background-color: #ddd;
+        background-color: #e5e5e5;
     }
 
     .bbbug_main_chat_input_form {
