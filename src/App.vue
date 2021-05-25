@@ -87,8 +87,10 @@
                             </span>
                         </div>
                     </div>
+                    <div class="bbbug_app_close" @click="isAppOpen=!isAppOpen">{{isAppOpen?"关闭应用":"打开应用"}}</div>
                     <div class="bbbug_main_chat_history" id="bbbug_main_chat_history" @scroll="onMessageScroll"
-                        @click="hideAll" @contextmenu.prevent="hideAll">
+                        @click="hideAll" @contextmenu.prevent="hideAll"
+                        :style="{top:(isAppOpen&&roomInfo.room_app?'245px':'45px')}">
                         <div v-for="(item,index) in messageList">
                             <div v-if="item.type=='text' || item.type=='img' || item.type=='link' || item.type=='jump' || item.type=='notice'"
                                 class="bbbug_main_chat_item bbbug_main_chat_text"
@@ -231,6 +233,10 @@
                                 </span>
                             </div>
                         </div>
+                    </div>
+                    <div class="bbbug_app" v-if="roomInfo.room_app && isAppOpen">
+                        <iframe id="bbbug_app" @load="appLoaded" frameborder="0"
+                            src="https://test.hamm.cn/html_js/bbbug_app/"></iframe>
                     </div>
                     <div v-show="menuVisible" :style="{left:menuLeft+'px',top:menuTop+'px'}" class="contextmenu">
                         <div @click="quotMessage(selectedMessage);hideAll()">引用回复</div>
@@ -424,6 +430,7 @@
             },
             data() {
                 return {
+                    isAppOpen: true,
                     uploadSongForm: false,
                     dialog: false,
                     audioUrl: "",
@@ -489,6 +496,18 @@
                 let that = this;
                 this.global.guestUserInfo.user_head = this.getStaticUrl(this.global.guestUserInfo.user_head);
                 this.isLockedOnlyBg = localStorage.getItem('isLockedOnlyBg') == 1 ? true : false;
+                window.addEventListener('message',function(event){
+                    if(!event.data || !event.data.event){
+                        return;
+                    }
+                    switch(event.data.event){
+                        case 'sendTextMessage':
+                            that.message = event.data.message;
+                            that.sendMessage();
+                            break;
+                        default:
+                    }
+                },false);
             },
             mounted() {
                 let that = this;
@@ -516,7 +535,7 @@
                                 that.isLocked = !that.isLocked;
                                 break;
                             default:
-                                console.log(e.keyCode)
+                                // console.log(e.keyCode)
                                 if (e.target.localName != 'textarea' && e.target.localName != 'input') {
                                     switch (e.keyCode) {
                                         case 90:
@@ -631,6 +650,12 @@
                 });
             },
             methods: {
+                appLoaded() {
+                    this.sendAppEvent('init', {
+                        userInfo: this.userinfo,
+                        roomInfo: this.global.roomInfo
+                    });
+                },
                 /**
                  * @description: 保存播放器部分配置
                  * @param {null}
@@ -638,6 +663,15 @@
                  */
                 saveLockBgConfig() {
                     localStorage.setItem("isLockedOnlyBg", this.isLockedOnlyBg ? 1 : 0);
+                },
+                sendAppEvent(type, data = null) {
+                    if(this.global.roomInfo.room_app && this.isAppOpen){
+                        let json = {
+                            event: type,
+                            data: data
+                        };
+                        document.getElementById("bbbug_app").contentWindow.postMessage(json, "*");
+                    }
                 },
                 /**
                  * @description: 隐藏上传音乐窗口
@@ -744,6 +778,9 @@
                         user: roomAdminInfo
                     });
                     that.autoScroll();
+                    that.sendAppEvent('qrcode', {
+                        url: that.global.apiUrl + '/api/weapp/qrcode?room_id=' + that.global.room_id
+                    })
                 },
                 /**
                  * @description: 游客登录
@@ -1007,7 +1044,12 @@
                                     msg: res.data.attach_thumb,
                                     resource: res.data.attach_path,
                                 },
-                                success(res) { }
+                                success(res) { 
+                                    that.sendAppEvent('sendImg', {
+                                        thumb: res.data.attach_thumb,
+                                        resource: res.data.attach_path,
+                                    });
+                                }
                             });
                         }).catch(function () { });
                     } else {
@@ -1075,6 +1117,9 @@
                         this.$refs.audio.volume = parseFloat(volume / 100);
                         localStorage.setItem('volume', volume);
                     }
+                    this.sendAppEvent('volumeChanged', {
+                        volume: this.audioVolume
+                    });
                 },
                 /**
                  * @description: 显示音量操作条
@@ -1097,6 +1142,9 @@
                     that.$refs.audio.volume = parseFloat(that.audioVolume / 100);
                     localStorage.setItem('volume', that.audioVolume);
                     that.hideVolumeBarAfter5seconds();
+                    that.sendAppEvent('volumeChanged', {
+                        volume: that.audioVolume
+                    });
                 },
                 /**
                  * @description: 5s后隐藏音量条
@@ -1490,6 +1538,10 @@
                             resource: url,
                         },
                         success(res) {
+                            that.sendAppEvent('sendEmoji', {
+                                thumb: url,
+                                resource: url,
+                            });
                             that.isEmojiBoxShow = false;
                         }
                     });
@@ -1499,9 +1551,11 @@
                  * @param {event} 输入框事件
                  * @return {null}
                  */
-                sendMessage(e) {
+                sendMessage(e=false) {
                     let that = this;
-                    e.preventDefault();
+                    if(e){
+                        e.preventDefault();
+                    }
                     if (that.message == '') {
                         return;
                     }
@@ -1545,6 +1599,9 @@
                             that.atUserInfo = false;
                             that.isEnableScroll = true;
                             that.autoScroll();
+                            that.sendAppEvent('sendText', {
+                                text: message,
+                            });
                         },
                         error(res) {
                             for (let i = that.messageList.length - 1; i >= 0; i--) {
@@ -1731,6 +1788,9 @@
                             room_id: that.global.room_id
                         },
                         success(res) {
+                            that.sendAppEvent('touch', {
+                                user_id: user_id
+                            });
                             that.$message.success(res.msg);
                         }
                     });
@@ -1896,6 +1956,7 @@
                     if (reConnect) {
                         that.appLoading = true;
                     }
+                    that.isAppOpen = false;
                     that.request({
                         url: "room/getRoomInfo",
                         data: {
@@ -1910,6 +1971,7 @@
                             that.updateCopyData();
                             that.roomInfo = res.data;
                             that.background = res.data.room_background || "new/images/bg_dark.jpg";
+                            that.isAppOpen = true;
                             if (reConnect) {
                                 that.audioUrl = '';
                                 that.songInfo = null;
@@ -2026,6 +2088,11 @@
                             room_id: that.global.room_id,
                             mid: that.songInfo.song.mid
                         },
+                        success(res) {
+                            that.sendAppEvent('addFavSong', {
+                                song: that.songInfo
+                            });
+                        }
                     });
                 },
                 /**
@@ -2244,6 +2311,9 @@
                                     that.messageList.shift();
                                 }
                                 that.messageList.push(obj);
+                                that.sendAppEvent('jump', {
+                                    data: obj
+                                });
                                 break;
                             case 'system':
                             case 'join':
@@ -2251,11 +2321,17 @@
                                     that.messageList.shift();
                                 }
                                 that.messageList.push(obj);
+                                that.sendAppEvent('join', {
+                                    data: obj
+                                });
                                 break;
                                 // case 'join':
                                 //     that.addSystemMessage(obj.content);
                                 break;
                             case 'addSong':
+                                that.sendAppEvent('addSong', {
+                                    data: obj
+                                });
                                 if (obj.at) {
                                     that.addSystemMessage(that.urldecode(obj.user.user_name) + " 送了一首 《" + obj.song.name + "》(" + obj.song.singer + ") 给 " + that.urldecode(obj.at.user_name), '#409EFF', '#eee');
                                     if (obj.at.user_id == that.userInfo.user_id) {
@@ -2280,50 +2356,69 @@
                                 }
 
                                 break;
-                            case 'chat_bg':
-                                that.addSystemMessage(that.urldecode(obj.user.user_name) + " 运气大爆发,触发了点歌背景墙特效(1小时内播放歌曲时有效)!", 'green', '#eee');
-
-                                break;
                             case 'push':
+                                that.sendAppEvent('pushSong', {
+                                    data: obj
+                                });
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 顶了下《" + obj.song.name + "》(" + obj.song.singer + ")");
 
                                 break;
                             case 'removeSong':
+                                that.sendAppEvent('removeSong', {
+                                    data: obj
+                                });
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 将歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") 从队列移除");
 
                                 break;
                             case 'removeban':
+                                that.sendAppEvent('removeban', {
+                                    data: obj
+                                });
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 将 " + that.urldecode(obj.ban.user_name) + " 解禁");
 
                                 break;
                             case 'shutdown':
+                                that.sendAppEvent('shutdown', {
+                                    data: obj
+                                });
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 禁止了用户 " + that.urldecode(obj.ban.user_name) + " 发言");
 
                                 break;
                             case 'songdown':
+                                that.sendAppEvent('songdown', {
+                                    data: obj
+                                });
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 禁止了用户 " + that.urldecode(obj.ban.user_name) + " 点歌");
 
                                 break;
                             case 'guest_remove':
+                                that.sendAppEvent('removeGuest', {
+                                    data: obj
+                                });
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 取消了用户 " + that.urldecode(obj.guest.user_name) + " 嘉宾身份");
 
                                 break;
                             case 'guest_add':
+                                that.sendAppEvent('addGuest', {
+                                    data: obj
+                                });
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 为用户 " + that.urldecode(obj.guest.user_name) + " 设置了嘉宾身份");
 
                                 break;
                             case 'pass':
+                                that.sendAppEvent('passSong', {
+                                    data: obj
+                                });
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 切掉了当前播放的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ");
-
-                                break;
-                            case 'passGame':
-                                that.addSystemMessage(that.urldecode(obj.user.user_name) + " PASS了当前的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ");
 
                                 break;
                             case 'all':
                                 that.addSystemMessage(obj.content, '#fff', '#666');
                                 break;
                             case 'back':
+                                that.sendAppEvent('msgBack', {
+                                    data: obj
+                                });
                                 for (let i = 0; i < that.messageList.length; i++) {
                                     if (parseInt(that.messageList[i].message_id) == parseInt(obj.message_id)) {
                                         that.messageList.splice(i, 1);
@@ -2333,6 +2428,9 @@
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 撤回了一条消息");
                                 break;
                             case 'playSong':
+                                that.sendAppEvent('playSong', {
+                                    data: obj
+                                });
                                 if (obj.song) {
                                     obj.song.pic = obj.song.pic.replace('http://', 'https://');
                                     that.songInfo = obj;
@@ -2376,6 +2474,9 @@
                                 }
                                 break;
                             case 'online':
+                                that.sendAppEvent('online', {
+                                    data: obj
+                                });
                                 that.onlineList = obj.data || [];
                                 break;
                             case 'roomUpdate':
@@ -2619,6 +2720,7 @@
         border-radius: 5px;
     }
 
+
     .bbbug_main_chat {
         position: absolute;
         left: 80px;
@@ -2725,6 +2827,40 @@
     .bbbug_main_chat_enable {
         background-color: #666666;
         color: #fff;
+    }
+
+
+    .bbbug_app {
+        position: absolute;
+        left: 0;
+        top: 45px;
+        right: 0;
+        height: 200px;
+        border: none;
+        border-bottom: 1px solid #e5e5e5;
+        background-color: transparent;
+    }
+
+    .bbbug_app iframe {
+        width: 100%;
+        height: 100%;
+    }
+
+    .bbbug_app_close {
+        position: absolute;
+        right: 0px;
+        top: 43px;
+        background-color: #ccc;
+        font-size: 12px;
+        padding: 3px 5px;
+        border-radius: 0;
+        color: white;
+        cursor: pointer;
+        z-index: 10;
+    }
+
+    .bbbug_app_close:hover {
+        background-color: orange;
     }
 
     .bbbug_main_chat_history {
