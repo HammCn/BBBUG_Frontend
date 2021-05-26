@@ -87,10 +87,11 @@
                             </span>
                         </div>
                     </div>
-                    <div class="bbbug_app_close" @click="isAppOpen=!isAppOpen">{{isAppOpen?"关闭应用":"打开应用"}}</div>
+                    <div class="bbbug_app_close" @click="isAppOpenToggle" v-if="roomInfo.room_app">
+                        {{isAppOpen?"关闭应用":"打开应用"}}</div>
                     <div class="bbbug_main_chat_history" id="bbbug_main_chat_history" @scroll="onMessageScroll"
                         @click="hideAll" @contextmenu.prevent="hideAll"
-                        :style="{top:(isAppOpen&&roomInfo.room_app?'245px':'45px')}">
+                        :style="{top:(isAppOpen&&roomInfo.room_app?'242px':'42px')}">
                         <div v-for="(item,index) in messageList">
                             <div v-if="item.type=='text' || item.type=='img' || item.type=='link' || item.type=='jump' || item.type=='notice'"
                                 class="bbbug_main_chat_item bbbug_main_chat_text"
@@ -235,8 +236,10 @@
                         </div>
                     </div>
                     <div class="bbbug_app" v-if="roomInfo.room_app && isAppOpen">
-                        <iframe id="bbbug_app" @load="appLoaded" frameborder="0"
-                            src="https://test.hamm.cn/html_js/bbbug_app/"></iframe>
+                        <iframe id="bbbug_app" @load="appLoaded" frameborder="0" :src="roomInfo.room_app"></iframe>
+                        <a href="https://doc.bbbug.com/4056059.html"
+                            style="font-size:12px;color:#999;position:absolute;right:5px;bottom:5px;text-decoration:none;"
+                            target="_blank">我要开发</a>
                     </div>
                     <div v-show="menuVisible" :style="{left:menuLeft+'px',top:menuTop+'px'}" class="contextmenu">
                         <div @click="quotMessage(selectedMessage);hideAll()">引用回复</div>
@@ -496,18 +499,19 @@
                 let that = this;
                 this.global.guestUserInfo.user_head = this.getStaticUrl(this.global.guestUserInfo.user_head);
                 this.isLockedOnlyBg = localStorage.getItem('isLockedOnlyBg') == 1 ? true : false;
-                window.addEventListener('message',function(event){
-                    if(!event.data || !event.data.event){
+                this.isAppOpen = localStorage.getItem('isAppClosed') == 1 ? false : true;
+                window.addEventListener('message', function (event) {
+                    if (!event.data || !event.data.event) {
                         return;
                     }
-                    switch(event.data.event){
+                    switch (event.data.event) {
                         case 'sendTextMessage':
                             that.message = event.data.message;
                             that.sendMessage();
                             break;
                         default:
                     }
-                },false);
+                }, false);
             },
             mounted() {
                 let that = this;
@@ -650,6 +654,10 @@
                 });
             },
             methods: {
+                isAppOpenToggle() {
+                    this.isAppOpen = !this.isAppOpen;
+                    localStorage.setItem('isAppClosed', this.isAppOpen ? 0 : 1);
+                },
                 appLoaded() {
                     this.sendAppEvent('init', {
                         userInfo: this.userinfo,
@@ -665,7 +673,7 @@
                     localStorage.setItem("isLockedOnlyBg", this.isLockedOnlyBg ? 1 : 0);
                 },
                 sendAppEvent(type, data = null) {
-                    if(this.global.roomInfo.room_app && this.isAppOpen){
+                    if (this.global.roomInfo.room_app && this.isAppOpen) {
                         let json = {
                             event: type,
                             data: data
@@ -1044,7 +1052,7 @@
                                     msg: res.data.attach_thumb,
                                     resource: res.data.attach_path,
                                 },
-                                success(res) { 
+                                success(res) {
                                     that.sendAppEvent('sendImg', {
                                         thumb: res.data.attach_thumb,
                                         resource: res.data.attach_path,
@@ -1256,6 +1264,11 @@
                     }
                     that.audioTimeNow = that.getSongTime(that.$refs.audio.currentTime);
                     that.audioTimeTotal = that.getSongTime(that.$refs.audio.duration);
+                    that.sendAppEvent('playSong', {
+                        data: that.songInfo,
+                        start: that.$refs.audio.currentTime,
+                        total: that.$refs.audio.duration
+                    });
                 },
                 /**
                  * @description: 可以播放事件 开始播放
@@ -1551,9 +1564,9 @@
                  * @param {event} 输入框事件
                  * @return {null}
                  */
-                sendMessage(e=false) {
+                sendMessage(e = false) {
                     let that = this;
-                    if(e){
+                    if (e) {
                         e.preventDefault();
                     }
                     if (that.message == '') {
@@ -1956,7 +1969,6 @@
                     if (reConnect) {
                         that.appLoading = true;
                     }
-                    that.isAppOpen = false;
                     that.request({
                         url: "room/getRoomInfo",
                         data: {
@@ -1971,7 +1983,6 @@
                             that.updateCopyData();
                             that.roomInfo = res.data;
                             that.background = res.data.room_background || "new/images/bg_dark.jpg";
-                            that.isAppOpen = true;
                             if (reConnect) {
                                 that.audioUrl = '';
                                 that.songInfo = null;
@@ -2316,6 +2327,11 @@
                                 });
                                 break;
                             case 'system':
+                                if (that.messageList.length > that.historyMax) {
+                                    that.messageList.shift();
+                                }
+                                that.messageList.push(obj);
+                                break;
                             case 'join':
                                 if (that.messageList.length > that.historyMax) {
                                     that.messageList.shift();
@@ -2410,7 +2426,6 @@
                                     data: obj
                                 });
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 切掉了当前播放的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ");
-
                                 break;
                             case 'all':
                                 that.addSystemMessage(obj.content, '#fff', '#666');
@@ -2428,9 +2443,6 @@
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 撤回了一条消息");
                                 break;
                             case 'playSong':
-                                that.sendAppEvent('playSong', {
-                                    data: obj
-                                });
                                 if (obj.song) {
                                     obj.song.pic = obj.song.pic.replace('http://', 'https://');
                                     that.songInfo = obj;
@@ -2833,7 +2845,7 @@
     .bbbug_app {
         position: absolute;
         left: 0;
-        top: 45px;
+        top: 42px;
         right: 0;
         height: 200px;
         border: none;
@@ -2849,7 +2861,7 @@
     .bbbug_app_close {
         position: absolute;
         right: 0px;
-        top: 43px;
+        top: 42px;
         background-color: #ccc;
         font-size: 12px;
         padding: 3px 5px;
@@ -2866,7 +2878,7 @@
     .bbbug_main_chat_history {
         position: absolute;
         left: 0;
-        top: 45px;
+        top: 42px;
         right: 0;
         bottom: 150px;
         overflow: hidden;
