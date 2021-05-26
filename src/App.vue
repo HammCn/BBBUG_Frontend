@@ -514,6 +514,13 @@
                         case 'showLrc':
                             that.showOrHideLrc(true);
                             break;
+                        case 'setVolume':
+                            let volume = parseInt(event.data.volume);
+                            if(volume>=0 && volume<=100){
+                                that.audioVolume = volume;
+                                that.$refs.audio.volume = parseFloat(that.audioVolume / 100);
+                            }
+                            break;
                         default:
                     }
                 }, false);
