@@ -5,7 +5,7 @@
         <!-- <div class="snow"></div> -->
         <div class="bbbug_link">
             <a href="javascript:;" title="显示当前房间微信小程序码" @click="showQrCode">小程序</a>
-            <a href="https://qm.qq.com/cgi-bin/qm/qr?k=3yei1QB3MehVQoBWiDEMU0NmdMIdPwPD&jump_from=webapi">QQ群</a>
+            <a href="https://qm.qq.com/cgi-bin/qm/qr?k=3yei1QB3MehVQoBWiDEMU0NmdMIdPwPD&jump_from=webapi" target="_blank">QQ群</a>
             <a href="https://doc.bbbug.com" target="_blank">开发文档</a>
             <a href="https://gitee.com/bbbug_com" target="_blank">Gitee</a>
             <a href="https://github.com/HammCn" target="_blank">Github</a>
@@ -77,6 +77,8 @@
 
                         </div>
                         <div class="bbbug_main_chat_online">
+                            <a href="https://doc.bbbug.com/4056059.html" class="bbbug_main_chat_invate"
+                                style="color:orangered;text-decoration:none;" target="_blank">插件开发</a>
                             <span title="复制邀请链接" class="bbbug_main_chat_invate"
                                 :data-clipboard-text="copyData">邀请</span>
                             <span @click.stop="showOnlineList" title="打开在线用户列表">
@@ -86,7 +88,8 @@
                             </span>
                         </div>
                     </div>
-                    <div class="bbbug_app_close" @click="isAppOpenToggle" v-if="roomInfo.room_app">
+                    <div class="bbbug_app_close" @click="isAppOpenToggle" v-if="roomInfo.room_app"
+                        :style="{top:(isAppOpen?'242px':'42px')}">
                         {{isAppOpen?"关闭应用":"打开应用"}}</div>
                     <div class="bbbug_main_chat_history" id="bbbug_main_chat_history" @scroll="onMessageScroll"
                         @click="hideAll" @contextmenu.prevent="hideAll"
@@ -236,9 +239,6 @@
                     </div>
                     <div class="bbbug_app" v-if="roomInfo.room_app && isAppOpen">
                         <iframe id="bbbug_app" @load="appLoaded" frameborder="0" :src="roomInfo.room_app"></iframe>
-                        <a href="https://doc.bbbug.com/4056059.html"
-                            style="font-size:12px;color:#999;position:absolute;right:5px;bottom:5px;text-decoration:none;"
-                            target="_blank">我要开发</a>
                     </div>
                     <div v-show="menuVisible" :style="{left:menuLeft+'px',top:menuTop+'px'}" class="contextmenu">
                         <div @click="quotMessage(selectedMessage);hideAll()">引用回复</div>
@@ -260,7 +260,7 @@
                             <el-slider v-if="isVolumeBarShow" class="bbbug_main_menu_song_volume_bar"
                                 v-model="audioVolume" vertical show-stops @change="audioVolumeChanged" height="80px">
                             </el-slider>
-                            <div class="bbbug_main_chat_input_song">
+                            <div class="bbbug_main_chat_input_song" v-if="isPlayerShow">
                                 <div class="bbbug_main_chat_input_song_name" v-if="songInfo && songInfo.song">
                                     <span>{{songInfo.song.name}}({{songInfo.song.singer}})</span>
                                     <i class="iconfont icon-icon_people_fill" style="
@@ -457,7 +457,8 @@
                     isEnableAtNotification: true,
                     isEnableSendMessage: false,
                     isEmojiBoxShow: false,
-                    isLrcStringShow:true,
+                    isLrcStringShow: true,
+                    isPlayerShow: true,
                     messageList: [],
                     // 消息最大允许保留
                     historyMax: 100,
@@ -516,10 +517,28 @@
                             break;
                         case 'setVolume':
                             let volume = parseInt(event.data.volume);
-                            if(volume>=0 && volume<=100){
+                            if (volume >= 0 && volume <= 100) {
                                 that.audioVolume = volume;
                                 that.$refs.audio.volume = parseFloat(that.audioVolume / 100);
                             }
+                            break;
+                        case 'showUserInfo':
+                            let userId = parseInt(event.data.userId);
+                            if (userId > 0) {
+                                that.showUserPage(userId);
+                            }
+                            break;
+                        case 'showPlayer':
+                            that.isPlayerShow = true;
+                            break;
+                        case 'hidePlayer':
+                            that.isPlayerShow = false;
+                            break;
+                        case 'passTheSong':
+                            that.passTheSong();
+                            break;
+                        case 'loveTheSong':
+                            that.loveTheSong();
                             break;
                         default:
                     }
@@ -666,13 +685,13 @@
                 });
             },
             methods: {
-                showOrHideLrc(show){
+                showOrHideLrc(show) {
                     this.isLrcStringShow = show;
                 },
                 isAppOpenToggle() {
                     this.isAppOpen = !this.isAppOpen;
                     localStorage.setItem('isAppClosed', this.isAppOpen ? 0 : 1);
-                    if(!this.isAppOpen){
+                    if (!this.isAppOpen) {
                         this.isLrcStringShow = true;
                     }
                 },
@@ -1213,10 +1232,10 @@
                     }
                     that.updateLrcString('歌词读取中...');
                 },
-                updateLrcString(str){
-                    if(this.lrcString != str) {
+                updateLrcString(str) {
+                    if (this.lrcString != str) {
                         this.lrcString = str;
-                        this.sendAppEvent('lrcLine',this.lrcString);
+                        this.sendAppEvent('lrcLine', this.lrcString);
                     }
                 },
                 /**
@@ -1341,7 +1360,7 @@
                         },
                         success(res) {
                             that.musicLrcObj = res.data;
-                            that.sendAppEvent("lrc",res.data);
+                            that.sendAppEvent("lrc", res.data);
                         },
                     });
                 },
@@ -2002,6 +2021,7 @@
                         },
                         success(res) {
                             that.isLrcStringShow = true;
+                            that.isPlayerShow = true;
                             document.title = res.data.room_name;
                             localStorage.setItem('room_change_id', res.data.room_id);
                             that.global.room_id = res.data.room_id;
