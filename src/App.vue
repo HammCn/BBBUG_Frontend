@@ -4,6 +4,8 @@
         </div>
         <!-- <div class="snow"></div> -->
         <div class="bbbug_link">
+            <a href="javascript:;" title="显示当前房间微信小程序码" @click="showQrCode">小程序</a>
+            <a href="https://qm.qq.com/cgi-bin/qm/qr?k=3yei1QB3MehVQoBWiDEMU0NmdMIdPwPD&jump_from=webapi">QQ群</a>
             <a href="https://doc.bbbug.com" target="_blank">开发文档</a>
             <a href="https://gitee.com/bbbug_com" target="_blank">Gitee</a>
             <a href="https://github.com/HammCn" target="_blank">Github</a>
@@ -75,11 +77,8 @@
 
                         </div>
                         <div class="bbbug_main_chat_online">
-                            <span class="bbbug_main_chat_invate"
-                                onclick="window.open('https://qm.qq.com/cgi-bin/qm/qr?k=3yei1QB3MehVQoBWiDEMU0NmdMIdPwPD&jump_from=webapi');">QQ群</span>
                             <span title="复制邀请链接" class="bbbug_main_chat_invate"
                                 :data-clipboard-text="copyData">邀请</span>
-                            <span class="bbbug_main_chat_invate" title="显示当前房间微信小程序码" @click="showQrCode">小程序</span>
                             <span @click.stop="showOnlineList" title="打开在线用户列表">
                                 <i class="iconfont icon-icon_people_fill">
                                 </i>
@@ -322,7 +321,7 @@
                             v-if="atUserInfo && atUserInfo.message" @close="atUserInfo={user:{}};">
                             {{getQuotMessage(atUserInfo)}}
                         </el-tag>
-                        <div class="bbbug_main_chat_toolbar_lrc"><span>{{lrcString}}</span></div>
+                        <div class="bbbug_main_chat_toolbar_lrc" v-if="isLrcStringShow"><span>{{lrcString}}</span></div>
                     </div>
                 </div>
                 <div class="bbbug_frame">
@@ -458,7 +457,7 @@
                     isEnableAtNotification: true,
                     isEnableSendMessage: false,
                     isEmojiBoxShow: false,
-
+                    isLrcStringShow:true,
                     messageList: [],
                     // 消息最大允许保留
                     historyMax: 100,
@@ -508,6 +507,12 @@
                         case 'sendTextMessage':
                             that.message = event.data.message;
                             that.sendMessage();
+                            break;
+                        case 'hideLrc':
+                            that.showOrHideLrc(false);
+                            break;
+                        case 'showLrc':
+                            that.showOrHideLrc(true);
                             break;
                         default:
                     }
@@ -654,9 +659,15 @@
                 });
             },
             methods: {
+                showOrHideLrc(show){
+                    this.isLrcStringShow = show;
+                },
                 isAppOpenToggle() {
                     this.isAppOpen = !this.isAppOpen;
                     localStorage.setItem('isAppClosed', this.isAppOpen ? 0 : 1);
+                    if(!this.isAppOpen){
+                        this.isLrcStringShow = true;
+                    }
                 },
                 appLoaded() {
                     this.sendAppEvent('init', {
@@ -1181,11 +1192,11 @@
                             if (that.musicLrcObj) {
                                 for (let i = 0; i < that.musicLrcObj.length; i++) {
                                     if (i == that.musicLrcObj.length - 1) {
-                                        that.lrcString = (that.musicLrcObj[i].lineLyric);
+                                        that.updateLrcString(that.musicLrcObj[i].lineLyric);
                                         return;
                                     } else {
                                         if (that.$refs.audio.currentTime > that.musicLrcObj[i].time && that.$refs.audio.currentTime < that.musicLrcObj[i + 1].time) {
-                                            that.lrcString = (that.musicLrcObj[i].lineLyric);
+                                            that.updateLrcString(that.musicLrcObj[i].lineLyric);
                                             return;
                                         }
                                     }
@@ -1193,7 +1204,13 @@
                             }
                         }
                     }
-                    that.lrcString = '歌词读取中...';
+                    that.updateLrcString('歌词读取中...');
+                },
+                updateLrcString(str){
+                    if(this.lrcString != str) {
+                        this.lrcString = str;
+                        this.sendAppEvent('lrcLine',this.lrcString);
+                    }
                 },
                 /**
                  * @description: Audio播放完毕
@@ -1317,6 +1334,7 @@
                         },
                         success(res) {
                             that.musicLrcObj = res.data;
+                            that.sendAppEvent("lrc",res.data);
                         },
                     });
                 },
@@ -1976,6 +1994,7 @@
                             room_password: that.global.room_password
                         },
                         success(res) {
+                            that.isLrcStringShow = true;
                             document.title = res.data.room_name;
                             localStorage.setItem('room_change_id', res.data.room_id);
                             that.global.room_id = res.data.room_id;
@@ -2831,7 +2850,6 @@
     .bbbug_main_chat_invate {
         vertical-align: middle;
         font-size: 14px;
-        color: orangered;
         margin-right: 10px;
         display: inline-block;
     }
