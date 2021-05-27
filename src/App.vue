@@ -5,7 +5,8 @@
         <!-- <div class="snow"></div> -->
         <div class="bbbug_link">
             <a href="javascript:;" title="显示当前房间微信小程序码" @click="showQrCode">小程序</a>
-            <a href="https://qm.qq.com/cgi-bin/qm/qr?k=3yei1QB3MehVQoBWiDEMU0NmdMIdPwPD&jump_from=webapi" target="_blank">QQ群</a>
+            <a href="https://qm.qq.com/cgi-bin/qm/qr?k=3yei1QB3MehVQoBWiDEMU0NmdMIdPwPD&jump_from=webapi"
+                target="_blank">QQ群</a>
             <a href="https://doc.bbbug.com" target="_blank">开发文档</a>
             <a href="https://gitee.com/bbbug_com" target="_blank">Gitee</a>
             <a href="https://github.com/HammCn" target="_blank">Github</a>
@@ -540,6 +541,15 @@
                         case 'loveTheSong':
                             that.loveTheSong();
                             break;
+                        case 'getNowSong':
+                            that.audioTimeNow = that.getSongTime(that.$refs.audio.currentTime);
+                            that.audioTimeTotal = that.getSongTime(that.$refs.audio.duration);
+                            that.sendAppEvent('playSong', {
+                                data: that.songInfo,
+                                start: that.$refs.audio.currentTime,
+                                total: that.$refs.audio.duration
+                            });
+                            break;
                         default:
                     }
                 }, false);
@@ -693,6 +703,7 @@
                     localStorage.setItem('isAppClosed', this.isAppOpen ? 0 : 1);
                     if (!this.isAppOpen) {
                         this.isLrcStringShow = true;
+                        this.isPlayerShow = true;
                     }
                 },
                 appLoaded() {
