@@ -711,7 +711,7 @@
                 },
                 appLoaded() {
                     this.sendAppEvent('init', {
-                        userInfo: this.userinfo,
+                        userInfo: this.userInfo,
                         roomInfo: this.global.roomInfo
                     });
                 },
