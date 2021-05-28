@@ -549,6 +549,8 @@
                                 start: that.$refs.audio.currentTime,
                                 total: that.$refs.audio.duration
                             });
+                        case 'getLrcObj':
+                            that.sendAppEvent("lrc", that.musicLrcObj);
                             break;
                         default:
                     }
