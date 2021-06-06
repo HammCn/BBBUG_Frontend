@@ -34,7 +34,7 @@
                     <el-form-item label="性别">
                         <el-select size="medium" v-model="userInfo.user_sex" placeholder="请选择你的性别" class="allLine"
                             style="margin-left:0px;">
-                            <el-option v-for="(item,index) in sexList" :label="item.title" :value="item.value">
+                            <el-option v-for="item in sexList" :key="item.valule" :label="item.title" :value="item.value">
                             </el-option>
                         </el-select>
                     </el-form-item>

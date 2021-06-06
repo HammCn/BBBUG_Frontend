@@ -14,7 +14,7 @@
                     </el-form-item>
                     <el-form-item label="房间类型">
                         <el-select size="small" v-model="roomInfo.room_type" placeholder="请选择房间类型">
-                            <el-option v-for="(item,index) in room_type" :label="item.title" :value="item.value">
+                            <el-option v-for="item in room_type" :key="item.value" :label="item.title" :value="item.value">
                             </el-option>
                         </el-select>
                     </el-form-item>
