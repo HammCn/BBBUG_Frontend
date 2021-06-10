@@ -2167,7 +2167,7 @@
                             });
                         }
                     });
-                },    
+                },
                 /**
                  * @description: 获取当前的websocket连接地址
                  * @param {null}
