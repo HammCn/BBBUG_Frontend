@@ -3459,5 +3459,6 @@
         top: 0%;
         left: 50%;
         transform: translate(calc(-50% - 10px), calc(-50% + 8px));
+        pointer-events: none;
     }
 </style>
