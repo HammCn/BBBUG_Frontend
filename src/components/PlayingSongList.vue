@@ -92,7 +92,6 @@
                         success(res) {
                             that.bbbug_loading = false;
                             that.list = res.data;
-                            that.$emit('listUpdate', res.data);
                         },
                         error(res) {
                             that.bbbug_loading = false;
