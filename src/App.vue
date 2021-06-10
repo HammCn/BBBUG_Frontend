@@ -70,7 +70,7 @@
                                 <i title="点歌音乐房" class="iconfont bbbug_main_room_icon icon-changyongtubiao-mianxing-61"
                                     v-if="roomInfo.room_type==1"></i></span>
                             <i title="房主播放器" class="iconfont bbbug_main_room_icon icon-icon_voice"
-                                v-if="roomInfo.room_type==4"></i></span>
+                                v-if="roomInfo.room_type==4"></i>
                             <i title="修改房间信息"
                                 class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-32 bbbug_main_room_icon_setting"
                                 @click="openRoomSetting"
@@ -95,7 +95,7 @@
                     <div class="bbbug_main_chat_history" id="bbbug_main_chat_history" @scroll="onMessageScroll"
                         @click="hideAll" @contextmenu.prevent="hideAll"
                         :style="{top:(isAppOpen&&roomInfo.room_app?'242px':'42px')}">
-                        <div v-for="(item,index) in messageList">
+                        <div v-for="(item,index) in messageList" :key="index">
                             <div v-if="item.type=='text' || item.type=='img' || item.type=='link' || item.type=='jump' || item.type=='notice'"
                                 class="bbbug_main_chat_item bbbug_main_chat_text"
                                 :class="item.user.user_id==userInfo.user_id?'bbbug_main_chat_mine':''">
@@ -298,7 +298,7 @@
                         </div>
                         <div v-loading="loadingSearchImage" style="text-align: left;">
                             <el-popover placement="top-start" title="预览表情" trigger="hover" :open-delay="2000"
-                                v-for="(item,index) in imageList">
+                                v-for="item in imageList" :key="item">
                                 <img :src="item"
                                     style="width:200px;height:200px;border-radius:10px;border:1px solid #f5f5f5;" />
                                 <img slot="reference" :src="item" @click.stop="sendEmoji(item)" />
@@ -870,14 +870,20 @@
                  * @return {null}
                  */
                 updateDarkModel(isDarkModel) {
-                    this.isDarkModel = isDarkModel;
-                    if (this.isDarkModel) {
-                        document.body.className = 'bbbug_dark';
-                        localStorage.setItem('isDarkModel', 1);
-                    } else {
-                        document.body.className = '';
-                        localStorage.setItem('isDarkModel', 0);
+                    let darkModelVal = 0;
+                    let className = '';
+                    let modelName = ''
+                    if (isDarkModel) {
+                        darkModelVal = 1;
+                        className = 'bbbug_dark';
+                        modelName = 'dark';
                     }
+
+                    document.body.className = className;
+                    localStorage.setItem('isDarkModel', darkModelVal);
+
+                    this.sendAppEvent('themeChanged',{model:  modelName});
+                    this.isDarkModel = isDarkModel;
                     this.$forceUpdate();
                 },
                 /**

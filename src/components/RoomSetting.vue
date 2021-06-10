@@ -14,13 +14,13 @@
                     </el-form-item>
                     <el-form-item label="隐藏房间">
                         <el-select size="small" v-model="roomInfo.room_hide" placeholder="是否隐藏房间">
-                            <el-option v-for="(item,index) in room_hide" :label="item.title" :value="item.value">
+                            <el-option v-for="item in room_hide" :key="item.value" :label="item.title" :value="item.value">
                             </el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="房间权限">
                         <el-select size="small" v-model="roomInfo.room_public" placeholder="请选择房间权限类别">
-                            <el-option v-for="(item,index) in room_public" :label="item.title" :value="item.value">
+                            <el-option v-for="item in room_public" :key="item.value" :label="item.title" :value="item.value">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -40,19 +40,19 @@
                     </el-form-item>
                     <el-form-item label="全员禁言">
                         <el-select size="small" v-model="roomInfo.room_sendmsg" placeholder="请选择是否全员禁言">
-                            <el-option v-for="(item,index) in room_sendmsg" :label="item.title" :value="item.value">
+                            <el-option v-for="item in room_sendmsg" :key="item.value" :label="item.title" :value="item.value">
                             </el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="房间类型">
                         <el-select size="small" v-model="roomInfo.room_type" placeholder="请选择房间类型">
-                            <el-option v-for="(item,index) in room_type" :label="item.title" :value="item.value">
+                            <el-option v-for="item in room_type" :key="item.value" :label="item.title" :value="item.value">
                             </el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="机器点歌" v-if="roomInfo.room_type==1">
                         <el-select size="small" v-model="roomInfo.room_robot" placeholder="请选择机器人是否点歌">
-                            <el-option v-for="(item,index) in room_robot" :label="item.title" :value="item.value">
+                            <el-option v-for="item in room_robot"  :key="item.value" :label="item.title" :value="item.value">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -78,25 +78,25 @@
                     </el-form-item>
                     <el-form-item label="投票切歌" v-if="roomInfo.room_type==1">
                         <el-select size="small" v-model="roomInfo.room_votepass" placeholder="请选择是否开启投票切歌">
-                            <el-option v-for="(item,index) in room_votepass" :label="item.title" :value="item.value">
+                            <el-option v-for="item in room_votepass" :key="item.value" :label="item.title" :value="item.value">
                             </el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="投票比例" v-if="roomInfo.room_type==1 && roomInfo.room_votepass==1">
                         <el-select size="small" v-model="roomInfo.room_votepercent" placeholder="请选择投票比例">
-                            <el-option v-for="(item,index) in room_votepercent" :label="item.title" :value="item.value">
+                            <el-option v-for="item in room_votepercent" :key="item.value" :label="item.title" :value="item.value">
                             </el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="开启点歌" v-if="roomInfo.room_type==1 || roomInfo.room_type==4">
                         <el-select size="small" v-model="roomInfo.room_addsong" placeholder="请选择是否开启点歌">
-                            <el-option v-for="(item,index) in room_addsong" :label="item.title" :value="item.value">
+                            <el-option v-for="item in room_addsong" :key="item.value" :label="item.title" :value="item.value">
                             </el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="循环方式" v-if="roomInfo.room_type==4">
                         <el-select size="small" v-model="roomInfo.room_playone" placeholder="请选择歌曲播放循环方式">
-                            <el-option v-for="(item,index) in room_playone" :label="item.title" :value="item.value">
+                            <el-option v-for="item in room_playone" :key="item.value" :label="item.title" :value="item.value">
                             </el-option>
                         </el-select>
                     </el-form-item>
