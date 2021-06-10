@@ -329,7 +329,7 @@
                     <MySetting class="bbbug_frame_box" v-if="dialog && dialog.MySetting"></MySetting>
                     <MySongList class="bbbug_frame_box" v-if="dialog && dialog.MySongList"></MySongList>
                     <OnlineList class="bbbug_frame_box" v-if="dialog && dialog.OnlineList"></OnlineList>
-                    <PlayingSongList class="bbbug_frame_box" v-if="dialog && dialog.PlayingSongList" v-on:listUpdate="onPlayingSongListUpdate"></PlayingSongList>
+                    <PlayingSongList class="bbbug_frame_box" v-if="dialog && dialog.PlayingSongList"></PlayingSongList>
                     <Profile class="bbbug_frame_box" v-if="dialog && dialog.Profile"></Profile>
                     <RoomCreate class="bbbug_frame_box" v-if="dialog && dialog.RoomCreate"></RoomCreate>
                     <RoomList class="bbbug_frame_box" v-if="dialog && dialog.RoomList"></RoomList>
@@ -1393,7 +1393,6 @@
                 playMusic() {
                     let that = this;
                     that.getMusicLrc();
-                    that.getPlayingSongCount();
                     that.audioRetryTimes = 0;
                     that.$nextTick(function () {
                         that.audioStartPlay();
@@ -2260,6 +2259,12 @@
                             that.messageList.shift();
                         }
                         obj.time = parseInt(new Date().valueOf() / 1000);
+
+                        // 更新当前歌曲数量
+                        if(!isNaN(obj.count)) {
+                            that.songCount = obj.count;
+                        }
+
                         switch (obj.type) {
                             case 'preload':
                                 that.nextAudioUrl = obj.url;
@@ -2438,9 +2443,6 @@
                                 } else {
                                     that.addSystemMessage(that.urldecode(obj.user.user_name) + " 点了一首 《" + obj.song.name + "》(" + obj.song.singer + ")");
                                 }
-                                this.songCount++;
-                                // 因为存在机器人的歌被替换的情况，用户点歌时更新一下歌曲列表
-                                this.getPlayingSongCount();
                                 break;
                             case 'push':
                                 that.sendAppEvent('pushSong', {
@@ -2453,7 +2455,6 @@
                                 that.sendAppEvent('removeSong', {
                                     data: obj
                                 });
-                                this.songCount--;
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 将歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") 从队列移除");
                                 break;
                             case 'removeban':
@@ -2496,7 +2497,6 @@
                                     data: obj
                                 });
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 切掉了当前播放的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ");
-                                this.songCount--;
                                 break;
                             case 'all':
                                 that.addSystemMessage(obj.content, '#fff', '#666');
@@ -2631,32 +2631,6 @@
                     that.websocket.reConnectTimer = setTimeout(function () {
                         that.connectWebsocket();
                     }, 1000);
-                },
-
-                /**
-                 * @description: 获取当前播放的歌曲列表，用于显示图标
-                 * @param {null} 
-                 * @return {null}
-                 */
-                getPlayingSongCount() {
-                    const that = this;
-                    that.request({
-                        url: "song/songList",
-                        data: {
-                            room_id: that.global.room_id
-                        },
-                        success(res) {
-                            that.songCount = res.data && res.data.length || 0;
-                        }
-                    });
-                },
-                /**
-                 * @description: 歌曲列表更新事件
-                 * @param {null}
-                 * @return {null}
-                 */
-                onPlayingSongListUpdate(list) {
-                    this.songCount = list.length;
                 }
             },
         }
@@ -3459,5 +3433,6 @@
         top: 0%;
         left: 50%;
         transform: translate(calc(-50% - 10px), calc(-50% + 8px));
+        pointer-events: none;
     }
 </style>
