@@ -2167,7 +2167,7 @@
                             });
                         }
                     });
-                },
+                },    
                 /**
                  * @description: 获取当前的websocket连接地址
                  * @param {null}
@@ -2432,9 +2432,9 @@
                                 } else {
                                     that.addSystemMessage(that.urldecode(obj.user.user_name) + " 点了一首 《" + obj.song.name + "》(" + obj.song.singer + ")");
                                 }
-								this.songCount++;
-								// 因为存在机器人的歌被替换的情况，用户点歌时更新一下歌曲列表
-								this.getPlayingSongCount();
+                                this.songCount++;
+                                // 因为存在机器人的歌被替换的情况，用户点歌时更新一下歌曲列表
+                                this.getPlayingSongCount();
                                 break;
                             case 'push':
                                 that.sendAppEvent('pushSong', {
@@ -2447,7 +2447,7 @@
                                 that.sendAppEvent('removeSong', {
                                     data: obj
                                 });
-								this.songCount--;
+                                this.songCount--;
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 将歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") 从队列移除");
                                 break;
                             case 'removeban':
@@ -2490,7 +2490,7 @@
                                     data: obj
                                 });
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 切掉了当前播放的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ");
-								this.songCount--;
+                                this.songCount--;
                                 break;
                             case 'all':
                                 that.addSystemMessage(obj.content, '#fff', '#666');
@@ -3438,7 +3438,7 @@
 
     .bbbug_main_menu [data-count]:not([data-count='0'])::before {
         content: attr(data-count);
-		font-weight: bold;
+        font-weight: bold;
         color: #333;
         background-color: #999;
         width: 18px;
