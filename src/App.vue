@@ -2260,10 +2260,10 @@
                         }
                         obj.time = parseInt(new Date().valueOf() / 1000);
 
-						// 更新当前歌曲数量
-						if(!isNaN(obj.count)) {
-							that.songCount = obj.count;
-						}
+                        // 更新当前歌曲数量
+                        if(!isNaN(obj.count)) {
+                            that.songCount = obj.count;
+                        }
 
                         switch (obj.type) {
                             case 'preload':
@@ -2418,7 +2418,7 @@
                                 //     that.addSystemMessage(obj.content);
                                 break;
                             case 'addSong':
-								console.log('add', obj);
+                                console.log('add', obj);
                                 that.sendAppEvent('addSong', {
                                     data: obj
                                 });
