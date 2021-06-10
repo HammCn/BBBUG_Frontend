@@ -2418,7 +2418,6 @@
                                 //     that.addSystemMessage(obj.content);
                                 break;
                             case 'addSong':
-                                console.log('add', obj);
                                 that.sendAppEvent('addSong', {
                                     data: obj
                                 });
