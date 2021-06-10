@@ -25,7 +25,7 @@
                                 <div>点歌</div>
                             </div>
                         </div>
-                        <div class="bbbug_main_menu_icon">
+                        <div class="bbbug_main_menu_icon" :data-count="songCount">
                             <div @click="showPlaySongList">
                                 <img :src="getStaticUrl('new/images/menubar_pickedsong.png')" title="已点歌曲列表" />
                                 <div>已点</div>
@@ -259,7 +259,7 @@
                                 <img title="上传图片" class="" :src="getStaticUrl('new/images/button_image.png')" />
                             </el-upload>
                             <el-slider v-if="isVolumeBarShow" class="bbbug_main_menu_song_volume_bar"
-                                v-model="audioVolume" vertical show-stops @change="audioVolumeChanged" height="80px">
+                                v-model="audioVolume" vertical show-stops @input="audioVolumeChanged" height="80px">
                             </el-slider>
                             <div class="bbbug_main_chat_input_song" v-if="isPlayerShow">
                                 <div class="bbbug_main_chat_input_song_name" v-if="songInfo && songInfo.song">
@@ -329,8 +329,7 @@
                     <MySetting class="bbbug_frame_box" v-if="dialog && dialog.MySetting"></MySetting>
                     <MySongList class="bbbug_frame_box" v-if="dialog && dialog.MySongList"></MySongList>
                     <OnlineList class="bbbug_frame_box" v-if="dialog && dialog.OnlineList"></OnlineList>
-                    <PlayingSongList class="bbbug_frame_box" v-if="dialog && dialog.PlayingSongList">
-                    </PlayingSongList>
+                    <PlayingSongList class="bbbug_frame_box" v-if="dialog && dialog.PlayingSongList" v-on:listUpdate="onPlayingSongListUpdate"></PlayingSongList>
                     <Profile class="bbbug_frame_box" v-if="dialog && dialog.Profile"></Profile>
                     <RoomCreate class="bbbug_frame_box" v-if="dialog && dialog.RoomCreate"></RoomCreate>
                     <RoomList class="bbbug_frame_box" v-if="dialog && dialog.RoomList"></RoomList>
@@ -494,6 +493,8 @@
                     emojiList: [],
                     imageList: [],
                     imageKeyword: "",
+                    // 当前歌曲个数
+                    songCount: 0
                 }
             },
             created() {
@@ -1386,6 +1387,7 @@
                 playMusic() {
                     let that = this;
                     that.getMusicLrc();
+                    that.getPlayingSongCount();
                     that.audioRetryTimes = 0;
                     that.$nextTick(function () {
                         that.audioStartPlay();
@@ -2430,7 +2432,9 @@
                                 } else {
                                     that.addSystemMessage(that.urldecode(obj.user.user_name) + " 点了一首 《" + obj.song.name + "》(" + obj.song.singer + ")");
                                 }
-
+                                this.songCount++;
+                                // 因为存在机器人的歌被替换的情况，用户点歌时更新一下歌曲列表
+                                this.getPlayingSongCount();
                                 break;
                             case 'push':
                                 that.sendAppEvent('pushSong', {
@@ -2443,8 +2447,8 @@
                                 that.sendAppEvent('removeSong', {
                                     data: obj
                                 });
+                                this.songCount--;
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 将歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") 从队列移除");
-
                                 break;
                             case 'removeban':
                                 that.sendAppEvent('removeban', {
@@ -2486,6 +2490,7 @@
                                     data: obj
                                 });
                                 that.addSystemMessage(that.urldecode(obj.user.user_name) + " 切掉了当前播放的歌曲 《" + obj.song.name + "》(" + obj.song.singer + ") ");
+                                this.songCount--;
                                 break;
                             case 'all':
                                 that.addSystemMessage(obj.content, '#fff', '#666');
@@ -2621,6 +2626,32 @@
                         that.connectWebsocket();
                     }, 1000);
                 },
+
+                /**
+                 * @description: 获取当前播放的歌曲列表，用于显示图标
+                 * @param {null} 
+                 * @return {null}
+                 */
+                getPlayingSongCount() {
+                    const that = this;
+                    that.request({
+                        url: "song/songList",
+                        data: {
+                            room_id: that.global.room_id
+                        },
+                        success(res) {
+                            that.songCount = res.data && res.data.length || 0;
+                        }
+                    });
+                },
+                /**
+                 * @description: 歌曲列表更新事件
+                 * @param {null}
+                 * @return {null}
+                 */
+                onPlayingSongListUpdate(list) {
+                    this.songCount = list.length;
+                }
             },
         }
 </script>
@@ -3399,5 +3430,28 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    .bbbug_main_menu [data-count] {
+        position: relative;
+    }
+
+    .bbbug_main_menu [data-count]:not([data-count='0'])::before {
+        content: attr(data-count);
+        font-weight: bold;
+        color: #333;
+        background-color: #999;
+        width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        border: solid 2px currentColor;
+        font-size: 12px;
+        position: absolute;
+        top: 0%;
+        left: 50%;
+        transform: translate(calc(-50% - 10px), calc(-50% + 8px));
     }
 </style>
