@@ -554,6 +554,11 @@
                         case 'getLrcObj':
                             that.sendAppEvent("lrc", that.musicLrcObj);
                             break;
+                        case 'getThemeMode':
+                            that.sendAppEvent("themeChanged", {
+                                model: that.isDarkModel ? 'dark' : 'light'
+                            });
+                            break;
                         default:
                     }
                 }, false);
@@ -870,19 +875,12 @@
                  * @return {null}
                  */
                 updateDarkModel(isDarkModel) {
-                    let darkModelVal = 0;
-                    let className = '';
-                    let modelName = ''
-                    if (isDarkModel) {
-                        darkModelVal = 1;
-                        className = 'bbbug_dark';
-                        modelName = 'dark';
-                    }
+                    document.body.className = isDarkModel ? 'bbbug_dark' : '';
+                    localStorage.setItem('isDarkModel', isDarkModel ? 1 : 0);
 
-                    document.body.className = className;
-                    localStorage.setItem('isDarkModel', darkModelVal);
-
-                    this.sendAppEvent('themeChanged',{model:  modelName});
+                    this.sendAppEvent('themeChanged', {
+                        model: isDarkModel ? 'dark' : 'light'
+                    });
                     this.isDarkModel = isDarkModel;
                     this.$forceUpdate();
                 },
@@ -2261,7 +2259,7 @@
                         obj.time = parseInt(new Date().valueOf() / 1000);
 
                         // 更新当前歌曲数量
-                        if(!isNaN(obj.count)) {
+                        if (!isNaN(obj.count)) {
                             that.songCount = obj.count;
                         }
 
