@@ -9,11 +9,19 @@
                     <div class="bbbug_scroll" v-if="list.length>0">
                         <div class="bbbug_main_right_song_item" v-for="(item,index) in list" v-loading="item.loading">
                             <div class="bbug_main_right_song_pic">
-                                <img :data="getStaticUrl(item.song.pic)" :src="getStaticUrl('new/images/loading.gif')" class="xiaomi"
+                                <img :data="getStaticUrl(item.song.pic)" :src="getStaticUrl('new/images/loading.gif')"
+                                    class="xiaomi"
                                     onload="this.src=this.attributes['data'].value;this.attributes['onload']=null;"
                                     :onerror="getStaticUrl('new/images/nohead.jpg')" />
                             </div>
-                            <div class="bbbug_main_right_song_name"><font class="orangered" v-if="item.push_count && item.push_count>0">({{item.push_count}})</font>{{item.song.name}}
+                            <div class="bbbug_main_right_song_name">
+                                <font class="orangered"
+                                    v-if="item.push_count && item.push_count>0 && item.push_count<888">
+                                    ({{item.push_count}})</font>
+                                <font class="orangered"
+                                    v-if="item.push_count && item.push_count>=888">
+                                    (置顶)</font>
+                                    {{item.song.name}}
                             </div>
                             <div class="bbbug_main_right_song_singer" v-if="item.at">
                                 <font v-if="item.at.user_id == userInfo.user_id" color="orangered">
