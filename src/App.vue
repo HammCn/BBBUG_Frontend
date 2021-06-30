@@ -2953,10 +2953,11 @@
     .bbbug_app_fullpage {
         height: auto;
         bottom: 0;
+        border-bottom: none !important;
     }
 
     .bbbug_dark .bbbug_app {
-        border-bottom: none !important;
+        border-bottom: 1px solid #444;
     }
 
     .bbbug_app iframe {
@@ -2975,6 +2976,10 @@
         color: white;
         cursor: pointer;
         z-index: 10;
+    }
+
+    .bbbug_dark .bbbug_app_close {
+        background-color: #444;
     }
 
     .bbbug_app_close:hover {
