@@ -7,8 +7,7 @@
                     <div class="bbbug_scroll" v-if="list.length>0" @scroll="onScroll">
                         <div class="bbbug_main_right_song_item" v-for="(item,index) in list" v-loading="item.loading">
                             <div class="bbug_main_right_song_pic">
-                                <img :data="getStaticUrl(item.pic)" :src="getStaticUrl('new/images/loading.gif')" class="xiaomi"
-                                    onload="this.src=this.attributes['data'].value;this.attributes['onload']=null;"
+                                <img :src="getStaticUrl(item.pic)" class="xiaomi" 
                                     :onerror="getStaticUrl('new/images/nohead.jpg')" />
                             </div>
                             <div class="bbbug_main_right_song_name">{{item.name}}
