@@ -29,6 +29,9 @@
                             v-model="roomInfo.room_password">
                         </el-input>
                     </el-form-item>
+                    <el-form-item label="房间插件">
+                        <el-input v-model="roomInfo.room_app" placeholder="请输入插件https地址"></el-input>
+                    </el-form-item>
                     <el-form-item label="房间背景">
                         <el-input v-model="roomInfo.room_background" placeholder="请上传房间背景图" readonly="readonly">
                             <template></template>
