@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <div class="bbbug_bg" :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
+        <div class="bbbug_bg" @click="hideAll" :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
         </div>
         <!-- <div class="snow"></div> -->
         <div class="bbbug_link">
@@ -89,240 +89,251 @@
                             </span>
                         </div>
                     </div>
-                    <div class="bbbug_app_close" @click="isAppOpenToggle" v-if="roomInfo.room_app"
-                        :style="{top:(isAppOpen?'242px':'42px')}">
-                        {{isAppOpen?"关闭应用":"打开应用"}}</div>
-                    <div class="bbbug_main_chat_history" id="bbbug_main_chat_history" @scroll="onMessageScroll"
-                        @click="hideAll" @contextmenu.prevent="hideAll"
-                        :style="{top:(isAppOpen&&roomInfo.room_app?'242px':'42px')}">
-                        <div v-for="(item,index) in messageList" :key="index">
-                            <div v-if="item.type=='text' || item.type=='img' || item.type=='link' || item.type=='jump' || item.type=='notice'"
-                                class="bbbug_main_chat_item bbbug_main_chat_text"
-                                :class="item.user.user_id==userInfo.user_id?'bbbug_main_chat_mine':''">
-                                <div class="bbbug_main_chat_head">
-                                    <el-dropdown trigger="click" @command="commandUserHead" :index="index">
-                                        <img class="bbbug_main_chat_head_image xiaomi"
-                                            :src="getStaticUrl(item.user.user_head)"
-                                            :onerror="getStaticUrl('new/images/nohead.jpg')"
-                                            @dblclick.stop="doTouch(item.user.user_id)" />
-                                        <el-dropdown-menu slot="dropdown">
-                                            <el-dropdown-item :command="beforeHandleUserCommand(item.user, 'at')"
-                                                v-if="item.user.user_id!=userInfo.user_id">
-                                                @Ta
-                                            </el-dropdown-item>
-                                            <!-- <el-dropdown-item class="bbbug_phone_message_back" :command="beforeHandleUserCommand(item.user, 'pullback')" v-if="userInfo && (item.user.user_id==userInfo.user_id || userInfo.user_admin || user.user_id == roomInfo.room_user)">
-                                                撤回
-                                            </el-dropdown-item>
-                                            <el-dropdown-item :command="beforeHandleUserCommand(item.user, 'touch')"
-                                                v-if="item.user.user_id!=userInfo.user_id">
-                                                摸摸
-                                            </el-dropdown-item> -->
-                                            <el-dropdown-item :command="beforeHandleUserCommand(item.user, 'sendSong')"
-                                                v-if="item.user.user_id!=userInfo.user_id">
-                                                送歌
-                                            </el-dropdown-item>
-                                            <el-dropdown-item :command="beforeHandleUserCommand(item.user, 'removeBan')"
-                                                v-if="item.user.user_id!=userInfo.user_id && (userInfo.user_admin||userInfo.user_id==roomInfo.room_user)">
-                                                解禁
-                                            </el-dropdown-item>
-                                            <el-dropdown-item :command="beforeHandleUserCommand(item.user, 'shutdown')"
-                                                v-if="item.user.user_id!=userInfo.user_id && (userInfo.user_admin||userInfo.user_id==roomInfo.room_user)">
-                                                禁言
-                                            </el-dropdown-item>
-                                            <el-dropdown-item :command="beforeHandleUserCommand(item.user, 'songdown')"
-                                                v-if="item.user.user_id!=userInfo.user_id && (userInfo.user_admin||userInfo.user_id==roomInfo.room_user)">
-                                                禁歌
-                                            </el-dropdown-item>
-                                            <el-dropdown-item :command="beforeHandleUserCommand(item.user, 'profile')">
-                                                主页
-                                            </el-dropdown-item>
-                                        </el-dropdown-menu>
-                                    </el-dropdown>
+                    <div v-if="!roomInfo.room_app || !roomInfo.room_fullpage">
+                        <div class="bbbug_app_close" @click="isAppOpenToggle" v-if="roomInfo.room_app"
+                            :style="{top:(isAppOpen?'242px':'42px')}">
+                            {{isAppOpen?"关闭应用":"打开应用"}}</div>
+                        <div class="bbbug_main_chat_history" id="bbbug_main_chat_history" @scroll="onMessageScroll"
+                            @click="hideAll" @contextmenu.prevent="hideAll"
+                            :style="{top:(isAppOpen&&roomInfo.room_app?'242px':'42px')}">
+                            <div v-for="(item,index) in messageList" :key="index">
+                                <div v-if="item.type=='text' || item.type=='img' || item.type=='link' || item.type=='jump' || item.type=='notice'"
+                                    class="bbbug_main_chat_item bbbug_main_chat_text"
+                                    :class="item.user.user_id==userInfo.user_id?'bbbug_main_chat_mine':''">
+                                    <div class="bbbug_main_chat_head">
+                                        <el-dropdown trigger="click" @command="commandUserHead" :index="index">
+                                            <img class="bbbug_main_chat_head_image xiaomi"
+                                                :src="getStaticUrl(item.user.user_head)"
+                                                :onerror="getStaticUrl('new/images/nohead.jpg')"
+                                                @dblclick.stop="doTouch(item.user.user_id)" />
+                                            <el-dropdown-menu slot="dropdown">
+                                                <el-dropdown-item :command="beforeHandleUserCommand(item.user, 'at')"
+                                                    v-if="item.user.user_id!=userInfo.user_id">
+                                                    @Ta
+                                                </el-dropdown-item>
+                                                <!-- <el-dropdown-item class="bbbug_phone_message_back" :command="beforeHandleUserCommand(item.user, 'pullback')" v-if="userInfo && (item.user.user_id==userInfo.user_id || userInfo.user_admin || user.user_id == roomInfo.room_user)">
+                                            撤回
+                                        </el-dropdown-item>
+                                        <el-dropdown-item :command="beforeHandleUserCommand(item.user, 'touch')"
+                                            v-if="item.user.user_id!=userInfo.user_id">
+                                            摸摸
+                                        </el-dropdown-item> -->
+                                                <el-dropdown-item
+                                                    :command="beforeHandleUserCommand(item.user, 'sendSong')"
+                                                    v-if="item.user.user_id!=userInfo.user_id">
+                                                    送歌
+                                                </el-dropdown-item>
+                                                <el-dropdown-item
+                                                    :command="beforeHandleUserCommand(item.user, 'removeBan')"
+                                                    v-if="item.user.user_id!=userInfo.user_id && (userInfo.user_admin||userInfo.user_id==roomInfo.room_user)">
+                                                    解禁
+                                                </el-dropdown-item>
+                                                <el-dropdown-item
+                                                    :command="beforeHandleUserCommand(item.user, 'shutdown')"
+                                                    v-if="item.user.user_id!=userInfo.user_id && (userInfo.user_admin||userInfo.user_id==roomInfo.room_user)">
+                                                    禁言
+                                                </el-dropdown-item>
+                                                <el-dropdown-item
+                                                    :command="beforeHandleUserCommand(item.user, 'songdown')"
+                                                    v-if="item.user.user_id!=userInfo.user_id && (userInfo.user_admin||userInfo.user_id==roomInfo.room_user)">
+                                                    禁歌
+                                                </el-dropdown-item>
+                                                <el-dropdown-item
+                                                    :command="beforeHandleUserCommand(item.user, 'profile')">
+                                                    主页
+                                                </el-dropdown-item>
+                                            </el-dropdown-menu>
+                                        </el-dropdown>
+                                    </div>
+                                    <div class="bbbug_main_chat_name" :class="item.user.user_id<10000?'orangered':''"
+                                        :title="item.user.user_id<10000?'骨灰级赞助用户':''">
+                                        {{urldecode(item.user.user_name)}}
+                                        <i class="iconfont icon-icon_certification_f user_icon"
+                                            style="font-size:18px;color:#097AD8;" v-if="item.user.user_vip"
+                                            :title="item.user.user_vip"></i>
+                                        <span class="bbbug_main_chat_name_icon" v-if="item.user.user_icon==1"
+                                            title="曾经的元老级管理员">元老</span>
+                                    </div>
+                                    <div class="bbbug_main_chat_context_menu"
+                                        @contextmenu.prevent.stop="openMenu($event,item)">
+                                        <!-- 图片消息 -->
+                                        <div class="bbbug_main_chat_content" v-if="item.type=='img'"
+                                            style="padding:5px;border-radius:10px;line-height:0;">
+                                            <img class="bbbug_main_chat_img"
+                                                :style="{width:getImageWidth(urldecode(item.content))+'px'}"
+                                                :src="getStaticUrl(urldecode(item.content))"
+                                                :onerror="getStaticUrl('/new/images/error.jpg')"
+                                                :large="getStaticUrl(urldecode(item.resource))"
+                                                :preview="item.message_id" />
+                                        </div>
+                                        <!--jump消息-->
+                                        <div class="bbbug_main_chat_content bbbug_main_chat_jump"
+                                            v-if="item.type=='jump'" title="快捷机票 点击进入"
+                                            @click="enterRoom(item.jump.room_id)" style="border-radius:10px">
+                                            <div class="bbbug_main_chat_jump_name">
+                                                <div class="bbbug_main_chat_jump_id">ID:{{item.jump.room_id}}</div>
+                                                {{item.jump.room_name}}
+                                            </div>
+                                            <div class="bbbug_main_chat_jump_desc">
+                                                {{item.jump.room_notice||"能听歌就行了,房间公告写不写就算了吧"}}</div>
+                                            <div class="bbbug_main_chat_jump_tips">快捷机票
+                                                <font color=yellow v-if="item.jump.room_public==1">加密房间</font>
+                                                <font color=#999 v-if="item.jump.room_public==0">公开房间</font>
+                                            </div>
+                                        </div>
+                                        <!--link消息-->
+                                        <div class="bbbug_main_chat_content bbbug_main_chat_jump"
+                                            v-if="item.type=='link'" title="打开外部链接"
+                                            @click="openNewWebPage(urldecode(item.link))" style="border-radius:10px">
+                                            <div class="bbbug_main_chat_jump_name">
+                                                {{urldecode(item.title)}}
+                                            </div>
+                                            <div class="bbbug_main_chat_jump_desc">
+                                                {{urldecode(item.desc)||"没有读取到网站简介..."}}
+                                            </div>
+                                            <div class="bbbug_main_chat_jump_tips">{{urldecode(item.link)}}
+                                            </div>
+                                        </div>
+                                        <!--房间公告-->
+                                        <div class="bbbug_main_chat_content bbbug_main_chat_notice"
+                                            v-if="item.type=='notice'" style="border-radius:10px">
+                                            <div class="bbbug_main_chat_notice_title">房间公告</div>
+                                            <div class="bbbug_main_chat_notice_content">
+                                                {{urldecode(item.content)}}
+                                            </div>
+                                        </div>
+                                        <!--文字消息-->
+                                        <div v-if="item.isAtAll">
+                                            <div class="bbbug_main_chat_content content_at" v-if="item.type=='text'">
+                                                {{urldecode(item.content)}}</div>
+                                        </div>
+                                        <div v-if="!item.isAtAll">
+                                            <div class="bbbug_main_chat_content content_at"
+                                                v-if="item.type=='text' && item.user.user_id!=userInfo.user_id && (item.at && item.at.user_id==userInfo.user_id)">
+                                                {{urldecode(item.content)}}</div>
+                                            <div class="bbbug_main_chat_content"
+                                                v-if="item.type=='text' && item.user.user_id!=userInfo.user_id && (!item.at || item.at.user_id!=userInfo.user_id)">
+                                                {{urldecode(item.content)}}</div>
+                                            <div class="bbbug_main_chat_content content_boy"
+                                                v-if="item.type=='text' && item.user.user_id==userInfo.user_id && userInfo.user_sex==1">
+                                                {{urldecode(item.content)}}</div>
+                                            <div class="bbbug_main_chat_content content_girl"
+                                                v-if="item.type=='text' && item.user.user_id==userInfo.user_id && userInfo.user_sex==0">
+                                                {{urldecode(item.content)}}</div>
+                                            <div class="bbbug_main_chat_content_loading love_fast" v-if="item.loading">
+                                                <i class="iconfont icon-loading"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bbbug_main_chat_name_time">{{friendlyTime(item.time)}}</div>
+                                    <div class="bbbug_main_chat_content_quot" v-if="item.at && item.at.message"
+                                        :title="getQuotMessage(item.at)">
+                                        {{getQuotMessage(item.at)}}</div>
                                 </div>
-                                <div class="bbbug_main_chat_name" :class="item.user.user_id<10000?'orangered':''"
-                                    :title="item.user.user_id<10000?'骨灰级赞助用户':''">
-                                    {{urldecode(item.user.user_name)}}
-                                    <i class="iconfont icon-icon_certification_f user_icon"
-                                        style="font-size:18px;color:#097AD8;" v-if="item.user.user_vip"
-                                        :title="item.user.user_vip"></i>
-                                    <span class="bbbug_main_chat_name_icon" v-if="item.user.user_icon==1"
-                                        title="曾经的元老级管理员">元老</span>
+                                <div v-if="item.type=='system'" class="bbbug_main_chat_system">
+                                    <span class="bbbug_main_chat_system_text">{{item.content}}</span>
                                 </div>
-                                <div class="bbbug_main_chat_context_menu"
-                                    @contextmenu.prevent.stop="openMenu($event,item)">
-                                    <!-- 图片消息 -->
-                                    <div class="bbbug_main_chat_content" v-if="item.type=='img'"
-                                        style="padding:5px;border-radius:10px;line-height:0;">
-                                        <img class="bbbug_main_chat_img"
-                                            :style="{width:getImageWidth(urldecode(item.content))+'px'}"
-                                            :src="getStaticUrl(urldecode(item.content))"
-                                            :onerror="getStaticUrl('/new/images/error.jpg')"
-                                            :large="getStaticUrl(urldecode(item.resource))"
-                                            :preview="item.message_id" />
-                                    </div>
-                                    <!--jump消息-->
-                                    <div class="bbbug_main_chat_content bbbug_main_chat_jump" v-if="item.type=='jump'"
-                                        title="快捷机票 点击进入" @click="enterRoom(item.jump.room_id)"
-                                        style="border-radius:10px">
-                                        <div class="bbbug_main_chat_jump_name">
-                                            <div class="bbbug_main_chat_jump_id">ID:{{item.jump.room_id}}</div>
-                                            {{item.jump.room_name}}
-                                        </div>
-                                        <div class="bbbug_main_chat_jump_desc">
-                                            {{item.jump.room_notice||"能听歌就行了,房间公告写不写就算了吧"}}</div>
-                                        <div class="bbbug_main_chat_jump_tips">快捷机票
-                                            <font color=yellow v-if="item.jump.room_public==1">加密房间</font>
-                                            <font color=#999 v-if="item.jump.room_public==0">公开房间</font>
-                                        </div>
-                                    </div>
-                                    <!--link消息-->
-                                    <div class="bbbug_main_chat_content bbbug_main_chat_jump" v-if="item.type=='link'"
-                                        title="打开外部链接" @click="openNewWebPage(urldecode(item.link))"
-                                        style="border-radius:10px">
-                                        <div class="bbbug_main_chat_jump_name">
-                                            {{urldecode(item.title)}}
-                                        </div>
-                                        <div class="bbbug_main_chat_jump_desc">{{urldecode(item.desc)||"没有读取到网站简介..."}}
-                                        </div>
-                                        <div class="bbbug_main_chat_jump_tips">{{urldecode(item.link)}}
-                                        </div>
-                                    </div>
-                                    <!--房间公告-->
-                                    <div class="bbbug_main_chat_content bbbug_main_chat_notice"
-                                        v-if="item.type=='notice'" style="border-radius:10px">
-                                        <div class="bbbug_main_chat_notice_title">房间公告</div>
-                                        <div class="bbbug_main_chat_notice_content">
-                                            {{urldecode(item.content)}}
-                                        </div>
-                                    </div>
-                                    <!--文字消息-->
-                                    <div v-if="item.isAtAll">
-                                        <div class="bbbug_main_chat_content content_at" v-if="item.type=='text'">
-                                            {{urldecode(item.content)}}</div>
-                                    </div>
-                                    <div v-if="!item.isAtAll">
-                                        <div class="bbbug_main_chat_content content_at"
-                                            v-if="item.type=='text' && item.user.user_id!=userInfo.user_id && (item.at && item.at.user_id==userInfo.user_id)">
-                                            {{urldecode(item.content)}}</div>
-                                        <div class="bbbug_main_chat_content"
-                                            v-if="item.type=='text' && item.user.user_id!=userInfo.user_id && (!item.at || item.at.user_id!=userInfo.user_id)">
-                                            {{urldecode(item.content)}}</div>
-                                        <div class="bbbug_main_chat_content content_boy"
-                                            v-if="item.type=='text' && item.user.user_id==userInfo.user_id && userInfo.user_sex==1">
-                                            {{urldecode(item.content)}}</div>
-                                        <div class="bbbug_main_chat_content content_girl"
-                                            v-if="item.type=='text' && item.user.user_id==userInfo.user_id && userInfo.user_sex==0">
-                                            {{urldecode(item.content)}}</div>
-                                        <div class="bbbug_main_chat_content_loading love_fast" v-if="item.loading">
-                                            <i class="iconfont icon-loading"></i>
-                                        </div>
-                                    </div>
+                                <div v-if="item.type=='join'" class="bbbug_main_chat_system">
+                                    <span class="bbbug_main_chat_system_text">
+                                        欢迎<span v-if="item.where">{{item.where}}的</span><span v-if="item.user">
+                                            <font class="orangered" style="cursor: pointer;" title="点击查看资料"
+                                                @click.stop="showUserPage(item.user.user_id)">
+                                                {{urldecode(item.name)}} </font>
+                                        </span><span v-if="!item.user"><span
+                                                v-if="item.plat">{{item.plat}}用户</span><span
+                                                v-if="!item.plat">临时用户</span></span>{{item.user?'回来!':''}}
+                                    </span>
                                 </div>
-                                <div class="bbbug_main_chat_name_time">{{friendlyTime(item.time)}}</div>
-                                <div class="bbbug_main_chat_content_quot" v-if="item.at && item.at.message"
-                                    :title="getQuotMessage(item.at)">
-                                    {{getQuotMessage(item.at)}}</div>
-                            </div>
-                            <div v-if="item.type=='system'" class="bbbug_main_chat_system">
-                                <span class="bbbug_main_chat_system_text">{{item.content}}</span>
-                            </div>
-                            <div v-if="item.type=='join'" class="bbbug_main_chat_system">
-                                <span class="bbbug_main_chat_system_text">
-                                    欢迎<span v-if="item.where">{{item.where}}的</span><span v-if="item.user">
-                                        <font class="orangered" style="cursor: pointer;" title="点击查看资料"
-                                            @click.stop="showUserPage(item.user.user_id)">
-                                            {{urldecode(item.name)}} </font>
-                                    </span><span v-if="!item.user"><span v-if="item.plat">{{item.plat}}用户</span><span
-                                            v-if="!item.plat">临时用户</span></span>{{item.user?'回来!':''}}
-                                </span>
                             </div>
                         </div>
-                    </div>
-                    <div class="bbbug_app" v-if="roomInfo.room_app && isAppOpen">
-                        <iframe id="bbbug_app" @load="appLoaded" frameborder="0" :src="roomInfo.room_app"></iframe>
-                    </div>
-                    <div v-show="menuVisible" :style="{left:menuLeft+'px',top:menuTop+'px'}" class="contextmenu">
-                        <div @click="quotMessage(selectedMessage);hideAll()">引用回复</div>
-                        <div @click="sendBackMessage(selectedMessage);hideAll()"
-                            v-if="selectedMessage.user.user_id==userInfo.user_id || (selectedMessage.user.user_id!=userInfo.user_id && (userInfo.user_admin||userInfo.user_id==roomInfo.room_user))">
-                            撤回消息
+                        <div v-show="menuVisible" :style="{left:menuLeft+'px',top:menuTop+'px'}" class="contextmenu">
+                            <div @click="quotMessage(selectedMessage);hideAll()">引用回复</div>
+                            <div @click="sendBackMessage(selectedMessage);hideAll()"
+                                v-if="selectedMessage.user.user_id==userInfo.user_id || (selectedMessage.user.user_id!=userInfo.user_id && (userInfo.user_admin||userInfo.user_id==roomInfo.room_user))">
+                                撤回消息
+                            </div>
                         </div>
-                    </div>
-                    <div class="bbbug_main_chat_toolbar">
-                        <div class="bbbug_main_chat_toolbar_item">
-                            <img title="发送表情" class="bbbug_main_chat_toolbar_emoji" @click.stop="showEmojiBox"
-                                :src="getStaticUrl('new/images/button_emoji.png')" />
+                        <div class="bbbug_main_chat_toolbar">
+                            <div class="bbbug_main_chat_toolbar_item">
+                                <img title="发送表情" class="bbbug_main_chat_toolbar_emoji" @click.stop="showEmojiBox"
+                                    :src="getStaticUrl('new/images/button_emoji.png')" />
 
-                            <el-upload :action="uploadImageUrl" :show-file-list="false"
-                                :on-success="handleImageUploadSuccess" class="bbbug_main_chat_toolbar_img"
-                                :before-upload="doUploadBefore" :data="baseData">
-                                <img title="上传图片" class="" :src="getStaticUrl('new/images/button_image.png')" />
-                            </el-upload>
-                            <el-slider v-if="isVolumeBarShow" class="bbbug_main_menu_song_volume_bar"
-                                v-model="audioVolume" vertical show-stops @input="audioVolumeChanged" height="80px">
-                            </el-slider>
-                            <div class="bbbug_main_chat_input_song" v-if="isPlayerShow">
-                                <div class="bbbug_main_chat_input_song_name" v-if="songInfo && songInfo.song">
-                                    <span>{{songInfo.song.name}}({{songInfo.song.singer}})</span>
-                                    <i class="iconfont icon-icon_people_fill" style="
-                                        font-weight: bold;
-                                        font-size: 14px;
-                                        vertical-align: middle;
-                                        margin-left: 10px;
-                                        display: inline-block;
-                                    "></i>
-                                    <font style="cursor: pointer;" title="点击查看资料"
-                                        @click.stop="showUserPage(songInfo.user.user_id)" class="orangered">
-                                        {{urldecode(songInfo.user.user_name)}}</font>
-                                </div>
-                                <div class="bbbug_main_chat_input_song_ctrl">
-                                    <i v-if="songInfo" @click.stop="loveTheSong" title="收藏"
-                                        class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-15"></i>
-                                    <i title="音量" @click="setEnableOrDisableVolume" @mouseover="showAudioVolumeBar"
-                                        class="iconfont volume_bar"
-                                        :class="audioVolume>0?'icon-changyongtubiao-xianxingdaochu-zhuanqu-39':'icon-changyongtubiao-xianxingdaochu-zhuanqu-40'"></i>
-                                    <i @click.stop="passTheSong" title="切歌/不喜欢" class="iconfont icon-xiayige"></i>
+                                <el-upload :action="uploadImageUrl" :show-file-list="false"
+                                    :on-success="handleImageUploadSuccess" class="bbbug_main_chat_toolbar_img"
+                                    :before-upload="doUploadBefore" :data="baseData">
+                                    <img title="上传图片" class="" :src="getStaticUrl('new/images/button_image.png')" />
+                                </el-upload>
+                                <el-slider v-if="isVolumeBarShow" class="bbbug_main_menu_song_volume_bar"
+                                    v-model="audioVolume" vertical show-stops @input="audioVolumeChanged" height="80px">
+                                </el-slider>
+                                <div class="bbbug_main_chat_input_song" v-if="isPlayerShow">
+                                    <div class="bbbug_main_chat_input_song_name" v-if="songInfo && songInfo.song">
+                                        <span>{{songInfo.song.name}}({{songInfo.song.singer}})</span>
+                                        <i class="iconfont icon-icon_people_fill" style="
+                                    font-weight: bold;
+                                    font-size: 14px;
+                                    vertical-align: middle;
+                                    margin-left: 10px;
+                                    display: inline-block;
+                                "></i>
+                                        <font style="cursor: pointer;" title="点击查看资料"
+                                            @click.stop="showUserPage(songInfo.user.user_id)" class="orangered">
+                                            {{urldecode(songInfo.user.user_name)}}</font>
+                                    </div>
+                                    <div class="bbbug_main_chat_input_song_ctrl">
+                                        <i v-if="songInfo" @click.stop="loveTheSong" title="收藏"
+                                            class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-15"></i>
+                                        <i title="音量" @click="setEnableOrDisableVolume" @mouseover="showAudioVolumeBar"
+                                            class="iconfont volume_bar"
+                                            :class="audioVolume>0?'icon-changyongtubiao-xianxingdaochu-zhuanqu-39':'icon-changyongtubiao-xianxingdaochu-zhuanqu-40'"></i>
+                                        <i @click.stop="passTheSong" title="切歌/不喜欢" class="iconfont icon-xiayige"></i>
+                                    </div>
                                 </div>
                             </div>
+                            <div title="跳到最新消息" class="bbbug_main_chat_toolbar_tobottom"
+                                @click="isEnableScroll=true;autoScroll();" v-if="!isEnableScroll"><i
+                                    class="iconfont icon-xiangxia"></i></div>
                         </div>
-                        <div title="跳到最新消息" class="bbbug_main_chat_toolbar_tobottom"
-                            @click="isEnableScroll=true;autoScroll();" v-if="!isEnableScroll"><i
-                                class="iconfont icon-xiangxia"></i></div>
+                        <div class="bbbug_main_chat_emojis" v-if="isEmojiBoxShow">
+                            <div class="bbbug_main_chat_emojis_search">
+                                <el-input placeholder="输入关键词搜索表情包" v-model="imageKeyword" clearable
+                                    class="bbbug_main_chat_emojis_input" @keydown.13.native="searchImage">
+                                    <el-button slot="append" icon="el-icon-search" @click="searchImage"></el-button>
+                                </el-input>
+                            </div>
+                            <div v-loading="loadingSearchImage" style="text-align: left;">
+                                <el-popover placement="top-start" title="预览表情" trigger="hover" :open-delay="2000"
+                                    v-for="item in imageList" :key="item">
+                                    <img :src="item"
+                                        style="width:200px;height:200px;border-radius:10px;border:1px solid #f5f5f5;" />
+                                    <img slot="reference" :src="item" @click.stop="sendEmoji(item)" />
+                                </el-popover>
+                            </div>
+                        </div>
+                        <div class="bbbug_main_chat_percent" v-if="songInfo">
+                            <div :style="{width:audioPercent+'%'}"></div>
+                        </div>
+                        <div class="bbbug_main_chat_input">
+                            <div class="bbbug_main_chat_input_toolbar"></div>
+                            <div class="bbbug_main_chat_input_form">
+                                <textarea @click="hideAll" class="bbug_main_chat_input_message"
+                                    :placeholder="(roomInfo && roomInfo.room_sendmsg==1 && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?'全员禁言中,你暂时无法发言...':'Wish you enjoy your bugs...'"
+                                    @keydown.13="sendMessage" @input="messageChanged" v-model="message"
+                                    :disabled="(roomInfo && roomInfo.room_sendmsg==1 && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?true:false"></textarea>
+                            </div>
+                            <button class="bbbug_main_chat_input_send" id="qqLoginBtn" @click.stop="sendMessage"
+                                :class="isEnableSendMessage?'bbbug_main_chat_enable':''">发送(Enter)</button>
+                            <el-tag class="bbbug_main_chat_input_quot" closable type="info"
+                                v-if="atUserInfo && atUserInfo.message" @close="atUserInfo={user:{}};">
+                                {{getQuotMessage(atUserInfo)}}
+                            </el-tag>
+                            <div class="bbbug_main_chat_toolbar_lrc" v-if="isLrcStringShow"><span>{{lrcString}}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bbbug_main_chat_emojis" v-if="isEmojiBoxShow">
-                        <div class="bbbug_main_chat_emojis_search">
-                            <el-input placeholder="输入关键词搜索表情包" v-model="imageKeyword" clearable
-                                class="bbbug_main_chat_emojis_input" @keydown.13.native="searchImage">
-                                <el-button slot="append" icon="el-icon-search" @click="searchImage"></el-button>
-                            </el-input>
-                        </div>
-                        <div v-loading="loadingSearchImage" style="text-align: left;">
-                            <el-popover placement="top-start" title="预览表情" trigger="hover" :open-delay="2000"
-                                v-for="item in imageList" :key="item">
-                                <img :src="item"
-                                    style="width:200px;height:200px;border-radius:10px;border:1px solid #f5f5f5;" />
-                                <img slot="reference" :src="item" @click.stop="sendEmoji(item)" />
-                            </el-popover>
-                        </div>
-                    </div>
-                    <div class="bbbug_main_chat_percent" v-if="songInfo">
-                        <div :style="{width:audioPercent+'%'}"></div>
-                    </div>
-                    <div class="bbbug_main_chat_input">
-                        <div class="bbbug_main_chat_input_toolbar"></div>
-                        <div class="bbbug_main_chat_input_form">
-                            <textarea @click="hideAll" class="bbug_main_chat_input_message"
-                                :placeholder="(roomInfo && roomInfo.room_sendmsg==1 && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?'全员禁言中,你暂时无法发言...':'Wish you enjoy your bugs...'"
-                                @keydown.13="sendMessage" @input="messageChanged" v-model="message"
-                                :disabled="(roomInfo && roomInfo.room_sendmsg==1 && roomInfo.room_user!=userInfo.user_id && !userInfo.user_admin)?true:false"></textarea>
-                        </div>
-                        <button class="bbbug_main_chat_input_send" id="qqLoginBtn" @click.stop="sendMessage"
-                            :class="isEnableSendMessage?'bbbug_main_chat_enable':''">发送(Enter)</button>
-                        <el-tag class="bbbug_main_chat_input_quot" closable type="info"
-                            v-if="atUserInfo && atUserInfo.message" @close="atUserInfo={user:{}};">
-                            {{getQuotMessage(atUserInfo)}}
-                        </el-tag>
-                        <div class="bbbug_main_chat_toolbar_lrc" v-if="isLrcStringShow"><span>{{lrcString}}</span></div>
+                    <div class="bbbug_app" v-if="roomInfo.room_app && isAppOpen"
+                        :class="roomInfo.room_fullpage?'bbbug_app_fullpage':''">
+                        <iframe id="bbbug_app" @load="appLoaded" frameborder="0" :src="roomInfo.room_app"></iframe>
                     </div>
                 </div>
                 <div class="bbbug_frame">
@@ -558,6 +569,9 @@
                             that.sendAppEvent("themeChanged", {
                                 model: that.isDarkModel ? 'dark' : 'light'
                             });
+                            break;
+                        case 'hideAll':
+                            that.hideAll();
                             break;
                         default:
                     }
@@ -2013,7 +2027,7 @@
                  */
                 autoScroll() {
                     let that = this;
-                    if (!that.isLocked) {
+                    if (!that.isLocked && !that.roomInfo.room_fullpage) {
                         that.$nextTick(function () {
                             if (that.isEnableScroll) {
                                 let ele = document.getElementById('bbbug_main_chat_history');
@@ -2252,6 +2266,21 @@
                             obj = JSON.parse(data);
                         } catch (e) {
                             return;
+                        }
+                        if (that.roomInfo.room_fullpage) {
+                            //插件自行接管消息
+                            switch (obj.type) {
+                                case 'preload':
+                                case 'playSong':
+                                case 'online':
+                                case 'roomUpdate':
+                                    break;
+                                default:
+                                    that.sendAppEvent('messageController', {
+                                        data: obj
+                                    });
+                                    return;
+                            }
                         }
                         if (that.messageList.length > that.historyMax) {
                             that.messageList.shift();
@@ -2919,6 +2948,15 @@
         border: none;
         border-bottom: 1px solid #e5e5e5;
         background-color: transparent;
+    }
+
+    .bbbug_app_fullpage {
+        height: auto;
+        bottom: 0;
+    }
+
+    .bbbug_dark .bbbug_app {
+        border-bottom: none !important;
     }
 
     .bbbug_app iframe {
