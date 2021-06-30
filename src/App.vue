@@ -331,7 +331,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bbbug_app" v-if="roomInfo.room_app && isAppOpen"
+                    <div class="bbbug_app" v-if="roomInfo.room_app && (isAppOpen || roomInfo.room_fullpage)"
                         :class="roomInfo.room_fullpage?'bbbug_app_fullpage':''">
                         <iframe id="bbbug_app" @load="appLoaded" frameborder="0" :src="roomInfo.room_app"></iframe>
                     </div>
@@ -2948,6 +2948,7 @@
         border: none;
         border-bottom: 1px solid #e5e5e5;
         background-color: transparent;
+        overflow: hidden;
     }
 
     .bbbug_app_fullpage {
