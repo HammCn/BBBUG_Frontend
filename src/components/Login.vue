@@ -1,6 +1,6 @@
 <template>
     <div id="login">
-        <div class="bbbug_bg" @click.stop="isLocked=!isLocked;"
+        <div style="z-index: 99;" class="bbbug_bg" @click.stop="isLocked=!isLocked;"
             :style="{backgroundImage:'url('+getStaticUrl(background)+')'}">
         </div>
         <div class="bbbug_login">
@@ -161,7 +161,9 @@
         right: 0;
         top: 0;
         bottom: 0;
+        z-index: 99;
     }
+    
 
     .bbbug_login_form {
         width: 400px;
