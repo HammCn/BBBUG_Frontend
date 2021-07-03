@@ -10,7 +10,7 @@
                     <el-link class="bbbug_login_form_title_guest" @click="loginGuest">游客</el-link>
                 </div>
                 <el-form-item prop="user_account" label="账号"
-                    :rules="[{required: true, message: '账号必须填写才能登录啊...', trigger: 'blur' }]">
+                    :rules="userAccountRules">
                     <el-input placeholder="支持ID/邮箱登录" v-model="form.user_account">
                         <el-button slot="append" icon="el-icon-message" title="发送验证码到邮箱" @click="sendMail">
                             发送
@@ -20,7 +20,7 @@
                 <el-form-item prop="user_password" label="密码"
                     :rules="[{ required: true, message: '不填写密码如何登录???', trigger: 'blur' }]">
                     <el-input type="password" placeholder="登录密码或验证码" v-model="form.user_password"
-                        @keydown.13.native="doLogin('bbbug_login_form')">
+                        @keydown.13.native="doLogin">
                     </el-input>
                 </el-form-item>
                 <el-form-item class="bbbug_login_form_submit" style="margin-left:10px;"> <span style="float:left;">
@@ -49,16 +49,26 @@
                         </el-link> -->
                     </span>
 
-                    <el-button type="primary" @click="doLogin('bbbug_login_form')">立即登录</el-button>
+                    <el-button type="primary" @click="doLogin">立即登录</el-button>
                 </el-form-item>
             </el-form>
         </div>
     </div>
 </template>
 <script>
+    import { isIntStr, isEmail } from '@/utils';
     export
         default {
             data() {
+                const validatorUserAccount = (rule, value, callback) => {
+                    if (!value) {
+                        return callback(new Error('账号必须填写才能登录啊...'));
+                    }
+                    if (!isIntStr(value) || !isEmail(value)) {
+                        return callback(new Error('请输入的账号正确...'));
+                    }
+                    callback();
+                }
                 return {
                     background: "new/images/bg_dark.jpg",
                     bbbug_loading: false,
@@ -67,7 +77,10 @@
                         user_account: "",
                         user_password: "",
                     },
-                    timer: null
+                    timer: null,
+                    userAccountRules: [
+                        { required: true, validator: validatorUserAccount, trigger: 'blur' },
+                    ]
                 }
             },
             created() {
@@ -107,9 +120,9 @@
                  * @param {string} 验证表单名称
                  * @return {null}
                  */
-                doLogin(formName) {
+                doLogin() {
                     let that = this;
-                    that.$refs[formName].validate(function (valid) {
+                    that.$refs['bbbug_login_form'].validate(function (valid) {
                         if (valid) {
                             that.bbbug_loading = true;
                             that.request({
@@ -135,15 +148,19 @@
                  * @return {null}
                  */
                 sendMail() {
-                    let that = this;
-                    that.request({
+                    const { form } = this;
+                    const { user_account: email } = form;
+                    if(!isEmail(email)){
+                        return this.$message.error('快输入邮箱呀~');
+                    }
+                    this.request({
                         url: "sms/email",
                         loading: true,
                         data: {
-                            email: that.form.user_account
+                            email
                         },
-                        success(res) {
-                            that.$message.success(res.msg);
+                        success: (res) => {
+                            this.$message.success(res.msg);
                         }
                     });
                 }
