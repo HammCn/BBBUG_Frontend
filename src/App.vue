@@ -280,7 +280,8 @@
                                             @click.stop="showUserPage(songInfo.user.user_id)" class="orangered">
                                             {{urldecode(songInfo.user.user_name)}}</font>
                                     </div>
-                                    <div class="bbbug_main_chat_input_song_ctrl">
+                                    <div class="bbbug_main_chat_input_song_ctrl"
+                                        v-if="roomInfo.room_type == 1 || roomInfo.room_type == 4">
                                         <i v-if="songInfo" @click.stop="loveTheSong" title="收藏"
                                             class="iconfont icon-changyongtubiao-xianxingdaochu-zhuanqu-15"></i>
                                         <i title="音量" @click="setEnableOrDisableVolume" @mouseover="showAudioVolumeBar"
@@ -310,8 +311,8 @@
                                 </el-popover>
                             </div>
                         </div>
-                        <div class="bbbug_main_chat_percent" v-if="songInfo">
-                            <div :style="{width:audioPercent+'%'}"></div>
+                        <div class="bbbug_main_chat_percent">
+                            <div :style="{width:audioPercent+'%'}" v-if="songInfo"></div>
                         </div>
                         <div class="bbbug_main_chat_input">
                             <div class="bbbug_main_chat_input_toolbar"></div>
@@ -327,7 +328,9 @@
                                 v-if="atUserInfo && atUserInfo.message" @close="atUserInfo={user:{}};">
                                 {{getQuotMessage(atUserInfo)}}
                             </el-tag>
-                            <div class="bbbug_main_chat_toolbar_lrc" v-if="isLrcStringShow"><span>{{lrcString}}</span>
+                            <div class="bbbug_main_chat_toolbar_lrc"
+                                v-if="isLrcStringShow && (roomInfo.room_type ==1 || roomInfo.room_type==4)">
+                                <span>{{lrcString}}</span>
                             </div>
                         </div>
                     </div>
@@ -377,7 +380,7 @@
                         <div class="name">读碟中,请稍后...</div>
                         <div class="desc">[{{roomInfo.room_id}}]{{urldecode(roomInfo.room_name)}}</div>
                     </div>
-                    <div class="controls" v-if="songInfo">
+                    <div class="controls" v-if="songInfo && (roomInfo.room_type == 1 || roomInfo.room_type == 4)">
                         <i title="音量" @click="setEnableOrDisableVolume" class="iconfont volume_bar"
                             :class="audioVolume>0?'icon-changyongtubiao-xianxingdaochu-zhuanqu-39':'icon-changyongtubiao-xianxingdaochu-zhuanqu-40'"></i>
                         <i @click.stop="loveTheSong" title="收藏"
@@ -386,7 +389,8 @@
                         <i @click.stop="passTheSong" title="切歌/不喜欢" class="iconfont icon-xiayige"></i>
                     </div>
                     <div class="progress">
-                        <div :style="{width: audioPercent +'%'}"></div>
+                        <div :style="{width: audioPercent +'%'}"
+                            v-if="songInfo && (roomInfo.room_type == 1 || roomInfo.room_type == 4)"></div>
                     </div>
                     <div class="time">
                         <span class="now">{{audioTimeNow}}</span>
@@ -573,6 +577,12 @@
                         case 'hideAll':
                             that.hideAll();
                             break;
+                        case 'sendImage':
+                            that.sendEmoji(event.data.url);
+                            break;
+                        case 'getMessageList':
+                            that.sendAppEvent('messageList', that.messageList);
+                            break;
                         default:
                     }
                 }, false);
@@ -600,7 +610,9 @@
                     window.onkeydown = function (e) {
                         switch (e.keyCode) {
                             case 27:
-                                that.isLocked = !that.isLocked;
+                                if (that.roomInfo.room_type == 1 || that.roomInfo.room_type == 4) {
+                                    that.isLocked = !that.isLocked;
+                                }
                                 break;
                             default:
                                 // console.log(e.keyCode)
@@ -2520,6 +2532,8 @@
 
                                 break;
                             case 'pass':
+                                that.musicLrcObj = {};
+                                that.$refs.audio.stop();
                                 that.sendAppEvent('passSong', {
                                     data: obj
                                 });
