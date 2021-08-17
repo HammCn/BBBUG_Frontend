@@ -59,7 +59,7 @@ Vue.prototype.global = {
 Vue.prototype.isDarkModel = false;
 /**
  * @description: 更改暗黑模式
- * @param {bool} 是否启动暗黑模式 
+ * @param {bool} 是否启动暗黑模式
  * @return {null}
  */
 Vue.prototype.changeDarkModel = function (enabled) {
@@ -95,7 +95,10 @@ Vue.prototype.getStaticUrl = function (url) {
     if (!url) {
         url = "";
     }
-    url = this.http2https(url.toString());
+    const isHttps = 'https:' == document.location.protocol ? true : false;
+    if (isHttps) {
+        url = this.http2https(url.toString());
+    }
     if (url.indexOf('http://') == 0 || url.indexOf("https://") == 0) {
         return url;
     } else {
