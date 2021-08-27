@@ -15,7 +15,7 @@
 
 
 <p align="center">
-<a href="https://bbbug.com" target="_blank"><img src="https://api.bbbug.com/api/badge/888"/></a>
+<a href="https://demo.bbbug.com" target="_blank"><img src="https://api.bbbug.com/api/badge/888"/></a>
 </p>
 
 ### 介绍
