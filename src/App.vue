@@ -303,7 +303,7 @@
                                 </el-input>
                             </div>
                             <div v-loading="loadingSearchImage" style="text-align: left;">
-                                <el-popover placement="top-start" title="预览表情" trigger="hover" :open-delay="2000"
+                                <el-popover placement="top-start" title="预览表情" trigger="hover" :open-delay="500"
                                     v-for="item in imageList" :key="item">
                                     <img :src="item"
                                         style="width:200px;height:200px;border-radius:10px;border:1px solid #f5f5f5;" />
