@@ -15,14 +15,14 @@
 
 
 <p align="center">
-<a href="https://bbbug.com" target="_blank"><img src="https://api.bbbug.com/api/badge/888"/></a>
+<a href="https://demo.bbbug.com" target="_blank"><img src="https://api.bbbug.com/api/badge/888"/></a>
 </p>
 
 ### 介绍
 
 一个可以聊天听歌的音乐聊天室，支持了Gitee/OSChina/QQ/钉钉等OAuth登录，支持多房间和创建私人房间，支持房间加密和切换房间模式。此仓库为PC站前端仓库。QQ群1140258698
 
-体验一下：<a href="https://www.bbbug.com/" target="_blank">www.bbbug.com</a>
+体验一下：<a href="https://demo.bbbug.com/" target="_blank">demo.bbbug.com</a>
 
 ### 免责声明
 
