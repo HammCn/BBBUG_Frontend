@@ -2073,6 +2073,11 @@
                             that.global.roomInfo = res.data;
                             that.updateCopyData();
                             that.roomInfo = res.data;
+                            if(that.roomInfo.room_app && that.roomInfo.room_fullpage){
+                                that.isAppOpen = false;
+                                that.isAppOpenToggle();
+                                //强制打开APP
+                            }
                             that.background = res.data.room_background || "new/images/bg_dark.jpg";
                             if (reConnect) {
                                 that.audioUrl = '';
