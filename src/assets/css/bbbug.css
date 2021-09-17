@@ -4,7 +4,7 @@
      height: 100%;
      margin: 0;
      padding: 0;
-     background-color: #000;
+     background-color: #1296db;
  }
  .el-tag__close{
      position: absolute!important;
@@ -154,7 +154,7 @@
      background-size: cover;
      position: fixed;
      left: 0;
-     top: 0;
+     top: -50px;
      bottom: 0;
      right: 0;
  }
